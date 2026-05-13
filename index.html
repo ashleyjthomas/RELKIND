@@ -14,7 +14,7 @@
     }
     #gc{
       background:#fff;border-radius:24px;padding:22px;
-      max-width:740px;width:100%;
+      max-width:780px;width:100%;
       box-shadow:0 8px 32px rgba(0,0,0,.12);
       min-height:90vh;display:flex;flex-direction:column;
       align-items:center;gap:14px;
@@ -26,36 +26,31 @@
     }
     @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 
-    /* ── Speaking animation ── */
     @keyframes speakBounce{
       0%,100%{transform:translateY(0) rotate(0deg)}
-      20%    {transform:translateY(-8px) rotate(-4deg)}
-      60%    {transform:translateY(-8px) rotate(4deg)}
-      80%    {transform:translateY(-3px)}
+      25%    {transform:translateY(-10px) rotate(-4deg)}
+      75%    {transform:translateY(-10px) rotate(4deg)}
     }
-    .speaking{animation:speakBounce 0.65s ease-in-out infinite}
+    .speaking{ animation:speakBounce 0.6s ease-in-out infinite }
 
-    /* ── Star pop ── */
     @keyframes starPop{
       0%  {transform:scale(0) rotate(-20deg);opacity:0}
-      60% {transform:scale(1.4) rotate(10deg);opacity:1}
+      60% {transform:scale(1.5) rotate(10deg);opacity:1}
       100%{transform:scale(1)  rotate(0deg); opacity:1}
     }
-    .star-pop{animation:starPop 0.55s ease-out forwards}
+    .star-pop{animation:starPop 0.5s ease-out forwards}
 
-    h1{font-size:2.1em;color:#e74c3c;text-align:center;text-shadow:2px 2px #ffeaa7}
-    h2{font-size:1.5em;color:#2c3e50;text-align:center}
-    .txt{font-size:1.1em;line-height:1.65;color:#2c3e50;text-align:center;max-width:580px}
+    h1{font-size:2em;color:#e74c3c;text-align:center;text-shadow:2px 2px #ffeaa7}
+    h2{font-size:1.45em;color:#2c3e50;text-align:center}
+    .txt{font-size:1.1em;line-height:1.65;color:#2c3e50;text-align:center;max-width:600px}
 
-    /* ── Direction box ── */
     .dirs{
-      font-size:1.08em;color:#34495e;text-align:center;
+      font-size:1.05em;color:#34495e;text-align:center;
       background:#eaf4ff;border-radius:14px;padding:11px 18px;
-      width:100%;max-width:580px;
+      width:100%;max-width:600px;
       border-left:5px solid #3498db;line-height:1.55;
     }
 
-    /* ── Buttons ── */
     .btn{
       background:linear-gradient(145deg,#3498db,#2980b9);color:#fff;
       border:none;padding:13px 26px;border-radius:50px;
@@ -64,14 +59,16 @@
       transition:transform .1s;touch-action:manipulation;
     }
     .btn:active{transform:scale(.97)}
-    .btn.g  {background:linear-gradient(145deg,#2ecc71,#27ae60);box-shadow:0 4px 12px rgba(46,204,113,.4)}
-    .btn.or {background:linear-gradient(145deg,#f39c12,#e67e22);box-shadow:0 4px 12px rgba(243,156,18,.5);
-             font-size:1.3em;padding:16px 34px}
-    .btn.sl {background:linear-gradient(145deg,#95a5a6,#7f8c8d)}
-    .btn.sm {padding:8px 16px;font-size:.95em}
-    .btn:disabled{opacity:.55;cursor:not-allowed;transform:none}
+    .btn.g {background:linear-gradient(145deg,#2ecc71,#27ae60)}
+    .btn.or{
+      background:linear-gradient(145deg,#f39c12,#e67e22);
+      box-shadow:0 4px 14px rgba(243,156,18,.5);
+      font-size:1.3em;padding:16px 36px;
+    }
+    .btn.sl{background:linear-gradient(145deg,#95a5a6,#7f8c8d)}
+    .btn.sm{padding:8px 16px;font-size:.95em}
+    .btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
 
-    /* ── Age picker ── */
     .age-row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
     .abtn{
       background:#ecf0f1;color:#2c3e50;border:3px solid transparent;
@@ -93,55 +90,60 @@
       padding:8px 18px;background:#fff9e6;border-radius:22px;
       border:2px solid #f39c12;
     }
-    .star-slot{font-size:1.9em;display:inline-block;transition:transform .3s}
+    .star-slot{font-size:1.9em;transition:transform .3s}
     .star-slot.earned{color:#f39c12}
     .star-slot.empty {color:#ddd}
 
-    /* ── Character images ── */
-    .char-img{object-fit:contain;border-radius:12px}
-    .char-img.sm{width:80px; height:80px}
-    .char-img.md{width:110px;height:110px}
-    .char-img.lg{width:160px;height:160px}
-    .char-img.xl{width:220px;height:220px}
+    /* ── Progress text ── */
+    .prog{text-align:center;font-size:.88em;color:#aaa;margin-top:-4px}
 
-    /* ── Group intro image ── */
-    .grp-img{width:100%;max-width:400px;border-radius:16px;object-fit:contain}
+    /* ── Character images ── */
+    .char-img{object-fit:contain;border-radius:12px;display:block}
+    .char-img.sm {width:80px; height:80px}
+    .char-img.md {width:120px;height:120px}
+    .char-img.lg {width:170px;height:170px}
+    .char-img.xl {width:230px;height:230px}
+
+    /* ── Group intro ── */
+    .grp-img  {width:100%;max-width:420px;border-radius:16px;object-fit:contain}
     .title-img{width:100%;max-width:380px;border-radius:16px;object-fit:contain}
 
-    .cw{display:flex;flex-direction:column;align-items:center;gap:5px}
+    .cw{display:flex;flex-direction:column;align-items:center;gap:6px}
     .clbl{font-size:.95em;font-weight:700;color:#2c3e50;text-align:center}
     .cbadge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.78em;font-weight:700}
     .bwug  {background:#d6eaf8;color:#2471a3}
     .bflurp{background:#fdebd0;color:#ca6f1e}
     .bzazzo{background:#d5f5e3;color:#1e8449}
 
-    /* ── Three-character intro row ── */
+    /* ── Three-character row ── */
     .char-row{
-      display:flex;align-items:flex-end;gap:20px;
-      justify-content:center;flex-wrap:wrap;
-      width:100%;
+      display:flex;align-items:flex-end;gap:24px;
+      justify-content:center;flex-wrap:wrap;width:100%;
     }
 
     /* ── Action scene ── */
     .scene-img{
-      width:100%;max-width:440px;border-radius:16px;
+      width:100%;max-width:460px;border-radius:16px;
       object-fit:contain;border:3px solid #90caf9;
     }
 
-    /* ── Speech section ── */
+    /* ── Speech section ─────────────────────────────────────
+       Both characters on LEFT side, speech bubbles on RIGHT  */
     .speech-section{
-      width:100%;max-width:580px;
-      display:flex;flex-direction:column;gap:16px;
+      width:100%;max-width:620px;
+      display:flex;flex-direction:column;gap:20px;
     }
     .speech-row{
-      display:flex;align-items:center;gap:16px;
+      display:flex;align-items:center;gap:18px;
     }
+    /* characters always on left */
+    .sp-char{flex-shrink:0}
     .spbub{
       background:#fffde7;border:2.5px solid #ffc107;
       border-radius:16px;padding:13px 17px;
       font-size:1.08em;color:#2c3e50;flex:1;
       line-height:1.55;
-      opacity:0;transform:translateX(10px);
+      opacity:0;transform:translateX(14px);
       transition:opacity 0.45s ease, transform 0.45s ease;
     }
     .spbub.visible{opacity:1;transform:translateX(0)}
@@ -150,28 +152,28 @@
     .qbox{
       background:#f0f8ff;border:3px solid #3498db;
       border-radius:16px;padding:15px 20px;
-      text-align:center;width:100%;max-width:580px;
+      text-align:center;width:100%;max-width:600px;
       opacity:0;transform:translateY(8px);
-      transition:opacity 0.5s ease, transform 0.5s ease;
+      transition:opacity .5s ease, transform .5s ease;
     }
     .qbox.boss{background:#fef9e7;border-color:#e67e22}
     .qbox.show{opacity:1;transform:translateY(0)}
     .qtxt{font-size:1.22em;color:#2c3e50;font-weight:700}
     .qdef{font-size:.9em;color:#7f8c8d;margin-top:7px;line-height:1.5;font-style:italic}
 
-    /* ── Choices ── */
+    /* ── Choice cards ── */
     .choices{
-      display:flex;gap:24px;justify-content:center;flex-wrap:wrap;
+      display:flex;gap:28px;justify-content:center;flex-wrap:wrap;
       opacity:0;transform:translateY(8px);
-      transition:opacity 0.5s ease 0.2s, transform 0.5s ease 0.2s;
+      transition:opacity .5s ease .2s, transform .5s ease .2s;
     }
     .choices.show{opacity:1;transform:translateY(0)}
     .ccard{
       background:#fff;border:4px solid #dfe6e9;
-      border-radius:18px;padding:14px 18px;
+      border-radius:18px;padding:16px 20px;
       cursor:pointer;display:flex;flex-direction:column;
       align-items:center;gap:8px;
-      transition:all .15s;min-width:140px;
+      transition:all .15s;min-width:150px;
       touch-action:manipulation;-webkit-tap-highlight-color:transparent;
     }
     .ccard:hover,.ccard:active{border-color:#3498db;background:#eaf4ff;transform:scale(1.05)}
@@ -182,7 +184,7 @@
     .rrb{
       background:#95a5a6;color:#fff;border:none;
       border-radius:50%;width:44px;height:44px;
-      font-size:1.25em;cursor:pointer;flex-shrink:0;
+      font-size:1.2em;cursor:pointer;flex-shrink:0;
       display:flex;align-items:center;justify-content:center;
       touch-action:manipulation;
     }
@@ -192,7 +194,7 @@
       background:rgba(20,20,20,.88);color:#fff;
       padding:7px 11px;border-radius:10px;
       font-family:monospace;font-size:.72em;
-      z-index:9999;max-width:215px;
+      z-index:9999;max-width:220px;
     }
     #rbar button{
       background:#c0392b;color:#fff;border:none;
@@ -201,13 +203,14 @@
     }
     #rinfo{margin-top:5px;font-size:.73em;opacity:.82;line-height:1.45}
 
-    @media(max-width:460px){
+    @media(max-width:480px){
       #gc{padding:14px 10px}
-      h1{font-size:1.7em}
-      .ccard{min-width:110px;padding:11px 12px}
-      .choices{gap:14px}
+      h1{font-size:1.65em}
+      .ccard{min-width:120px;padding:12px 14px}
+      .choices{gap:16px}
+      .char-img.xl{width:180px;height:180px}
       .char-img.lg{width:130px;height:130px}
-      .speech-row{gap:10px}
+      .speech-row{gap:12px}
     }
   </style>
 </head>
@@ -224,14 +227,27 @@
 
 <script>
 // ═══════════════════════════════════════════════════════════
-//  TWIZZLE TOWN — Child Study Game v3
+//  TWIZZLE TOWN — Child Study Game v4
 //  ashleyjthomas/RELKIND
 // ═══════════════════════════════════════════════════════════
 
-const VILLAGE = "Twizzle Town";
+const VILLAGE   = "Twizzle Town";
 const CLOSE_DEF =
   "That means that they love each other more, " +
   "tell each other more secrets, and give each other hugs.";
+
+// ── IMAGE POOLS ─────────────────────────────────────────────
+
+const ORANGE_IMGS = [
+  'orange2.png','orange3.png','orange4.png','orange6.png',
+  'orange7.png','orange8.png','orange9.png','orange10.png',
+  'orange11.png','orange13.png','orange14.png','orange15.png'
+];
+
+const GREEN_IMGS = [
+  'green.png','green1.png','green2.png','green6.png',
+  'green7.png','green9.png','green10.png','green11.png','green12.png'
+];
 
 // ── UTILITIES ───────────────────────────────────────────────
 
@@ -251,7 +267,7 @@ function badge(g){
   return `<span class="cbadge ${cl[g]}">${lb[g]}</span>`;
 }
 
-function cimg(src,cls,id){
+function cimg(src, cls, id){
   const idStr = id ? `id="${id}"` : '';
   return `<img src="${src}" ${idStr} class="char-img ${cls||''}"
     alt="" onerror="this.style.opacity=0.15">`;
@@ -259,51 +275,53 @@ function cimg(src,cls,id){
 
 // ── SPEECH ──────────────────────────────────────────────────
 
-let _nar='';
+let _nar = '';
 
 function getVoice(){
-  const vs=window.speechSynthesis.getVoices();
-  return vs.find(v=>
-    v.name.includes('Samantha')||v.name.includes('Google US English')||
-    v.name.includes('Karen')||v.name.includes('Moira')
-  )||null;
+  const vs = window.speechSynthesis.getVoices();
+  return vs.find(v =>
+    v.name.includes('Samantha') || v.name.includes('Google US English') ||
+    v.name.includes('Karen')    || v.name.includes('Moira')
+  ) || null;
 }
 
 function say(txt){
   if(!window.speechSynthesis) return;
   window.speechSynthesis.cancel();
-  _nar=txt;
-  const u=new SpeechSynthesisUtterance(txt);
-  u.rate=0.87; u.pitch=1.1; u.volume=1;
-  const v=getVoice(); if(v) u.voice=v;
+  _nar = txt;
+  const u = new SpeechSynthesisUtterance(txt);
+  u.rate = 0.87; u.pitch = 1.1; u.volume = 1;
+  const v = getVoice(); if(v) u.voice = v;
   window.speechSynthesis.speak(u);
 }
 
 function reread(){ if(_nar) say(_nar); }
 
 function speakThen(text, cb){
-  if(!window.speechSynthesis){ setTimeout(cb,100); return; }
+  if(!window.speechSynthesis){ setTimeout(cb, 100); return; }
   window.speechSynthesis.cancel();
-  const u=new SpeechSynthesisUtterance(text);
-  u.rate=0.85; u.pitch=1.05; u.volume=1;
-  const v=getVoice(); if(v) u.voice=v;
-  const fallback=setTimeout(()=>cb(), text.length*90+1800);
-  u.onend=()=>{ clearTimeout(fallback); cb(); };
+  const u = new SpeechSynthesisUtterance(text);
+  u.rate = 0.85; u.pitch = 1.05; u.volume = 1;
+  const v = getVoice(); if(v) u.voice = v;
+  const fallback = setTimeout(()=>cb(), text.length * 90 + 2000);
+  u.onend = ()=>{ clearTimeout(fallback); cb(); };
   window.speechSynthesis.speak(u);
 }
 
 // ── STAR METER ──────────────────────────────────────────────
 
 function starMeterHTML(){
-  let h='<div class="star-meter">';
-  for(let i=0;i<6;i++)
-    h+=`<span class="star-slot ${i<G.stars?'earned':'empty'}">${i<G.stars?'⭐':'☆'}</span>`;
-  return h+'</div>';
+  let h = '<div class="star-meter">';
+  for(let i=0; i<6; i++)
+    h += `<span class="star-slot ${i<G.stars?'earned':'empty'}">
+            ${i<G.stars?'⭐':'☆'}
+          </span>`;
+  return h + '</div>';
 }
 
 // ── BLOCK CONFIGS ───────────────────────────────────────────
 
-const BCFG={
+const BCFG = {
   hmm1_close:{ep:'hmm',aRole:'group',      bRole:'individual',qType:'close'},
   hmm2_close:{ep:'hmm',aRole:'individual', bRole:'group',     qType:'close'},
   yes1_close:{ep:'yes',aRole:'group',      bRole:'individual',qType:'close'},
@@ -314,188 +332,183 @@ const BCFG={
   yes2_boss: {ep:'yes',aRole:'individual', bRole:'group',     qType:'boss'},
 };
 
-const BSUFFIX={
-  hmm1_close:'hmm1c',hmm2_close:'hmm2c',
-  yes1_close:'yes1c',yes2_close:'yes2c',
-  hmm1_boss:'hmm1b', hmm2_boss:'hmm2b',
-  yes1_boss:'yes1b', yes2_boss:'yes2b',
+const BSUFFIX = {
+  hmm1_close:'hmm1c', hmm2_close:'hmm2c',
+  yes1_close:'yes1c', yes2_close:'yes2c',
+  hmm1_boss:'hmm1b',  hmm2_boss:'hmm2b',
+  yes1_boss:'yes1b',  yes2_boss:'yes2b',
 };
 
 // ── TRIAL DATA ──────────────────────────────────────────────
+// portraitImg → blue character neutral portrait (shown in Phase 0)
+// actionImg   → blue character doing the behavior (shown in Phase 1)
+// pA/pB images picked randomly from ORANGE_IMGS / GREEN_IMGS at trial start
 
-const TRIALS={
+const TRIALS = {
   A:[
     {
       beh:'bugs', tgt:'Rowan', tg:'wug', pA:'Emery', gA:'flurp', pB:'Jules', gB:'zazzo',
       story: t=>`One day you see ${t} playing with bugs in the front yard.`,
-      icon:'🐛',
-      actionImgs:['rowan_bugs_v1.png','rowan_bugs_v2.png','rowan_bugs_v3.png','rowan_bugs_v4.png'],
-      pAImgs:['emery_portrait_v1.png','emery_portrait_v2.png'],
-      pBImgs:['jules_portrait_v1.png','jules_portrait_v2.png'],
-      act:{g:'play with bugs',i:'play with bugs'},
-      ids:{hmm1c:'Bugs_Hmm_1',hmm2c:'Bugs_Hmm_2',yes1c:'Bugs_Yes_1',yes2c:'Bugs_Yes_2',
-           hmm1b:'Bugs_Hmm_1_b',hmm2b:'Bugs_Hmm_2_b',yes1b:'Bugs_Yes_1_b',yes2b:'Bugs_Yes_2_b'}
+      portraitImg:'rowan.png', actionImg:'rowan_bugs.png',
+      act:{g:'play with bugs', i:'play with bugs'},
+      ids:{hmm1c:'Bugs_Hmm_1',   hmm2c:'Bugs_Hmm_2',
+           yes1c:'Bugs_Yes_1',   yes2c:'Bugs_Yes_2',
+           hmm1b:'Bugs_Hmm_1_b', hmm2b:'Bugs_Hmm_2_b',
+           yes1b:'Bugs_Yes_1_b', yes2b:'Bugs_Yes_2_b'}
     },
     {
       beh:'night', tgt:'Casey', tg:'wug', pA:'River', gA:'flurp', pB:'Morgan', gB:'zazzo',
       story: t=>`One night you notice that ${t} stays up in the middle of the night while everyone else is sleeping.`,
-      icon:'🌙',
-      actionImgs:['casey_night_v1.png','casey_night_v2.png','casey_night_v3.png','casey_night_v4.png'],
-      pAImgs:['river_portrait_v1.png','river_portrait_v2.png'],
-      pBImgs:['morgan_portrait_v1.png','morgan_portrait_v2.png'],
-      act:{g:'stay up in the middle of the night',i:'stay up in the middle of the night'},
-      ids:{hmm1c:'Night_Hmm_1',hmm2c:'Night_Hmm_2',yes1c:'Night_Yes_1',yes2c:'Night_Yes_2',
-           hmm1b:'Night_Hmm_1_b',hmm2b:'Night_Hmm_2_b',yes1b:'Night_Yes_1_b',yes2b:'Night_Yes_2_b'}
+      portraitImg:'casey.png', actionImg:'casey_night.png',
+      act:{g:'stay up in the middle of the night', i:'stay up in the middle of the night'},
+      ids:{hmm1c:'Night_Hmm_1',   hmm2c:'Night_Hmm_2',
+           yes1c:'Night_Yes_1',   yes2c:'Night_Yes_2',
+           hmm1b:'Night_Hmm_1_b', hmm2b:'Night_Hmm_2_b',
+           yes1b:'Night_Yes_1_b', yes2b:'Night_Yes_2_b'}
     },
     {
       beh:'walls', tgt:'Taylor', tg:'wug', pA:'Finley', gA:'flurp', pB:'Robin', gB:'zazzo',
       story: t=>`One day you see ${t} climbing a tall tree.`,
-      icon:'🌳',
-      actionImgs:['taylor_walls_v1.png','taylor_walls_v2.png','taylor_walls_v3.png','taylor_walls_v4.png'],
-      pAImgs:['finley_portrait_v1.png','finley_portrait_v2.png'],
-      pBImgs:['robin_portrait_v1.png','robin_portrait_v2.png'],
-      act:{g:'climb trees',i:'climb trees'},
-      ids:{hmm1c:'Walls_Hmm_1',hmm2c:'Walls_Hmm_2',yes1c:'Climb_Yes_1',yes2c:'Climb_Yes_2',
-           hmm1b:'Walls_Hmm_1_b',hmm2b:'Walls_Hmm_2_b',yes1b:'Walls_Yes_1_b',yes2b:'Walls_Yes_2_b'}
+      portraitImg:'taylor.png', actionImg:'taylor_walls.png',
+      act:{g:'climb trees', i:'climb trees'},
+      ids:{hmm1c:'Walls_Hmm_1',   hmm2c:'Walls_Hmm_2',
+           yes1c:'Climb_Yes_1',   yes2c:'Climb_Yes_2',
+           hmm1b:'Walls_Hmm_1_b', hmm2b:'Walls_Hmm_2_b',
+           yes1b:'Walls_Yes_1_b', yes2b:'Walls_Yes_2_b'}
     },
     {
       beh:'balls', tgt:'Alex', tg:'wug', pA:'Quinn', gA:'flurp', pB:'Drew', gB:'zazzo',
       story: t=>`One day you see ${t} bouncing a ball on their head over and over again.`,
-      icon:'⚽',
-      actionImgs:['alex_balls_v1.png','alex_balls_v2.png','alex_balls_v3.png','alex_balls_v4.png'],
-      pAImgs:['quinn_portrait_v1.png','quinn_portrait_v2.png'],
-      pBImgs:['drew_portrait_v1.png','drew_portrait_v2.png'],
-      act:{g:'bounce balls on their heads',i:'bounce balls on their head'},
-      ids:{hmm1c:'Balls_Hmm_1',hmm2c:'Balls_Hmm_2',yes1c:'Balls_Yes_1',yes2c:'Ball_Yes_2',
-           hmm1b:'Balls_Hmm_1_b',hmm2b:'Balls_Hmm_2_b',yes1b:'Balls_Yes_1_b',yes2b:'Balls_Yes_2_b'}
+      portraitImg:'alex.png', actionImg:'alex_ball.png',
+      act:{g:'bounce balls on their heads', i:'bounce balls on their head'},
+      ids:{hmm1c:'Balls_Hmm_1',   hmm2c:'Balls_Hmm_2',
+           yes1c:'Balls_Yes_1',   yes2c:'Ball_Yes_2',
+           hmm1b:'Balls_Hmm_1_b', hmm2b:'Balls_Hmm_2_b',
+           yes1b:'Balls_Yes_1_b', yes2b:'Balls_Yes_2_b'}
     },
     {
       beh:'whisper', tgt:'Jordan', tg:'wug', pA:'Skyler', gA:'flurp', pB:'Reese', gB:'zazzo',
       story: t=>`One day you notice that ${t} whispers whenever they talk to someone.`,
-      icon:'🤫',
-      actionImgs:['jordan_whisper_v1.png','jordan_whisper_v2.png','jordan_whisper_v3.png','jordan_whisper_v4.png'],
-      pAImgs:['skyler_portrait_v1.png','skyler_portrait_v2.png'],
-      pBImgs:['reese_portrait_v1.png','reese_portrait_v2.png'],
-      act:{g:'whisper when they talk',i:'whisper when they talk'},
-      ids:{hmm1c:'Whisper_Hmm_1',hmm2c:'Whisper_Hmm_2',yes1c:'Whisper_Yes_1',yes2c:'Whisper_Yes_2',
-           hmm1b:'Whisper_Hmm_1_b',hmm2b:'Whisper_Hmm_2_b',yes1b:'Whisper_Yes_1_b',yes2b:'Whisper_Yes_2_b'}
+      portraitImg:'jordan.png', actionImg:'jordan_whisper.png',
+      act:{g:'whisper when they talk', i:'whisper when they talk'},
+      ids:{hmm1c:'Whisper_Hmm_1',   hmm2c:'Whisper_Hmm_2',
+           yes1c:'Whisper_Yes_1',   yes2c:'Whisper_Yes_2',
+           hmm1b:'Whisper_Hmm_1_b', hmm2b:'Whisper_Hmm_2_b',
+           yes1b:'Whisper_Yes_1_b', yes2b:'Whisper_Yes_2_b'}
     },
     {
       beh:'flowers', tgt:'Riley', tg:'wug', pA:'Ash', gA:'flurp', pB:'Charlie', gB:'zazzo',
       story: t=>`One day you see ${t} eating flowers from their front yard.`,
-      icon:'🌸',
-      actionImgs:['riley_flowers_v1.png','riley_flowers_v2.png','riley_flowers_v3.png','riley_flowers_v4.png'],
-      pAImgs:['ash_portrait_v1.png','ash_portrait_v2.png'],
-      pBImgs:['charlie_portrait_v1.png','charlie_portrait_v2.png'],
-      act:{g:'eat flowers',i:'eat flowers'},
-      ids:{hmm1c:'Flowers_Hmm_1',hmm2c:'Flowers_Hmm_2',yes1c:'Flowers_Yes_1',yes2c:'Flowers_Yes_2',
-           hmm1b:'Flowers_Hmm_1_b',hmm2b:'Flowers_Hmm_2_b',yes1b:'Flowers_Yes_1_b',yes2b:'Flowers_Yes_2_b'}
+      portraitImg:'riley.png', actionImg:'riley_flowers.png',
+      act:{g:'eat flowers', i:'eat flowers'},
+      ids:{hmm1c:'Flowers_Hmm_1',   hmm2c:'Flowers_Hmm_2',
+           yes1c:'Flowers_Yes_1',   yes2c:'Flowers_Yes_2',
+           hmm1b:'Flowers_Hmm_1_b', hmm2b:'Flowers_Hmm_2_b',
+           yes1b:'Flowers_Yes_1_b', yes2b:'Flowers_Yes_2_b'}
     },
   ],
   B:[
     {
       beh:'rocks', tgt:'Sam', tg:'wug', pA:'Nova', gA:'flurp', pB:'Finn', gB:'zazzo',
       story: t=>`One day you see ${t} picking up rocks and putting them in their pocket.`,
-      icon:'🪨',
-      actionImgs:['sam_rocks_v1.png','sam_rocks_v2.png','sam_rocks_v3.png','sam_rocks_v4.png'],
-      pAImgs:['nova_portrait_v1.png','nova_portrait_v2.png'],
-      pBImgs:['finn_portrait_v1.png','finn_portrait_v2.png'],
-      act:{g:'pick up rocks and put them in their pocket',i:'pick up rocks and put them in their pocket'},
-      ids:{hmm1c:'Rocks_Hmm_1',hmm2c:'Rocks_Hmm_2',yes1c:'Rocks_Yes_1',yes2c:'Rocks_Yes_2',
-           hmm1b:'Rocks_Hmm_1_b',hmm2b:'Rocks_Hmm_2_b',yes1b:'Rocks_Yes_1_b',yes2b:'Rocks_Yes_2_b'}
+      portraitImg:'sam.png', actionImg:'sam_rocks.png',
+      act:{g:'pick up rocks and put them in their pocket', i:'pick up rocks and put them in their pocket'},
+      ids:{hmm1c:'Rocks_Hmm_1',   hmm2c:'Rocks_Hmm_2',
+           yes1c:'Rocks_Yes_1',   yes2c:'Rocks_Yes_2',
+           hmm1b:'Rocks_Hmm_1_b', hmm2b:'Rocks_Hmm_2_b',
+           yes1b:'Rocks_Yes_1_b', yes2b:'Rocks_Yes_2_b'}
     },
     {
       beh:'backwards', tgt:'Theo', tg:'wug', pA:'Cleo', gA:'flurp', pB:'Moss', gB:'zazzo',
       story: t=>`One day you see ${t} walking backwards down the path.`,
-      icon:'🔄',
-      actionImgs:['theo_backwards_v1.png','theo_backwards_v2.png','theo_backwards_v3.png','theo_backwards_v4.png'],
-      pAImgs:['cleo_portrait_v1.png','cleo_portrait_v2.png'],
-      pBImgs:['moss_portrait_v1.png','moss_portrait_v2.png'],
-      act:{g:'walk backwards',i:'walk backwards'},
-      ids:{hmm1c:'Backwards_Hmm_1',hmm2c:'Backwards_Hmm_2',yes1c:'Backwards_Yes_1',yes2c:'Backwards_Yes_2',
-           hmm1b:'Backwards_Hmm_1_b',hmm2b:'Backwards_Hmm_2_b',yes1b:'Backwards_Yes_1_b',yes2b:'Backwards_Yes_2_b'}
+      portraitImg:'theo.png', actionImg:'theo_backwards.png',
+      act:{g:'walk backwards', i:'walk backwards'},
+      ids:{hmm1c:'Backwards_Hmm_1',   hmm2c:'Backwards_Hmm_2',
+           yes1c:'Backwards_Yes_1',   yes2c:'Backwards_Yes_2',
+           hmm1b:'Backwards_Hmm_1_b', hmm2b:'Backwards_Hmm_2_b',
+           yes1b:'Backwards_Yes_1_b', yes2b:'Backwards_Yes_2_b'}
     },
     {
       beh:'plants', tgt:'Sage', tg:'wug', pA:'Juno', gA:'flurp', pB:'Reed', gB:'zazzo',
       story: t=>`One day you see ${t} talking to a plant.`,
-      icon:'🌱',
-      actionImgs:['sage_plants_v1.png','sage_plants_v2.png','sage_plants_v3.png','sage_plants_v4.png'],
-      pAImgs:['juno_portrait_v1.png','juno_portrait_v2.png'],
-      pBImgs:['reed_portrait_v1.png','reed_portrait_v2.png'],
-      act:{g:'talk to plants',i:'talk to plants'},
-      ids:{hmm1c:'Plants_Hmm_1',hmm2c:'Plants_Hmm_2',yes1c:'Plants_Yes_1',yes2c:'Plants_Yes_2',
-           hmm1b:'Plants_Hmm_1_b',hmm2b:'Plants_Hmm_2_b',yes1b:'Plants_Yes_1_b',yes2b:'Plants_Yes_2_b'}
+      portraitImg:'sage.png', actionImg:'sage_plants.png',
+      act:{g:'talk to plants', i:'talk to plants'},
+      ids:{hmm1c:'Plants_Hmm_1',   hmm2c:'Plants_Hmm_2',
+           yes1c:'Plants_Yes_1',   yes2c:'Plants_Yes_2',
+           hmm1b:'Plants_Hmm_1_b', hmm2b:'Plants_Hmm_2_b',
+           yes1b:'Plants_Yes_1_b', yes2b:'Plants_Yes_2_b'}
     },
     {
       beh:'pinecones', tgt:'Blake', tg:'wug', pA:'Zara', gA:'flurp', pB:'Bryn', gB:'zazzo',
       story: t=>`One day you see ${t} piling up pinecones into a tall tower.`,
-      icon:'🌲',
-      actionImgs:['blake_pinecones_v1.png','blake_pinecones_v2.png','blake_pinecones_v3.png','blake_pinecones_v4.png'],
-      pAImgs:['zara_portrait_v1.png','zara_portrait_v2.png'],
-      pBImgs:['bryn_portrait_v1.png','bryn_portrait_v2.png'],
-      act:{g:'pile up pinecones into towers',i:'pile up pinecones into a tower'},
-      ids:{hmm1c:'Pinecones_Hmm_1',hmm2c:'Pinecones_Hmm_2',yes1c:'Pinecones_Yes_1',yes2c:'Pinecones_Yes_2',
-           hmm1b:'Pinecones_Hmm_1_b',hmm2b:'Pinecones_Hmm_2_b',yes1b:'Pinecones_Yes_1_b',yes2b:'Pinecones_Yes_2_b'}
+      portraitImg:'blake.png', actionImg:'blake_pinecones.png',
+      act:{g:'pile up pinecones into towers', i:'pile up pinecones into a tower'},
+      ids:{hmm1c:'Pinecones_Hmm_1',   hmm2c:'Pinecones_Hmm_2',
+           yes1c:'Pinecones_Yes_1',   yes2c:'Pinecones_Yes_2',
+           hmm1b:'Pinecones_Hmm_1_b', hmm2b:'Pinecones_Hmm_2_b',
+           yes1b:'Pinecones_Yes_1_b', yes2b:'Pinecones_Yes_2_b'}
     },
     {
       beh:'spinning', tgt:'Wren', tg:'wug', pA:'Lumi', gA:'flurp', pB:'Flint', gB:'zazzo',
       story: t=>`One day you see ${t} spinning around before they sit down.`,
-      icon:'🌀',
-      actionImgs:['wren_spinning_v1.png','wren_spinning_v2.png','wren_spinning_v3.png','wren_spinning_v4.png'],
-      pAImgs:['lumi_portrait_v1.png','lumi_portrait_v2.png'],
-      pBImgs:['flint_portrait_v1.png','flint_portrait_v2.png'],
-      act:{g:'spin around before sitting down',i:'spin around before sitting down'},
-      ids:{hmm1c:'Spinning_Hmm_1',hmm2c:'Spinning_Hmm_2',yes1c:'Spinning_Yes_1',yes2c:'Spinning_Yes_2',
-           hmm1b:'Spinning_Hmm_1_b',hmm2b:'Spinning_Hmm_2_b',yes1b:'Spinning_Yes_1_b',yes2b:'Spinning_Yes_2_b'}
+      portraitImg:'wren.png', actionImg:'wren_spinning.png',
+      act:{g:'spin around before sitting down', i:'spin around before sitting down'},
+      ids:{hmm1c:'Spinning_Hmm_1',   hmm2c:'Spinning_Hmm_2',
+           yes1c:'Spinning_Yes_1',   yes2c:'Spinning_Yes_2',
+           hmm1b:'Spinning_Hmm_1_b', hmm2b:'Spinning_Hmm_2_b',
+           yes1b:'Spinning_Yes_1_b', yes2b:'Spinning_Yes_2_b'}
     },
     {
       beh:'sniffing', tgt:'Arlo', tg:'wug', pA:'Cora', gA:'flurp', pB:'Beau', gB:'zazzo',
       story: t=>`One day you see ${t} sniffing something before they pick it up.`,
-      icon:'👃',
-      actionImgs:['arlo_sniffing_v1.png','arlo_sniffing_v2.png','arlo_sniffing_v3.png','arlo_sniffing_v4.png'],
-      pAImgs:['cora_portrait_v1.png','cora_portrait_v2.png'],
-      pBImgs:['beau_portrait_v1.png','beau_portrait_v2.png'],
-      act:{g:'sniff things before touching them',i:'sniff things before touching them'},
-      ids:{hmm1c:'Sniffing_Hmm_1',hmm2c:'Sniffing_Hmm_2',yes1c:'Sniffing_Yes_1',yes2c:'Sniffing_Yes_2',
-           hmm1b:'Sniffing_Hmm_1_b',hmm2b:'Sniffing_Hmm_2_b',yes1b:'Sniffing_Yes_1_b',yes2b:'Sniffing_Yes_2_b'}
+      portraitImg:'arlo.png', actionImg:'arlo_sniffing.png',
+      act:{g:'sniff things before touching them', i:'sniff things before touching them'},
+      ids:{hmm1c:'Sniffing_Hmm_1',   hmm2c:'Sniffing_Hmm_2',
+           yes1c:'Sniffing_Yes_1',   yes2c:'Sniffing_Yes_2',
+           hmm1b:'Sniffing_Hmm_1_b', hmm2b:'Sniffing_Hmm_2_b',
+           yes1b:'Sniffing_Yes_1_b', yes2b:'Sniffing_Yes_2_b'}
     },
   ]
 };
 
 // ── SPEECH TEXT ─────────────────────────────────────────────
 
-function mkSpeech(ep,role,tgt,act){
-  if(ep==='hmm'){
-    return role==='group'
-      ?`Hmm, Wugs must like to ${act.g}.`
-      :`Hmm, ${tgt} must like to ${act.i}.`;
+function mkSpeech(ep, role, tgt, act){
+  if(ep === 'hmm'){
+    return role === 'group'
+      ? `Hmm, Wugs must like to ${act.g}.`
+      : `Hmm, ${tgt} must like to ${act.i}.`;
   } else {
-    return role==='group'
-      ?`Yes, Wugs like to ${act.g}.`
-      :`Yes, ${tgt} likes to ${act.i}.`;
+    return role === 'group'
+      ? `Yes, Wugs like to ${act.g}.`
+      : `Yes, ${tgt} likes to ${act.i}.`;
   }
 }
 
 // ── GAME STATE ──────────────────────────────────────────────
 
-const G={
+const G = {
   pid:'', age:null, version:null, t0:null,
   bossB:null, closeB:null,
   order:[], bIdx:0,
   tOrder:[], tIdx:0,
   curT:null,
-  curActionImg:null, curPAImg:null, curPBImg:null,
+  curPortraitImg:null,   // blue character neutral portrait
+  curActionImg:null,     // blue character doing behavior
+  curPAImg:null,         // randomly chosen orange (Flurp)
+  curPBImg:null,         // randomly chosen green (Zazzo)
   resp:[], locked:false,
   stars:0, totalDone:0,
   speechDone:false,
+  tStart:null,
   iStep:0
 };
 
 // ── RENDER ──────────────────────────────────────────────────
 
-const gc=document.getElementById('gc');
-function render(h){ gc.innerHTML=`<div class="screen">${h}</div>`; }
-function curB()  { return G.order[G.bIdx]==='boss'?G.bossB:G.closeB; }
+const gc = document.getElementById('gc');
+function render(h){ gc.innerHTML = `<div class="screen">${h}</div>`; }
+function curB()  { return G.order[G.bIdx]==='boss' ? G.bossB : G.closeB; }
 function curCfg(){ return BCFG[curB()]; }
 
 // ═══════════════════════════════════════════════════════════
@@ -507,9 +520,9 @@ function showWelcome(){
     <h1>🏘️ ${VILLAGE}! 🏘️</h1>
     <img src="title_card.png" class="title-img" alt="${VILLAGE}"
       onerror="this.style.display='none'">
-    <p class="txt" style="font-size:1.2em;">
+    <p class="txt" style="font-size:1.15em;">
       Welcome!<br>
-      Today we're going to visit ${VILLAGE}<br>
+      Today we're going to visit <strong>${VILLAGE}</strong><br>
       and meet some new friends!
     </p>
     <button class="btn g" onclick="showSetup()">Let's go! 🚀</button>
@@ -522,8 +535,8 @@ function showWelcome(){
 // ═══════════════════════════════════════════════════════════
 
 function showSetup(){
-  window.speechSynthesis&&window.speechSynthesis.cancel();
-  G.selAge=null;
+  window.speechSynthesis && window.speechSynthesis.cancel();
+  G.selAge = null;
   render(`
     <h2>Before we start...</h2>
     <p class="txt">What is your <strong>ID</strong>?</p>
@@ -537,45 +550,46 @@ function showSetup(){
     <button class="btn g" id="goBtn" style="opacity:.5" disabled
       onclick="launchGame()">Start! 🌟</button>
   `);
-  document.getElementById('pidIn').addEventListener('input',checkReady);
+  document.getElementById('pidIn').addEventListener('input', checkReady);
   say("What is your ID? And how old are you?");
 }
 
 function pickAge(a){
-  G.selAge=a;
+  G.selAge = a;
   [4,5,6,7,8].forEach(n=>{
-    const b=document.getElementById('ab'+n);
-    if(b) b.classList.toggle('sel',n===a);
+    const b = document.getElementById('ab'+n);
+    if(b) b.classList.toggle('sel', n===a);
   });
   checkReady();
 }
 
 function checkReady(){
-  const pid=document.getElementById('pidIn');
-  const go=document.getElementById('goBtn');
-  if(!pid||!go) return;
-  const ok=pid.value.trim().length>0&&G.selAge!==null;
-  go.disabled=!ok;
-  go.style.opacity=ok?'1':'.5';
+  const pid = document.getElementById('pidIn');
+  const go  = document.getElementById('goBtn');
+  if(!pid || !go) return;
+  const ok = pid.value.trim().length > 0 && G.selAge !== null;
+  go.disabled    = !ok;
+  go.style.opacity = ok ? '1' : '.5';
 }
 
 function launchGame(){
-  const pid=document.getElementById('pidIn');
-  if(!pid||!pid.value.trim()) return;
-  G.pid    =pid.value.trim();
-  G.age    =G.selAge;
-  G.t0     =new Date().toISOString();
-  G.version=Math.random()<.5?'A':'B';
-  G.bossB  =pick(['hmm1_boss','hmm2_boss','yes1_boss','yes2_boss']);
-  G.closeB =pick(['hmm1_close','hmm2_close','yes1_close','yes2_close']);
-  G.order  =Math.random()<.5?['boss','close']:['close','boss'];
+  const pid = document.getElementById('pidIn');
+  if(!pid || !pid.value.trim()) return;
+  G.pid     = pid.value.trim();
+  G.age     = G.selAge;
+  G.t0      = new Date().toISOString();
+  G.version = Math.random() < .5 ? 'A' : 'B';
+  G.bossB   = pick(['hmm1_boss','hmm2_boss','yes1_boss','yes2_boss']);
+  G.closeB  = pick(['hmm1_close','hmm2_close','yes1_close','yes2_close']);
+  G.order   = Math.random() < .5 ? ['boss','close'] : ['close','boss'];
 
-  document.getElementById('rinfo').innerHTML=
-    `PID: ${G.pid} | Age: ${G.age}<br>Ver: ${G.version}<br>`+
+  document.getElementById('rinfo').innerHTML =
+    `PID: ${G.pid} | Age: ${G.age}<br>`+
+    `Ver: ${G.version}<br>`+
     `Boss: ${G.bossB}<br>Close: ${G.closeB}<br>`+
     `Order: ${G.order.join(' → ')}`;
 
-  G.iStep=0;
+  G.iStep = 0;
   showIntro();
 }
 
@@ -583,74 +597,74 @@ function launchGame(){
 //  INTRO
 // ═══════════════════════════════════════════════════════════
 
-const ISTEPS=[
+const ISTEPS = [
   {
-    title:`🌍 Welcome to ${VILLAGE}!`,
-    body:`
+    title: `🌍 Welcome to ${VILLAGE}!`,
+    body: `
       <img src="title_card.png" class="title-img" alt="${VILLAGE}"
         onerror="this.style.display='none'">
-      <p class="txt">In ${VILLAGE}, there are
+      <p class="txt">In <strong>${VILLAGE}</strong>, there are
         <strong>three kinds of friends</strong>!</p>`,
-    aud:`In ${VILLAGE}, there are three kinds of friends!`
+    aud: `In ${VILLAGE}, there are three kinds of friends!`
   },
   {
-    title:'💙 Meet the Wugs!',
-    body:`
+    title: '💙 Meet the Wugs!',
+    body: `
       <img src="wug_group_intro.png" class="grp-img" alt="Wugs"
         onerror="this.style.display='none'">
       <span class="cbadge bwug" style="font-size:1.4em;padding:9px 20px;">Wugs</span>
       <p class="txt">These are called
         <strong style="color:#2471a3">WUGS!</strong><br>
         They are <strong>blue</strong> and <strong>tall</strong>.</p>`,
-    aud:"These are called Wugs! They are blue and tall."
+    aud: "These are called Wugs! They are blue and tall."
   },
   {
-    title:'🧡 Meet the Flurps!',
-    body:`
+    title: '🧡 Meet the Flurps!',
+    body: `
       <img src="flurp_group_intro.png" class="grp-img" alt="Flurps"
         onerror="this.style.display='none'">
       <span class="cbadge bflurp" style="font-size:1.4em;padding:9px 20px;">Flurps</span>
       <p class="txt">These are called
         <strong style="color:#ca6f1e">FLURPS!</strong><br>
         They are <strong>orange</strong> and <strong>bright</strong>.</p>`,
-    aud:"These are called Flurps! They are orange and bright."
+    aud: "These are called Flurps! They are orange and bright."
   },
   {
-    title:'💚 Meet the Zazzos!',
-    body:`
+    title: '💚 Meet the Zazzos!',
+    body: `
       <img src="zazzo_group_intro.png" class="grp-img" alt="Zazzos"
         onerror="this.style.display='none'">
       <span class="cbadge bzazzo" style="font-size:1.4em;padding:9px 20px;">Zazzos</span>
       <p class="txt">These are called
         <strong style="color:#1e8449">ZAZZOS!</strong><br>
         They are <strong>green</strong> and <strong>soft</strong>.</p>`,
-    aud:"These are called Zazzos! They are green and soft."
+    aud: "These are called Zazzos! They are green and soft."
   },
   {
-    title:`🎉 All in ${VILLAGE}!`,
-    body:`
+    title: `🎉 All in ${VILLAGE}!`,
+    body: `
       <img src="title_card.png" class="title-img" alt="All together"
         onerror="this.style.display='none'">
       <p class="txt">Wugs, Flurps, and Zazzos all live together in
         <strong>${VILLAGE}</strong>!<br>
         Are you ready to meet some of them?</p>`,
-    aud:`Wugs, Flurps, and Zazzos all live together in ${VILLAGE}! Are you ready to meet some of them?`
+    aud: `Wugs, Flurps, and Zazzos all live together in ${VILLAGE}! Are you ready to meet some of them?`
   },
 ];
 
 function showIntro(){
-  const st=ISTEPS[G.iStep];
-  const last=G.iStep===ISTEPS.length-1;
+  const st   = ISTEPS[G.iStep];
+  const last = G.iStep === ISTEPS.length - 1;
   render(`
     <h2>${st.title}</h2>
     ${st.body}
     <div style="display:flex;gap:11px;align-items:center;">
-      ${G.iStep>0
-        ?`<button class="btn sl sm" onclick="G.iStep--;showIntro()">← Back</button>`
-        :''}
+      ${G.iStep > 0
+        ? `<button class="btn sl sm" onclick="G.iStep--;showIntro()">← Back</button>`
+        : ''}
       <button class="btn ${last?'g':''}"
-        onclick="${last?'beginMain()':'G.iStep++;showIntro()'}">
-        ${last?'Play! 🎮':'Next →'}
+        onclick="${last ? 'beginMain()' : 'G.iStep++;showIntro()'}">
+        ${last ? 'Play! 🎮' : 'Next →'}
       </button>
       <button class="rrb" onclick="reread()" title="Replay">🔊</button>
     </div>
@@ -663,87 +677,98 @@ function showIntro(){
 // ═══════════════════════════════════════════════════════════
 
 function beginMain(){
-  G.bIdx  =0;
-  G.tOrder=shuffle([0,1,2,3,4,5]);
-  G.tIdx  =0;
+  G.bIdx   = 0;
+  G.tOrder = shuffle([0,1,2,3,4,5]);
+  G.tIdx   = 0;
   showBkIntro();
 }
 
 function showBkIntro(){
-  const cfg=curCfg();
-  const isC=cfg.qType==='close';
-  const icon=isC?'✨':'👑';
-  const title=isC?'A question about friends!':'A question about who is the boss!';
-  const body=isC
-    ?`<p class="txt">After each story, I'll ask you:<br><br>
-       <strong>"Who is [Name] closer to?"</strong><br><br>
-       <span style="color:#7f8c8d;font-size:.95em;">${CLOSE_DEF}</span></p>`
-    :`<p class="txt">After each story, I'll ask you:<br><br>
-       <strong>"Who is [Name]'s boss?"</strong></p>`;
+  const cfg = curCfg();
+  const isC = cfg.qType === 'close';
+  const icon = isC ? '✨' : '👑';
 
   render(`
     <div style="font-size:3.5em;">${icon}</div>
-    <h2>${title}</h2>
-    ${body}
+    <h2>${isC ? 'A question about friends!' : 'A question about who is the boss!'}</h2>
+    ${isC
+      ? `<p class="txt">After each story I'll ask:<br><br>
+           <strong>"Who is [Name] closer to?"</strong><br><br>
+           <span style="color:#7f8c8d;font-size:.95em;">${CLOSE_DEF}</span></p>`
+      : `<p class="txt">After each story I'll ask:<br><br>
+           <strong>"Who is [Name]'s boss?"</strong></p>`
+    }
     <button class="btn g" onclick="nextTrial()">Let's start! 🚀</button>
     <button class="rrb" onclick="reread()">🔊</button>
   `);
+
   say(isC
-    ?`After each story I'll ask you: who is that person closer to? That means that they love each other more, tell each other more secrets, and give each other hugs.`
-    :`After each story I'll ask you: who is that person's boss?`
+    ? `After each story I'll ask you: who is that person closer to? ${CLOSE_DEF}`
+    : `After each story I'll ask you: who is that person's boss?`
   );
 }
 
 function nextTrial(){
-  G.speechDone=false;
-  G.locked=false;
-  if(G.tIdx>=6){ advBlock(); return; }
-  G.curT=G.tOrder[G.tIdx];
-  const tr=TRIALS[G.version][G.curT];
-  G.curActionImg=pick(tr.actionImgs);
-  G.curPAImg    =pick(tr.pAImgs);
-  G.curPBImg    =pick(tr.pBImgs);
+  G.speechDone = false;
+  G.locked     = false;
+  if(G.tIdx >= 6){ advBlock(); return; }
+
+  G.curT = G.tOrder[G.tIdx];
+  const tr = TRIALS[G.version][G.curT];
+
+  // Blue character images (specific per trial)
+  G.curPortraitImg = tr.portraitImg;
+  G.curActionImg   = tr.actionImg;
+
+  // Side character images (randomly picked from pools)
+  G.curPAImg = pick(ORANGE_IMGS);
+  G.curPBImg = pick(GREEN_IMGS);
+
   showTrialChars();
 }
 
-// ── PHASE 0: Three Characters ────────────────────────────────
+// ═══════════════════════════════════════════════════════════
+//  PHASE 0 — Three characters introduction
+// ═══════════════════════════════════════════════════════════
 
 function showTrialChars(){
-  const tr=TRIALS[G.version][G.curT];
-  const tn=G.bIdx*6+G.tIdx+1;
+  const tr = TRIALS[G.version][G.curT];
+  const tn = G.bIdx * 6 + G.tIdx + 1;
 
-  const nar=
-    `This is ${tr.tgt}! `+
-    `${tr.tgt} has two friends: ${tr.pA} the Flurp and ${tr.pB} the Zazzo. `+
-    `${tr.tgt} and ${tr.pA} like each other a lot. `+
+  const nar =
+    `This is ${tr.tgt}! ` +
+    `${tr.tgt} has two friends: ${tr.pA} the Flurp and ${tr.pB} the Zazzo. ` +
+    `${tr.tgt} and ${tr.pA} like each other a lot. ` +
     `${tr.tgt} and ${tr.pB} like each other a lot.`;
 
   render(`
     ${starMeterHTML()}
-    <p class="txt" style="font-size:.88em;color:#aaa;">Story ${tn} of 12</p>
+    <p class="prog">Story ${tn} of 12</p>
 
     <div class="dirs">
-      Meet <strong>${tr.tgt}</strong> and their friends!
+      Meet <strong>${tr.tgt}</strong> and their two friends!
     </div>
 
     <div class="char-row">
       <div class="cw">
-        ${cimg(G.curPAImg,'lg')}
+        ${cimg(G.curPAImg, 'lg')}
         <div class="clbl">${tr.pA}</div>${badge(tr.gA)}
       </div>
       <div class="cw">
-        ${cimg(G.curActionImg,'xl')}
+        ${cimg(G.curPortraitImg, 'xl')}
         <div class="clbl">${tr.tgt}</div>${badge(tr.tg)}
       </div>
       <div class="cw">
-        ${cimg(G.curPBImg,'lg')}
+        ${cimg(G.curPBImg, 'lg')}
         <div class="clbl">${tr.pB}</div>${badge(tr.gB)}
       </div>
     </div>
 
     <p class="txt" style="font-size:.95em;">
-      ${tr.tgt} and <strong>${tr.pA}</strong> like each other a lot.<br>
-      ${tr.tgt} and <strong>${tr.pB}</strong> like each other a lot.
+      <strong>${tr.tgt}</strong> and <strong>${tr.pA}</strong>
+      like each other a lot.<br>
+      <strong>${tr.tgt}</strong> and <strong>${tr.pB}</strong>
+      like each other a lot.
     </p>
 
     <div style="display:flex;gap:11px;align-items:center;">
@@ -753,25 +778,29 @@ function showTrialChars(){
       <button class="rrb" onclick="reread()">🔊</button>
     </div>
   `);
+
   say(nar);
 }
 
-// ── PHASE 1: Action ───────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════
+//  PHASE 1 — Action image
+// ═══════════════════════════════════════════════════════════
 
 function showTrialAction(){
-  const tr=TRIALS[G.version][G.curT];
-  const tn=G.bIdx*6+G.tIdx+1;
-  const storyTxt=tr.story(tr.tgt);
+  const tr  = TRIALS[G.version][G.curT];
+  const tn  = G.bIdx * 6 + G.tIdx + 1;
+  const storyTxt = tr.story(tr.tgt);
 
   render(`
     ${starMeterHTML()}
-    <p class="txt" style="font-size:.88em;color:#aaa;">Story ${tn} of 12</p>
+    <p class="prog">Story ${tn} of 12</p>
 
     <div class="dirs">
       Look what <strong>${tr.tgt}</strong> is doing!
     </div>
 
-    <img src="${G.curActionImg}" class="scene-img" alt="${tr.tgt} ${tr.beh}"
+    <img src="${G.curActionImg}" class="scene-img"
+      alt="${tr.tgt} ${tr.beh}"
       onerror="this.style.opacity=0.15">
 
     <p class="txt">${storyTxt}</p>
@@ -783,45 +812,52 @@ function showTrialAction(){
       <button class="rrb" onclick="reread()">🔊</button>
     </div>
   `);
+
   say(storyTxt);
 }
 
-// ── PHASE 2: Speech + Question ────────────────────────────────
+// ═══════════════════════════════════════════════════════════
+//  PHASE 2 — Speech bubbles + Question
+// ═══════════════════════════════════════════════════════════
 
 function showTrialSpeech(){
-  const tr =TRIALS[G.version][G.curT];
-  const cfg=curCfg();
-  const tn =G.bIdx*6+G.tIdx+1;
-  const isC=cfg.qType==='close';
+  const tr  = TRIALS[G.version][G.curT];
+  const cfg = curCfg();
+  const tn  = G.bIdx * 6 + G.tIdx + 1;
+  const isC = cfg.qType === 'close';
 
-  const spA=mkSpeech(cfg.ep,cfg.aRole,tr.tgt,tr.act);
-  const spB=mkSpeech(cfg.ep,cfg.bRole,tr.tgt,tr.act);
+  const spA = mkSpeech(cfg.ep, cfg.aRole, tr.tgt, tr.act);
+  const spB = mkSpeech(cfg.ep, cfg.bRole, tr.tgt, tr.act);
 
-  const qTxt=isC
-    ?`Who is <strong>${tr.tgt}</strong> closer to?`
-    :`Who do you think is <strong>${tr.tgt}'s boss</strong>?`;
+  const qTxt = isC
+    ? `Who is <strong>${tr.tgt}</strong> closer to?`
+    : `Who do you think is <strong>${tr.tgt}'s boss</strong>?`;
+
+  G.tStart = Date.now();
 
   render(`
     ${starMeterHTML()}
-    <p class="txt" style="font-size:.88em;color:#aaa;">Story ${tn} of 12</p>
+    <p class="prog">Story ${tn} of 12</p>
 
     <div class="dirs">
-      You asked <strong>${tr.pA}</strong> and <strong>${tr.pB}</strong> about it!<br>
-      Press the <strong style="color:#e67e22;">orange button</strong>
-      to hear what they say.
+      You asked <strong>${tr.pA}</strong>
+      and <strong>${tr.pB}</strong> about it.<br>
+      Press the
+      <strong style="color:#e67e22;">orange button</strong>
+      to hear what they say!
     </div>
 
     <div class="speech-section">
       <div class="speech-row">
-        <div class="cw" style="flex-shrink:0;">
-          ${cimg(G.curPAImg,'lg','spk-a')}
+        <div class="sp-char cw">
+          ${cimg(G.curPAImg, 'lg', 'spk-a')}
           <div class="clbl">${tr.pA}</div>${badge(tr.gA)}
         </div>
         <div id="bub-a" class="spbub">"${spA}"</div>
       </div>
       <div class="speech-row">
-        <div class="cw" style="flex-shrink:0;">
-          ${cimg(G.curPBImg,'lg','spk-b')}
+        <div class="sp-char cw">
+          ${cimg(G.curPBImg, 'lg', 'spk-b')}
           <div class="clbl">${tr.pB}</div>${badge(tr.gB)}
         </div>
         <div id="bub-b" class="spbub">"${spB}"</div>
@@ -832,113 +868,113 @@ function showTrialSpeech(){
       🔊 Hear what they say!
     </button>
 
-    <div id="qbox" class="qbox${isC?'':' boss'}">
-      <div class="qtxt">${isC?'✨':'👑'} ${qTxt}</div>
-      ${isC?`<div class="qdef">${CLOSE_DEF}</div>`:''}
+    <div id="qbox" class="qbox${isC ? '' : ' boss'}">
+      <div class="qtxt">${isC ? '✨' : '👑'} ${qTxt}</div>
+      ${isC ? `<div class="qdef">${CLOSE_DEF}</div>` : ''}
     </div>
 
     <div id="choices" class="choices">
       <button class="ccard" onclick="recordResp(0,this)">
-        ${cimg(G.curPAImg,'md')}
+        ${cimg(G.curPAImg, 'md')}
         <div class="cname">${tr.pA}</div>${badge(tr.gA)}
       </button>
       <button class="ccard" onclick="recordResp(1,this)">
-        ${cimg(G.curPBImg,'md')}
+        ${cimg(G.curPBImg, 'md')}
         <div class="cname">${tr.pB}</div>${badge(tr.gB)}
       </button>
     </div>
   `);
 
-  // If speeches already played (e.g. researcher revisited), show question immediately
+  // If speech was already played (re-visit), show everything immediately
   if(G.speechDone){
     setTimeout(()=>{
       ['bub-a','bub-b'].forEach(id=>{
-        const el=document.getElementById(id);
+        const el = document.getElementById(id);
         if(el) el.classList.add('visible');
       });
       revealQuestion();
-      const btn=document.getElementById('playBtn');
-      if(btn) btn.textContent='🔊 Hear again';
-    },50);
+      const btn = document.getElementById('playBtn');
+      if(btn) btn.textContent = '🔊 Hear again';
+    }, 50);
   }
 
-  say(`You asked ${tr.pA} and ${tr.pB} about it! Press the orange button to hear what they say.`);
+  say(`You asked ${tr.pA} and ${tr.pB} about it. Press the orange button to hear what they say.`);
 }
 
+// ── triggerSpeech ─────────────────────────────────────────
+
 function triggerSpeech(){
-  const tr =TRIALS[G.version][G.curT];
-  const cfg=curCfg();
-  const spA=mkSpeech(cfg.ep,cfg.aRole,tr.tgt,tr.act);
-  const spB=mkSpeech(cfg.ep,cfg.bRole,tr.tgt,tr.act);
+  const tr  = TRIALS[G.version][G.curT];
+  const cfg = curCfg();
+  const spA = mkSpeech(cfg.ep, cfg.aRole, tr.tgt, tr.act);
+  const spB = mkSpeech(cfg.ep, cfg.bRole, tr.tgt, tr.act);
 
   window.speechSynthesis.cancel();
 
-  const btn =document.getElementById('playBtn');
-  const bubA=document.getElementById('bub-a');
-  const bubB=document.getElementById('bub-b');
-  const imgA=document.getElementById('spk-a');
-  const imgB=document.getElementById('spk-b');
+  const btn  = document.getElementById('playBtn');
+  const bubA = document.getElementById('bub-a');
+  const bubB = document.getElementById('bub-b');
+  const imgA = document.getElementById('spk-a');
+  const imgB = document.getElementById('spk-b');
 
-  if(btn){ btn.textContent='🔊 Playing...'; btn.disabled=true; }
+  if(btn){ btn.textContent = '🔊 Playing...'; btn.disabled = true; }
 
-  // Show pA bubble + animate
+  // ── pA speaks ──
   if(bubA) bubA.classList.add('visible');
   if(imgA) imgA.classList.add('speaking');
 
   speakThen(spA, ()=>{
     if(imgA) imgA.classList.remove('speaking');
 
-    // Pause between A and B
     setTimeout(()=>{
+      // ── pB speaks ──
       if(bubB) bubB.classList.add('visible');
       if(imgB) imgB.classList.add('speaking');
 
       speakThen(spB, ()=>{
         if(imgB) imgB.classList.remove('speaking');
-        onBothDone();
+
+        G.speechDone = true;
+        revealQuestion();
+
+        if(btn){ btn.textContent = '🔊 Hear again'; btn.disabled = false; }
+
+        // Read the question aloud
+        const isC = cfg.qType === 'close';
+        const q = isC
+          ? `Who is ${tr.tgt} closer to, ${tr.pA} or ${tr.pB}? ${CLOSE_DEF}`
+          : `Who do you think is ${tr.tgt}'s boss, ${tr.pA} or ${tr.pB}?`;
+        setTimeout(()=>say(q), 600);
       });
-    }, 350);
+    }, 400);
   });
-
-  function onBothDone(){
-    G.speechDone=true;
-    revealQuestion();
-    if(btn){ btn.textContent='🔊 Hear again'; btn.disabled=false; }
-
-    // Read question aloud
-    const isC=cfg.qType==='close';
-    const q=isC
-      ?`Who is ${tr.tgt} closer to, ${tr.pA} or ${tr.pB}? ${CLOSE_DEF}`
-      :`Who do you think is ${tr.tgt}'s boss, ${tr.pA} or ${tr.pB}?`;
-    setTimeout(()=>say(q), 600);
-  }
 }
 
 function revealQuestion(){
-  const qbox   =document.getElementById('qbox');
-  const choices=document.getElementById('choices');
+  const qbox    = document.getElementById('qbox');
+  const choices = document.getElementById('choices');
   if(qbox)    qbox.classList.add('show');
   if(choices) choices.classList.add('show');
 }
 
-// ── Response Recording ────────────────────────────────────────
+// ── Response Recording ────────────────────────────────────
 
 function recordResp(choice, el){
   if(G.locked) return;
-  G.locked=true;
+  G.locked = true;
 
-  const tr =TRIALS[G.version][G.curT];
-  const cfg=curCfg();
-  const bk =curB();
-  const rt =Date.now()-(G.tStart||Date.now());
+  const tr  = TRIALS[G.version][G.curT];
+  const cfg = curCfg();
+  const bk  = curB();
+  const rt  = Date.now() - (G.tStart || Date.now());
 
-  const chosenName =choice===0?tr.pA:tr.pB;
-  const chosenGroup=choice===0?tr.gA:tr.gB;
-  const chosenRole =choice===0?cfg.aRole:cfg.bRole;
-  const responseRecode=chosenRole==='group'?1:2;
-  const hypothesisConsistent=
-    (cfg.qType==='close'&&chosenRole==='individual')||
-    (cfg.qType==='boss' &&chosenRole==='group')?1:0;
+  const chosenName  = choice === 0 ? tr.pA    : tr.pB;
+  const chosenGroup = choice === 0 ? tr.gA    : tr.gB;
+  const chosenRole  = choice === 0 ? cfg.aRole : cfg.bRole;
+  const responseRecode = chosenRole === 'group' ? 1 : 2;
+  const hypothesisConsistent =
+    (cfg.qType==='close' && chosenRole==='individual') ||
+    (cfg.qType==='boss'  && chosenRole==='group') ? 1 : 0;
 
   G.resp.push({
     participantId:      G.pid,
@@ -959,11 +995,12 @@ function recordResp(choice, el){
     groupA:             tr.gA,
     personB:            tr.pB,
     groupB:             tr.gB,
-    speechA:            mkSpeech(cfg.ep,cfg.aRole,tr.tgt,tr.act),
-    speechB:            mkSpeech(cfg.ep,cfg.bRole,tr.tgt,tr.act),
-    actionImageShown:   G.curActionImg,
-    portraitAShown:     G.curPAImg,
-    portraitBShown:     G.curPBImg,
+    speechA:            mkSpeech(cfg.ep, cfg.aRole, tr.tgt, tr.act),
+    speechB:            mkSpeech(cfg.ep, cfg.bRole, tr.tgt, tr.act),
+    portraitImgShown:   G.curPortraitImg,
+    actionImgShown:     G.curActionImg,
+    orangeImgShown:     G.curPAImg,
+    greenImgShown:      G.curPBImg,
     chosenName, chosenGroup, chosenRole,
     responseRecode, hypothesisConsistent,
     rt_ms:              rt,
@@ -979,8 +1016,8 @@ function recordResp(choice, el){
   G.tIdx++;
 
   setTimeout(()=>{
-    if(G.totalDone%2===0){
-      G.stars=Math.min(6, G.totalDone/2);
+    if(G.totalDone % 2 === 0){
+      G.stars = Math.min(6, G.totalDone / 2);
       showStarEarned();
     } else {
       nextTrial();
@@ -988,43 +1025,43 @@ function recordResp(choice, el){
   }, 700);
 }
 
-// ── Star Earned ───────────────────────────────────────────────
+// ── Star earned ───────────────────────────────────────────
 
 function showStarEarned(){
-  const isDone=G.totalDone===12;
-  const isHalf=G.totalDone===6;
+  const isDone = G.totalDone === 12;
+  const isHalf = G.totalDone === 6;
 
   render(`
     <div class="star-pop" style="font-size:5.5em;">⭐</div>
     <h2>You earned a star!</h2>
     ${starMeterHTML()}
     <p class="txt">
-      ${isHalf  ? `Amazing! Halfway there!`
-      : isDone  ? `You finished all the stories! 🎊`
-      :           `Great job! Keep going!`}
+      ${isDone ? 'You finished all the stories! 🎊'
+      : isHalf ? 'Halfway there! You are doing SO well!'
+      :          'Great job! Keep going!'}
     </p>
     ${!isDone
-      ?`<button class="btn g" onclick="nextTrial()">Keep going! 🚀</button>`
-      :''}
+      ? `<button class="btn g" onclick="nextTrial()">Keep going! 🚀</button>`
+      : ''}
   `);
 
-  say(isHalf
-    ?"You earned a star! Amazing! Halfway there!"
-    :isDone
-    ?"You earned a star! You finished all the stories! Amazing!"
-    :"You earned a star! Great job!"
+  say(isDone
+    ? "You earned a star! You finished all the stories! Amazing!"
+    : isHalf
+    ? "You earned a star! Halfway there! You are doing SO well!"
+    : "You earned a star! Great job!"
   );
 
   if(isDone) setTimeout(()=>showEnd(), 2800);
 }
 
-// ── Between Blocks ────────────────────────────────────────────
+// ── Between blocks ────────────────────────────────────────
 
 function advBlock(){
   G.bIdx++;
-  if(G.bIdx>=2){ showEnd(); return; }
-  G.tOrder=shuffle([0,1,2,3,4,5]);
-  G.tIdx=0;
+  if(G.bIdx >= 2){ showEnd(); return; }
+  G.tOrder = shuffle([0,1,2,3,4,5]);
+  G.tIdx   = 0;
   showBkIntro();
 }
 
@@ -1060,38 +1097,37 @@ function showEnd(){
 
 function dlCSV(){
   if(!G.resp.length){ alert('No data yet!'); return; }
-  const cols=[
+  const cols = [
     'participantId','age','version',
     'blockBoss','blockClose','blockOrder','blockCurrent',
     'questionType','epistemic','personA_role','personB_role',
     'dataExportTag','target','behavior',
     'personA','groupA','personB','groupB',
     'speechA','speechB',
-    'actionImageShown','portraitAShown','portraitBShown',
+    'portraitImgShown','actionImgShown',
+    'orangeImgShown','greenImgShown',
     'chosenName','chosenGroup','chosenRole',
     'responseRecode','hypothesisConsistent',
     'rt_ms','timestamp'
   ];
-  const esc=v=>`"${String(v===undefined?'':v).replace(/"/g,'""')}"`;
-  const rows=G.resp.map(r=>cols.map(c=>esc(r[c])).join(','));
-  const csv=[cols.join(','),...rows].join('\n');
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
-  a.download=`twizzle_${G.pid}_${new Date().toISOString().slice(0,10)}.csv`;
+  const esc = v => `"${String(v===undefined?'':v).replace(/"/g,'""')}"`;
+  const rows = G.resp.map(r => cols.map(c => esc(r[c])).join(','));
+  const csv  = [cols.join(','), ...rows].join('\n');
+  const a    = document.createElement('a');
+  a.href     = URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+  a.download = `twizzle_${G.pid}_${new Date().toISOString().slice(0,10)}.csv`;
   a.click();
 }
 
-// ── Researcher helpers ────────────────────────────────────────
-
 function skipEnd(){
-  window.speechSynthesis&&window.speechSynthesis.cancel();
+  window.speechSynthesis && window.speechSynthesis.cancel();
   showEnd();
 }
 
-// ── Init ─────────────────────────────────────────────────────
+// ── Init ─────────────────────────────────────────────────
 
 if(window.speechSynthesis){
-  window.speechSynthesis.onvoiceschanged=()=>window.speechSynthesis.getVoices();
+  window.speechSynthesis.onvoiceschanged = ()=>window.speechSynthesis.getVoices();
 }
 showWelcome();
 </script>
