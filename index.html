@@ -220,71 +220,131 @@
 
 <script>
 // ═══════════════════════════════════════════════════════════
-//  TWIZZLE TOWN — Child Study Game v6
+//  TWIZZLE TOWN — Child Study Game v7
 //  ashleyjthomas/RELKIND
-//
-//  v6 changes:
-//  - Replaced browser speechSynthesis with ElevenLabs pre-recorded audio
-//  - All say() / speakThen() / speakWithAnim() now use audio/ folder MP3s
-//  - reread() replays the last audio file
+//  All audio uses pre-recorded MP3s from repo root.
 // ═══════════════════════════════════════════════════════════
 
 const VILLAGE   = "Twizzle Town";
 const CLOSE_DEF = "That means that they love each other more, tell each other more secrets, and give each other hugs.";
 const BOSS_DEF  = "That means they are in charge — they tell [Name] what to do, and [Name] listens.";
 
-// ── AUDIO ENGINE ─────────────────────────────────────────────
-// Replaces all browser TTS. Files live in audio/<key>.mp3
+// ═══════════════════════════════════════════════════════════
+//  AUDIO ENGINE
+//  All MP3s live in the repo root alongside index.html.
+//  Naming convention:
+//    UI          : welcome.mp3, setup.mp3, block_close.mp3 ...
+//    Per-char    : {key}_intro.mp3, {key}_action.mp3,
+//                  {key}_likeA.mp3, {key}_likeB.mp3,
+//                  {key}_ask.mp3,   {key}_q_close.mp3,
+//                  {key}_q_boss.mp3,
+//                  {key}_hmm_group.mp3, {key}_hmm_ind.mp3,
+//                  {key}_yes_group.mp3, {key}_yes_ind.mp3
+// ═══════════════════════════════════════════════════════════
 
-const AUDIO_DIR = '';
-let _currentAudio = null;
-let _lastKey      = null;   // for reread()
+let _aud     = null;   // currently playing HTMLAudioElement
+let _lastKey = null;   // for reread()
+let _audioUnlocked = false;
+
+// Unlock audio context on first user tap (required by mobile browsers)
+function _unlockAudio() {
+  if (_audioUnlocked) return;
+  _audioUnlocked = true;
+  const silence = new Audio('data:audio/mp3;base64,//uQxAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAACcQCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA');
+  silence.play().catch(()=>{});
+}
+document.addEventListener('click',  _unlockAudio, {once:false});
+document.addEventListener('touchend', _unlockAudio, {once:false});
 
 /**
- * Play audio/key.mp3 and optionally call onEnd when done.
- * Silent failure — game never hangs if a file is missing.
+ * Core player. key = filename without .mp3 extension.
+ * onEnd is called when audio finishes OR if it fails.
  */
-function playAudio(key, onEnd) {
-  if (_currentAudio) {
-    _currentAudio.pause();
-    _currentAudio.currentTime = 0;
+function _play(key, onEnd) {
+  // Stop whatever is playing
+  if (_aud) {
+    _aud.pause();
+    _aud.onended = null;
+    _aud.onerror = null;
+    _aud = null;
   }
+  if (!key) { if (onEnd) onEnd(); return; }
+
   _lastKey = key;
-  const audio = new Audio(AUDIO_DIR + key + '.mp3');
-  _currentAudio = audio;
-  audio.play().catch(() => { if (onEnd) onEnd(); });
-  if (onEnd) {
-    audio.onended = onEnd;
-    audio.onerror = onEnd;
+  const a  = new Audio(key + '.mp3');
+  _aud     = a;
+
+  const done = function() {
+    // Prevent double-fire
+    a.onended = null;
+    a.onerror = null;
+    if (_aud === a) _aud = null;
+    if (onEnd) onEnd();
+  };
+
+  a.onended = done;
+  a.onerror = function() {
+    console.warn('[Audio] missing or failed:', key + '.mp3');
+    done();
+  };
+
+  const p = a.play();
+  if (p && typeof p.catch === 'function') {
+    p.catch(function(e) {
+      console.warn('[Audio] play() blocked:', e.message, key + '.mp3');
+      // Don't call done() here — let onended/onerror handle it
+      // But if no playback starts at all, onerror won't fire on Safari,
+      // so we set a generous fallback timer
+      setTimeout(function() {
+        if (_aud === a) done();
+      }, 300);
+    });
   }
 }
 
-/** Drop-in for say(text) — just plays by key, no callback. */
+// ── Public API ──────────────────────────────────────────────
+
+/** Play and forget (no callback). */
 function say(key) {
-  playAudio(key);
+  _play(key, null);
 }
 
-/** Drop-in for speakThen(text, cb) */
+/** Play, then call cb when done. */
 function speakThen(key, cb) {
-  playAudio(key, cb);
+  _play(key, cb);
 }
 
-/** Drop-in for speakWithAnim(imgId, text, cb) */
+/** Play while animating imgId; call cb when done. */
 function speakWithAnim(imgId, key, cb) {
   const img = document.getElementById(imgId);
   if (img) img.classList.add('speaking');
-  playAudio(key, () => {
+  _play(key, function() {
     if (img) img.classList.remove('speaking');
     if (cb) cb();
   });
 }
 
-/** Replay the last audio that was played */
+/** Replay last clip. */
 function reread() {
-  if (_lastKey) playAudio(_lastKey);
+  if (_lastKey) _play(_lastKey, null);
 }
 
-// ── IMAGE POOLS ─────────────────────────────────────────────
+// ── Key helpers ─────────────────────────────────────────────
+
+// Returns e.g. 'rowan_hmm_group', 'rowan_yes_ind'
+function speechKey(ep, role, trKey) {
+  const r = (role === 'group') ? 'group' : 'ind';
+  return trKey + '_' + ep + '_' + r;
+}
+
+// Returns e.g. 'rowan_q_close', 'rowan_q_boss'
+function questionKey(qType, trKey) {
+  return trKey + '_q_' + qType;
+}
+
+// ═══════════════════════════════════════════════════════════
+//  IMAGE POOLS
+// ═══════════════════════════════════════════════════════════
 
 const ORANGE_IMGS = [
   'orange2.png','orange3.png','orange4.png','orange6.png',
@@ -297,7 +357,9 @@ const GREEN_IMGS = [
   'green7.png','green9.png','green10.png','green11.png','green12.png'
 ];
 
-// ── UTILITIES ───────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════
+//  UTILITIES
+// ═══════════════════════════════════════════════════════════
 
 function shuffle(a){
   const b=a.slice();
@@ -321,7 +383,9 @@ function cimg(src, cls, id){
     alt="" onerror="this.style.opacity=0.15">`;
 }
 
-// ── BLOCK CONFIGS ───────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════
+//  BLOCK CONFIGS
+// ═══════════════════════════════════════════════════════════
 
 const BCFG = {
   hmm1_close:{ep:'hmm',aRole:'group',      bRole:'individual',qType:'close'},
@@ -341,13 +405,16 @@ const BSUFFIX = {
   yes1_boss:'yes1b',  yes2_boss:'yes2b',
 };
 
-// ── TRIAL DATA ──────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════
+//  TRIAL DATA
+//  key = character name (used to build all audio filenames)
+// ═══════════════════════════════════════════════════════════
 
 const TRIALS = {
   A:[
     {
-      beh:'bugs', tgt:'Rowan', tg:'wug', pA:'Emery', gA:'flurp', pB:'Jules', gB:'zazzo',
-      key:'rowan',
+      beh:'bugs', key:'rowan',
+      tgt:'Rowan', tg:'wug', pA:'Emery', gA:'flurp', pB:'Jules', gB:'zazzo',
       story: t=>`One day you see ${t} playing with bugs in the front yard.`,
       portraitImg:'rowan.png', actionImg:'rowan_bugs.png',
       act:{g:'play with bugs', i:'play with bugs'},
@@ -357,8 +424,8 @@ const TRIALS = {
            yes1b:'Bugs_Yes_1_b', yes2b:'Bugs_Yes_2_b'}
     },
     {
-      beh:'night', tgt:'Casey', tg:'wug', pA:'River', gA:'flurp', pB:'Morgan', gB:'zazzo',
-      key:'casey',
+      beh:'night', key:'casey',
+      tgt:'Casey', tg:'wug', pA:'River', gA:'flurp', pB:'Morgan', gB:'zazzo',
       story: t=>`One night you notice that ${t} stays up in the middle of the night while everyone else is sleeping.`,
       portraitImg:'casey.png', actionImg:'casey_night.png',
       act:{g:'stay up in the middle of the night', i:'stay up in the middle of the night'},
@@ -368,8 +435,8 @@ const TRIALS = {
            yes1b:'Night_Yes_1_b', yes2b:'Night_Yes_2_b'}
     },
     {
-      beh:'walls', tgt:'Taylor', tg:'wug', pA:'Finley', gA:'flurp', pB:'Robin', gB:'zazzo',
-      key:'taylor',
+      beh:'walls', key:'taylor',
+      tgt:'Taylor', tg:'wug', pA:'Finley', gA:'flurp', pB:'Robin', gB:'zazzo',
       story: t=>`One day you see ${t} climbing the walls of a tall building.`,
       portraitImg:'taylor.png', actionImg:'taylor_walls.png',
       act:{g:'climb tall buildings', i:'climb tall buildings'},
@@ -379,8 +446,8 @@ const TRIALS = {
            yes1b:'Walls_Yes_1_b', yes2b:'Walls_Yes_2_b'}
     },
     {
-      beh:'balls', tgt:'Alex', tg:'wug', pA:'Quinn', gA:'flurp', pB:'Drew', gB:'zazzo',
-      key:'alex',
+      beh:'balls', key:'alex',
+      tgt:'Alex', tg:'wug', pA:'Quinn', gA:'flurp', pB:'Drew', gB:'zazzo',
       story: t=>`One day you see ${t} bouncing a ball on their head over and over again.`,
       portraitImg:'alex.png', actionImg:'alex_ball.png',
       act:{g:'bounce balls on their heads', i:'bounce balls on their heads'},
@@ -390,8 +457,8 @@ const TRIALS = {
            yes1b:'Balls_Yes_1_b', yes2b:'Balls_Yes_2_b'}
     },
     {
-      beh:'whisper', tgt:'Jordan', tg:'wug', pA:'Skyler', gA:'flurp', pB:'Reese', gB:'zazzo',
-      key:'jordan',
+      beh:'whisper', key:'jordan',
+      tgt:'Jordan', tg:'wug', pA:'Skyler', gA:'flurp', pB:'Reese', gB:'zazzo',
       story: t=>`One day you notice that ${t} whispers whenever they talk to someone.`,
       portraitImg:'jordan.png', actionImg:'jordan_whisper.png',
       act:{g:'whisper when they talk', i:'whisper when they talk'},
@@ -401,8 +468,8 @@ const TRIALS = {
            yes1b:'Whisper_Yes_1_b', yes2b:'Whisper_Yes_2_b'}
     },
     {
-      beh:'flowers', tgt:'Riley', tg:'wug', pA:'Ash', gA:'flurp', pB:'Charlie', gB:'zazzo',
-      key:'riley',
+      beh:'flowers', key:'riley',
+      tgt:'Riley', tg:'wug', pA:'Ash', gA:'flurp', pB:'Charlie', gB:'zazzo',
       story: t=>`One day you see ${t} eating flowers from their front yard.`,
       portraitImg:'riley.png', actionImg:'riley_flowers.png',
       act:{g:'eat flowers', i:'eat flowers'},
@@ -414,8 +481,8 @@ const TRIALS = {
   ],
   B:[
     {
-      beh:'rocks', tgt:'Sam', tg:'wug', pA:'Nova', gA:'flurp', pB:'Finn', gB:'zazzo',
-      key:'sam',
+      beh:'rocks', key:'sam',
+      tgt:'Sam', tg:'wug', pA:'Nova', gA:'flurp', pB:'Finn', gB:'zazzo',
       story: t=>`One day you see ${t} picking up rocks and putting them in their pocket.`,
       portraitImg:'sam.png', actionImg:'sam_rocks.png',
       act:{g:'pick up rocks and put them in their pocket',
@@ -426,8 +493,8 @@ const TRIALS = {
            yes1b:'Rocks_Yes_1_b', yes2b:'Rocks_Yes_2_b'}
     },
     {
-      beh:'backwards', tgt:'Theo', tg:'wug', pA:'Cleo', gA:'flurp', pB:'Moss', gB:'zazzo',
-      key:'theo',
+      beh:'backwards', key:'theo',
+      tgt:'Theo', tg:'wug', pA:'Cleo', gA:'flurp', pB:'Moss', gB:'zazzo',
       story: t=>`One day you see ${t} walking backwards down the path.`,
       portraitImg:'theo.png', actionImg:'theo_backwards.png',
       act:{g:'walk backwards', i:'walk backwards'},
@@ -437,8 +504,8 @@ const TRIALS = {
            yes1b:'Backwards_Yes_1_b', yes2b:'Backwards_Yes_2_b'}
     },
     {
-      beh:'plants', tgt:'Sage', tg:'wug', pA:'Juno', gA:'flurp', pB:'Reed', gB:'zazzo',
-      key:'sage',
+      beh:'plants', key:'sage',
+      tgt:'Sage', tg:'wug', pA:'Juno', gA:'flurp', pB:'Reed', gB:'zazzo',
       story: t=>`One day you see ${t} talking to a plant.`,
       portraitImg:'sage.png', actionImg:'sage_plants.png',
       act:{g:'talk to plants', i:'talk to plants'},
@@ -448,8 +515,8 @@ const TRIALS = {
            yes1b:'Plants_Yes_1_b', yes2b:'Plants_Yes_2_b'}
     },
     {
-      beh:'pinecones', tgt:'Blake', tg:'wug', pA:'Zara', gA:'flurp', pB:'Bryn', gB:'zazzo',
-      key:'blake',
+      beh:'pinecones', key:'blake',
+      tgt:'Blake', tg:'wug', pA:'Zara', gA:'flurp', pB:'Bryn', gB:'zazzo',
       story: t=>`One day you see ${t} piling up pinecones into a tall tower.`,
       portraitImg:'blake.png', actionImg:'blake_pinecones.png',
       act:{g:'pile up pinecones into a tall tower',
@@ -460,8 +527,8 @@ const TRIALS = {
            yes1b:'Pinecones_Yes_1_b', yes2b:'Pinecones_Yes_2_b'}
     },
     {
-      beh:'spinning', tgt:'Wren', tg:'wug', pA:'Lumi', gA:'flurp', pB:'Flint', gB:'zazzo',
-      key:'wren',
+      beh:'spinning', key:'wren',
+      tgt:'Wren', tg:'wug', pA:'Lumi', gA:'flurp', pB:'Flint', gB:'zazzo',
       story: t=>`One day you see ${t} spinning around before they sit down.`,
       portraitImg:'wren.png', actionImg:'wren_spinning.png',
       act:{g:'spin around before sitting down', i:'spin around before sitting down'},
@@ -471,8 +538,8 @@ const TRIALS = {
            yes1b:'Spinning_Yes_1_b', yes2b:'Spinning_Yes_2_b'}
     },
     {
-      beh:'sniffing', tgt:'Arlo', tg:'wug', pA:'Cora', gA:'flurp', pB:'Beau', gB:'zazzo',
-      key:'arlo',
+      beh:'sniffing', key:'arlo',
+      tgt:'Arlo', tg:'wug', pA:'Cora', gA:'flurp', pB:'Beau', gB:'zazzo',
       story: t=>`One day you see ${t} sniffing something before they pick it up.`,
       portraitImg:'arlo.png', actionImg:'arlo_sniffing.png',
       act:{g:'sniff things before touching them', i:'sniff things before touching them'},
@@ -484,41 +551,21 @@ const TRIALS = {
   ]
 };
 
-// ── SPEECH TEXT (still needed for CSV export) ────────────────
+// ── Speech text (CSV only — audio plays from MP3s) ────────────
 
 function mkSpeech(ep, role, tgt, act){
-  if(ep === 'hmm'){
-    return role === 'group'
+  if(ep==='hmm'){
+    return role==='group'
       ? `Hmm, Wugs must like to ${act.g}.`
       : `Hmm, ${tgt} must like to ${act.i}.`;
   } else {
-    return role === 'group'
+    return role==='group'
       ? `Yes, Wugs like to ${act.g}.`
       : `Yes, ${tgt} likes to ${act.i}.`;
   }
 }
 
-// ── AUDIO KEY HELPERS ────────────────────────────────────────
-
-/**
- * Returns the audio key for a speech bubble line.
- * ep: 'hmm' | 'yes'   role: 'group' | 'individual'
- */
-function speechKey(ep, role, trKey) {
-  // e.g. 'rowan_hmm_group', 'rowan_yes_ind'
-  const r = role === 'group' ? 'group' : 'ind';
-  return `${trKey}_${ep}_${r}`;
-}
-
-/**
- * Returns the audio key for the full question read-aloud.
- * qType: 'close' | 'boss'
- */
-function questionKey(qType, trKey) {
-  return `${trKey}_q_${qType}`;
-}
-
-// ── EFFECTIVE ROLES ──────────────────────────────────────────
+// ── Effective roles (per-trial swap) ─────────────────────────
 
 function effRoles(){
   const cfg = curCfg();
@@ -528,47 +575,44 @@ function effRoles(){
   };
 }
 
-// ── GAME STATE ───────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════
+//  GAME STATE
+// ═══════════════════════════════════════════════════════════
 
 const G = {
   pid:'', age:null, t0:null,
   bossB:null, closeB:null,
-  order:[],
-  versionMap:{},
-  bIdx:0,
-  tOrder:[], tIdx:0,
+  order:[], versionMap:{},
+  bIdx:0, tOrder:[], tIdx:0,
   curT:null,
-  curPortraitImg:null,
-  curActionImg:null,
-  curPAImg:null,
-  curPBImg:null,
+  curPortraitImg:null, curActionImg:null,
+  curPAImg:null, curPBImg:null,
   curSwap:false,
   resp:[], locked:false,
   stars:0, totalDone:0,
-  speechDone:false,
-  tStart:null,
+  speechDone:false, tStart:null,
   iStep:0
 };
 
-// ── HELPERS ──────────────────────────────────────────────────
+// ── Helpers ───────────────────────────────────────────────────
 
 const gc = document.getElementById('gc');
 function render(h){ gc.innerHTML = `<div class="screen">${h}</div>`; }
 
-function curB()  { return G.order[G.bIdx] === 'boss' ? G.bossB : G.closeB; }
-function curCfg(){ return BCFG[curB()]; }
+function curB()      { return G.order[G.bIdx]==='boss' ? G.bossB : G.closeB; }
+function curCfg()    { return BCFG[curB()]; }
 function curVersion(){ return G.versionMap[G.order[G.bIdx]]; }
 
 function starMeterHTML(){
   let h = '<div class="star-meter">';
-  for(let i=0; i<6; i++)
-    h += `<span class="star-slot ${i<G.stars?'earned':'empty'}">
-            ${i<G.stars?'⭐':'☆'}</span>`;
+  for(let i=0;i<6;i++)
+    h += `<span class="star-slot ${i<G.stars?'earned':'empty'}">${i<G.stars?'⭐':'☆'}</span>`;
   return h + '</div>';
 }
 
 // ═══════════════════════════════════════════════════════════
 //  WELCOME
+//  Audio: welcome.mp3
 // ═══════════════════════════════════════════════════════════
 
 function showWelcome(){
@@ -581,17 +625,18 @@ function showWelcome(){
       Today we're going to visit <strong>${VILLAGE}</strong><br>
       and meet some new friends!
     </p>
-    <button class="btn g" onclick="showSetup()">Let's go! 🚀</button>
+    <button class="btn g" onclick="_unlockAudio();showSetup()">Let's go! 🚀</button>
   `);
-  say('welcome');
+  // Welcome plays after first click due to autoplay policy — that's fine
 }
 
 // ═══════════════════════════════════════════════════════════
 //  SETUP
+//  Audio: setup.mp3
 // ═══════════════════════════════════════════════════════════
 
 function showSetup(){
-  if(_currentAudio){ _currentAudio.pause(); }
+  if(_aud){ _aud.pause(); }
   G.selAge = null;
   render(`
     <h2>Before we start...</h2>
@@ -635,7 +680,7 @@ function launchGame(){
   G.age  = G.selAge;
   G.t0   = new Date().toISOString();
 
-  G.bossB  = pick(['hmm1_boss', 'hmm2_boss', 'yes1_boss', 'yes2_boss']);
+  G.bossB  = pick(['hmm1_boss','hmm2_boss','yes1_boss','yes2_boss']);
   G.closeB = pick(['hmm1_close','hmm2_close','yes1_close','yes2_close']);
   G.order  = Math.random() < .5 ? ['boss','close'] : ['close','boss'];
 
@@ -655,19 +700,25 @@ function launchGame(){
 }
 
 // ═══════════════════════════════════════════════════════════
-//  INTRO
+//  INTRO STEPS
+//  Audio keys: intro_village, intro_wugs, intro_flurps,
+//              intro_zazzos, intro_ready
 // ═══════════════════════════════════════════════════════════
 
 const ISTEPS = [
-  { title:`🌍 Welcome to ${VILLAGE}!`, audKey:'intro_village',
-    body:`
+  {
+    title: `🌍 Welcome to ${VILLAGE}!`,
+    audKey: 'intro_village',
+    body: `
       <img src="title_card.png" class="title-img" alt="${VILLAGE}"
         onerror="this.style.display='none'">
       <p class="txt">In <strong>${VILLAGE}</strong>, there are
         <strong>three kinds of friends</strong>!</p>`
   },
-  { title:'Meet the Wugs!', audKey:'intro_wugs',
-    body:`
+  {
+    title: 'Meet the Wugs!',
+    audKey: 'intro_wugs',
+    body: `
       <div style="display:flex;gap:18px;justify-content:center;flex-wrap:wrap;align-items:flex-end;">
         <img src="rowan.png"  class="char-img lg" onerror="this.style.opacity=0.15">
         <img src="casey.png"  class="char-img lg" onerror="this.style.opacity=0.15">
@@ -678,8 +729,10 @@ const ISTEPS = [
         <strong style="color:#2471a3">WUGS!</strong><br>
         They are <strong>blue</strong> and <strong>tall</strong>.</p>`
   },
-  { title:'Meet the Flurps!', audKey:'intro_flurps',
-    body:`
+  {
+    title: 'Meet the Flurps!',
+    audKey: 'intro_flurps',
+    body: `
       <div style="display:flex;gap:18px;justify-content:center;flex-wrap:wrap;align-items:flex-end;">
         <img src="orange3.png"  class="char-img lg" onerror="this.style.opacity=0.15">
         <img src="orange7.png"  class="char-img lg" onerror="this.style.opacity=0.15">
@@ -690,8 +743,10 @@ const ISTEPS = [
         <strong style="color:#ca6f1e">FLURPS!</strong><br>
         They are <strong>orange</strong> and <strong>bright</strong>.</p>`
   },
-  { title:'Meet the Zazzos!', audKey:'intro_zazzos',
-    body:`
+  {
+    title: 'Meet the Zazzos!',
+    audKey: 'intro_zazzos',
+    body: `
       <div style="display:flex;gap:18px;justify-content:center;flex-wrap:wrap;align-items:flex-end;">
         <img src="green.png"  class="char-img lg" onerror="this.style.opacity=0.15">
         <img src="green2.png" class="char-img lg" onerror="this.style.opacity=0.15">
@@ -702,8 +757,10 @@ const ISTEPS = [
         <strong style="color:#1e8449">ZAZZOS!</strong><br>
         They are <strong>green</strong> and <strong>soft</strong>.</p>`
   },
-  { title:`🎉 All in ${VILLAGE}!`, audKey:'intro_ready',
-    body:`
+  {
+    title: `🎉 All in ${VILLAGE}!`,
+    audKey: 'intro_ready',
+    body: `
       <img src="title_card.png" class="title-img" alt="All together"
         onerror="this.style.display='none'">
       <p class="txt">Wugs, Flurps, and Zazzos all live in
@@ -726,7 +783,7 @@ function showIntro(){
         onclick="${last ? 'beginMain()' : 'G.iStep++;showIntro()'}">
         ${last ? 'Play! 🎮' : 'Next →'}
       </button>
-      <button class="rrb" onclick="reread()">🔊</button>
+      <button class="rrb" onclick="reread()" title="Replay">🔊</button>
     </div>
   `);
   say(st.audKey);
@@ -743,6 +800,9 @@ function beginMain(){
   showBkIntro();
 }
 
+// ── Block intro ───────────────────────────────────────────────
+//  Audio: block_close.mp3 or block_boss.mp3
+
 function showBkIntro(){
   const cfg = curCfg();
   const isC = cfg.qType === 'close';
@@ -751,7 +811,6 @@ function showBkIntro(){
   render(`
     <div style="font-size:3.5em;">${isC ? '✨' : '👑'}</div>
     <h2>${isC ? 'A question about friends!' : 'A question about the boss!'}</h2>
-
     ${isC ? `
       <p class="txt">After each story I will ask:<br><br>
         <strong>"Who is [Name] closer to?"</strong></p>
@@ -761,16 +820,14 @@ function showBkIntro(){
         <strong>"Who is [Name]'s boss?"</strong></p>
       <div class="defbox">${BOSS_DEF}</div>
     `}
-
     <p class="txt" style="font-size:.88em;color:#aaa;">
-      Block: ${isC ? 'Closer' : 'Boss'} &nbsp;|&nbsp;
-      Character set: ${ver}
+      Block: ${isC ? 'Closer' : 'Boss'} &nbsp;|&nbsp; Character set: ${ver}
     </p>
-
     <button class="btn g" onclick="nextTrial()">Let's start! 🚀</button>
     <button class="rrb" onclick="reread()">🔊</button>
   `);
 
+  // block_close.mp3 or block_boss.mp3
   say(isC ? 'block_close' : 'block_boss');
 }
 
@@ -780,8 +837,7 @@ function nextTrial(){
   if(G.tIdx >= 6){ advBlock(); return; }
 
   G.curT = G.tOrder[G.tIdx];
-  const ver = curVersion();
-  const tr  = TRIALS[ver][G.curT];
+  const tr = TRIALS[curVersion()][G.curT];
 
   G.curPortraitImg = tr.portraitImg;
   G.curActionImg   = tr.actionImg;
@@ -793,7 +849,11 @@ function nextTrial(){
 }
 
 // ═══════════════════════════════════════════════════════════
-//  PHASE 0 — Character introductions
+//  PHASE 0 — Character introduction
+//  Audio sequence:
+//    {key}_intro.mp3  → "This is Rowan! Rowan has two friends..."
+//    {key}_likeA.mp3  → "{tgt} and {pA} like each other a lot."  (pA bounces)
+//    {key}_likeB.mp3  → "{tgt} and {pB} like each other a lot."  (pB bounces)
 // ═══════════════════════════════════════════════════════════
 
 function showTrialChars(){
@@ -831,25 +891,26 @@ function showTrialChars(){
     </div>
   `);
 
-  // Animated narration sequence using pre-recorded audio
-  speakThen(tr.key + '_intro', () => {
-    setTimeout(() => {
-      speakWithAnim('side-a', tr.key + '_likeA', () => {
-        setTimeout(() => {
-          speakWithAnim('side-b', tr.key + '_likeB', () => {});
-        }, 250);
+  // Play: intro → then pA bounces with likeA → then pB bounces with likeB
+  speakThen(tr.key + '_intro', function() {
+    setTimeout(function() {
+      speakWithAnim('side-a', tr.key + '_likeA', function() {
+        setTimeout(function() {
+          speakWithAnim('side-b', tr.key + '_likeB', function() {});
+        }, 300);
       });
-    }, 200);
+    }, 250);
   });
 }
 
 // ═══════════════════════════════════════════════════════════
 //  PHASE 1 — Action image
+//  Audio: {key}_action.mp3
 // ═══════════════════════════════════════════════════════════
 
 function showTrialAction(){
-  const tr  = TRIALS[curVersion()][G.curT];
-  const tn  = G.bIdx * 6 + G.tIdx + 1;
+  const tr = TRIALS[curVersion()][G.curT];
+  const tn = G.bIdx * 6 + G.tIdx + 1;
 
   render(`
     ${starMeterHTML()}
@@ -873,11 +934,14 @@ function showTrialAction(){
     </div>
   `);
 
+  // e.g. rowan_action.mp3
   say(tr.key + '_action');
 }
 
 // ═══════════════════════════════════════════════════════════
 //  PHASE 2 — Speech bubbles + Question
+//  Audio: {key}_ask.mp3 (directions)
+//         then orange button triggers speech playback
 // ═══════════════════════════════════════════════════════════
 
 function showTrialSpeech(){
@@ -890,10 +954,9 @@ function showTrialSpeech(){
   const spA = mkSpeech(cfg.ep, er.rA, tr.tgt, tr.act);
   const spB = mkSpeech(cfg.ep, er.rB, tr.tgt, tr.act);
 
-  const qTxt = isC
+  const qTxt   = isC
     ? `Who is <strong>${tr.tgt}</strong> closer to?`
     : `Who do you think is <strong>${tr.tgt}'s boss</strong>?`;
-
   const defTxt = isC ? CLOSE_DEF : BOSS_DEF.replace('[Name]', tr.tgt);
 
   G.tStart = Date.now();
@@ -947,9 +1010,10 @@ function showTrialSpeech(){
     </div>
   `);
 
+  // If speeches were already played (revisit), reveal immediately
   if(G.speechDone){
-    setTimeout(()=>{
-      ['bub-a','bub-b'].forEach(id=>{
+    setTimeout(function(){
+      ['bub-a','bub-b'].forEach(function(id){
         const el = document.getElementById(id);
         if(el) el.classList.add('visible');
       });
@@ -959,17 +1023,22 @@ function showTrialSpeech(){
     }, 50);
   }
 
+  // e.g. rowan_ask.mp3  ("You asked Emery and Jules...")
   say(tr.key + '_ask');
 }
 
-// ── triggerSpeech ─────────────────────────────────────────────
+// ── Trigger speech playback ───────────────────────────────────
+//  Audio:
+//    pA: {key}_{ep}_{group|ind}.mp3   e.g. rowan_hmm_group.mp3
+//    pB: {key}_{ep}_{group|ind}.mp3   e.g. rowan_hmm_ind.mp3
+//  Then: {key}_q_{close|boss}.mp3     e.g. rowan_q_close.mp3
 
 function triggerSpeech(){
   const tr  = TRIALS[curVersion()][G.curT];
   const cfg = curCfg();
   const er  = effRoles();
 
-  if(_currentAudio){ _currentAudio.pause(); }
+  if(_aud){ _aud.pause(); }
 
   const btn  = document.getElementById('playBtn');
   const bubA = document.getElementById('bub-a');
@@ -977,24 +1046,32 @@ function triggerSpeech(){
 
   if(btn){ btn.textContent = '🔊 Playing...'; btn.disabled = true; }
 
+  // e.g. 'rowan_hmm_group', 'rowan_hmm_ind'
   const keyA = speechKey(cfg.ep, er.rA, tr.key);
   const keyB = speechKey(cfg.ep, er.rB, tr.key);
 
-  // pA speaks + animates
+  // Show pA bubble and animate while speaking
   if(bubA) bubA.classList.add('visible');
-  speakWithAnim('spk-a', keyA, () => {
-    setTimeout(() => {
-      // pB speaks + animates
+  speakWithAnim('spk-a', keyA, function() {
+
+    setTimeout(function() {
+      // Show pB bubble and animate while speaking
       if(bubB) bubB.classList.add('visible');
-      speakWithAnim('spk-b', keyB, () => {
+      speakWithAnim('spk-b', keyB, function() {
+
         G.speechDone = true;
         revealQuestion();
         if(btn){ btn.textContent = '🔊 Hear again'; btn.disabled = false; }
 
-        // Read full question aloud
-        setTimeout(() => say(questionKey(cfg.qType, tr.key)), 600);
+        // Play the question audio after a short pause
+        // e.g. rowan_q_close.mp3
+        setTimeout(function(){
+          say(questionKey(cfg.qType, tr.key));
+        }, 600);
+
       });
     }, 400);
+
   });
 }
 
@@ -1005,7 +1082,9 @@ function revealQuestion(){
   if(choices) choices.classList.add('show');
 }
 
-// ── Response Recording ────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════
+//  RESPONSE RECORDING
+// ═══════════════════════════════════════════════════════════
 
 function recordResp(choice, el){
   if(G.locked) return;
@@ -1028,39 +1107,39 @@ function recordResp(choice, el){
     (cfg.qType==='boss'  && chosenRole==='group') ? 1 : 0;
 
   G.resp.push({
-    participantId:       G.pid,
-    age:                 G.age,
-    versionThisBlock:    ver,
-    versionClose:        G.versionMap['close'],
-    versionBoss:         G.versionMap['boss'],
-    blockBoss:           G.bossB,
-    blockClose:          G.closeB,
-    blockOrder:          G.order.join('_'),
-    blockCurrent:        bk,
-    questionType:        cfg.qType,
-    epistemic:           cfg.ep,
-    blockRoleA:          cfg.aRole,
-    blockRoleB:          cfg.bRole,
-    rolesSwapped:        G.curSwap,
-    effectiveRoleA:      er.rA,
-    effectiveRoleB:      er.rB,
-    dataExportTag:       tr.ids[BSUFFIX[bk]],
-    target:              tr.tgt,
-    behavior:            tr.beh,
-    personA:             tr.pA,
-    groupA:              tr.gA,
-    personB:             tr.pB,
-    groupB:              tr.gB,
-    speechA:             mkSpeech(cfg.ep, er.rA, tr.tgt, tr.act),
-    speechB:             mkSpeech(cfg.ep, er.rB, tr.tgt, tr.act),
-    portraitImgShown:    G.curPortraitImg,
-    actionImgShown:      G.curActionImg,
-    orangeImgShown:      G.curPAImg,
-    greenImgShown:       G.curPBImg,
+    participantId:      G.pid,
+    age:                G.age,
+    versionThisBlock:   ver,
+    versionClose:       G.versionMap['close'],
+    versionBoss:        G.versionMap['boss'],
+    blockBoss:          G.bossB,
+    blockClose:         G.closeB,
+    blockOrder:         G.order.join('_'),
+    blockCurrent:       bk,
+    questionType:       cfg.qType,
+    epistemic:          cfg.ep,
+    blockRoleA:         cfg.aRole,
+    blockRoleB:         cfg.bRole,
+    rolesSwapped:       G.curSwap,
+    effectiveRoleA:     er.rA,
+    effectiveRoleB:     er.rB,
+    dataExportTag:      tr.ids[BSUFFIX[bk]],
+    target:             tr.tgt,
+    behavior:           tr.beh,
+    personA:            tr.pA,
+    groupA:             tr.gA,
+    personB:            tr.pB,
+    groupB:             tr.gB,
+    speechA:            mkSpeech(cfg.ep, er.rA, tr.tgt, tr.act),
+    speechB:            mkSpeech(cfg.ep, er.rB, tr.tgt, tr.act),
+    portraitImgShown:   G.curPortraitImg,
+    actionImgShown:     G.curActionImg,
+    orangeImgShown:     G.curPAImg,
+    greenImgShown:      G.curPBImg,
     chosenName, chosenGroup, chosenRole,
     responseRecode, hypothesisConsistent,
-    rt_ms:               rt,
-    timestamp:           new Date().toISOString()
+    rt_ms:              rt,
+    timestamp:          new Date().toISOString()
   });
 
   el.classList.add('chosen');
@@ -1070,7 +1149,7 @@ function recordResp(choice, el){
   G.totalDone++;
   G.tIdx++;
 
-  setTimeout(()=>{
+  setTimeout(function(){
     if(G.totalDone % 2 === 0){
       G.stars = Math.min(6, G.totalDone / 2);
       showStarEarned();
@@ -1080,7 +1159,10 @@ function recordResp(choice, el){
   }, 700);
 }
 
-// ── Star earned ───────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════
+//  STAR EARNED
+//  Audio: star_done.mp3 | star_halfway.mp3 | star_generic.mp3
+// ═══════════════════════════════════════════════════════════
 
 function showStarEarned(){
   const isDone = G.totalDone === 12;
@@ -1102,7 +1184,7 @@ function showStarEarned(){
 
   say(isDone ? 'star_done' : isHalf ? 'star_halfway' : 'star_generic');
 
-  if(isDone) setTimeout(()=>showEnd(), 2800);
+  if(isDone) setTimeout(function(){ showEnd(); }, 2800);
 }
 
 // ── Between blocks ────────────────────────────────────────────
@@ -1117,6 +1199,7 @@ function advBlock(){
 
 // ═══════════════════════════════════════════════════════════
 //  END
+//  Audio: end.mp3
 // ═══════════════════════════════════════════════════════════
 
 function showEnd(){
@@ -1139,6 +1222,9 @@ function showEnd(){
     <button class="btn g" onclick="dlCSV()">💾 Save My Data</button>
   `);
   say('end');
+
+  // Send postMessage for CHS iframe detection
+  try{ window.parent.postMessage({type:'GAME_COMPLETE'}, '*'); }catch(e){}
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -1173,7 +1259,7 @@ function dlCSV(){
 }
 
 function skipEnd(){
-  if(_currentAudio){ _currentAudio.pause(); }
+  if(_aud){ _aud.pause(); _aud = null; }
   showEnd();
 }
 
