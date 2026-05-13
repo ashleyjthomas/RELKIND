@@ -26,7 +26,6 @@
     }
     @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 
-    /* ── Speaking bounce ── */
     @keyframes speakBounce{
       0%,100%{transform:translateY(0)   rotate(0deg)  scale(1)}
       20%    {transform:translateY(-12px) rotate(-5deg) scale(1.05)}
@@ -35,7 +34,6 @@
     }
     .speaking{animation:speakBounce 0.65s ease-in-out infinite}
 
-    /* ── Star pop ── */
     @keyframes starPop{
       0%  {transform:scale(0) rotate(-20deg);opacity:0}
       60% {transform:scale(1.5) rotate(10deg);opacity:1}
@@ -54,7 +52,6 @@
       border-left:5px solid #3498db;line-height:1.55;
     }
 
-    /* ── Buttons ── */
     .btn{
       background:linear-gradient(145deg,#3498db,#2980b9);color:#fff;
       border:none;padding:13px 26px;border-radius:50px;
@@ -73,7 +70,6 @@
     .btn.sm{padding:8px 16px;font-size:.95em}
     .btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
 
-    /* ── Age picker ── */
     .age-row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
     .abtn{
       background:#ecf0f1;color:#2c3e50;border:3px solid transparent;
@@ -88,7 +84,6 @@
       width:100%;max-width:270px;text-align:center;
     }
 
-    /* ── Star meter ── */
     .star-meter{
       display:flex;gap:7px;align-items:center;justify-content:center;
       padding:8px 18px;background:#fff9e6;border-radius:22px;
@@ -99,7 +94,6 @@
     .star-slot.empty {color:#ddd}
     .prog{text-align:center;font-size:.88em;color:#aaa;margin-top:-4px}
 
-    /* ── Character images ── */
     .char-img{object-fit:contain;border-radius:12px;display:block}
     .char-img.sm {width:80px; height:80px}
     .char-img.md {width:120px;height:120px}
@@ -116,19 +110,16 @@
     .bflurp{background:#fdebd0;color:#ca6f1e}
     .bzazzo{background:#d5f5e3;color:#1e8449}
 
-    /* ── Three character row ── */
     .char-row{
       display:flex;align-items:flex-end;gap:24px;
       justify-content:center;flex-wrap:wrap;width:100%;
     }
 
-    /* ── Action image ── */
     .scene-img{
       width:100%;max-width:460px;border-radius:16px;
       object-fit:contain;border:3px solid #90caf9;
     }
 
-    /* ── Speech section ── both characters on LEFT ── */
     .speech-section{
       width:100%;max-width:640px;
       display:flex;flex-direction:column;gap:20px;
@@ -145,7 +136,6 @@
     }
     .spbub.visible{opacity:1;transform:translateX(0)}
 
-    /* ── Question box ── */
     .qbox{
       background:#f0f8ff;border:3px solid #3498db;
       border-radius:16px;padding:15px 20px;
@@ -158,7 +148,6 @@
     .qtxt{font-size:1.22em;color:#2c3e50;font-weight:700}
     .qdef{font-size:.9em;color:#7f8c8d;margin-top:7px;line-height:1.5;font-style:italic}
 
-    /* ── Choices ── */
     .choices{
       display:flex;gap:28px;justify-content:center;flex-wrap:wrap;
       opacity:0;transform:translateY(8px);
@@ -186,7 +175,6 @@
       touch-action:manipulation;
     }
 
-    /* ── Definition callout box ── */
     .defbox{
       background:#fef9e7;border:2px dashed #f39c12;
       border-radius:14px;padding:12px 18px;
@@ -232,20 +220,69 @@
 
 <script>
 // ═══════════════════════════════════════════════════════════
-//  TWIZZLE TOWN — Child Study Game v5
+//  TWIZZLE TOWN — Child Study Game v6
 //  ashleyjthomas/RELKIND
 //
-//  Key changes from v4:
-//  1. Side chars animate during "like each other" narration
-//  2. Pinecones wording consistent
-//  3. Per-trial role swap (randomises which colour = group/individual)
-//  4. Boss definition added (mirrors closer definition)
-//  5. Version A ↔ B split across blocks (never same set twice)
+//  v6 changes:
+//  - Replaced browser speechSynthesis with ElevenLabs pre-recorded audio
+//  - All say() / speakThen() / speakWithAnim() now use audio/ folder MP3s
+//  - reread() replays the last audio file
 // ═══════════════════════════════════════════════════════════
 
 const VILLAGE   = "Twizzle Town";
 const CLOSE_DEF = "That means that they love each other more, tell each other more secrets, and give each other hugs.";
 const BOSS_DEF  = "That means they are in charge — they tell [Name] what to do, and [Name] listens.";
+
+// ── AUDIO ENGINE ─────────────────────────────────────────────
+// Replaces all browser TTS. Files live in audio/<key>.mp3
+
+const AUDIO_DIR = 'audio/';
+let _currentAudio = null;
+let _lastKey      = null;   // for reread()
+
+/**
+ * Play audio/key.mp3 and optionally call onEnd when done.
+ * Silent failure — game never hangs if a file is missing.
+ */
+function playAudio(key, onEnd) {
+  if (_currentAudio) {
+    _currentAudio.pause();
+    _currentAudio.currentTime = 0;
+  }
+  _lastKey = key;
+  const audio = new Audio(AUDIO_DIR + key + '.mp3');
+  _currentAudio = audio;
+  audio.play().catch(() => { if (onEnd) onEnd(); });
+  if (onEnd) {
+    audio.onended = onEnd;
+    audio.onerror = onEnd;
+  }
+}
+
+/** Drop-in for say(text) — just plays by key, no callback. */
+function say(key) {
+  playAudio(key);
+}
+
+/** Drop-in for speakThen(text, cb) */
+function speakThen(key, cb) {
+  playAudio(key, cb);
+}
+
+/** Drop-in for speakWithAnim(imgId, text, cb) */
+function speakWithAnim(imgId, key, cb) {
+  const img = document.getElementById(imgId);
+  if (img) img.classList.add('speaking');
+  playAudio(key, () => {
+    if (img) img.classList.remove('speaking');
+    if (cb) cb();
+  });
+}
+
+/** Replay the last audio that was played */
+function reread() {
+  if (_lastKey) playAudio(_lastKey);
+}
 
 // ── IMAGE POOLS ─────────────────────────────────────────────
 
@@ -284,61 +321,6 @@ function cimg(src, cls, id){
     alt="" onerror="this.style.opacity=0.15">`;
 }
 
-// ── SPEECH ──────────────────────────────────────────────────
-
-let _nar = '';
-
-function getVoice(){
-  const vs = window.speechSynthesis.getVoices();
-  return vs.find(v =>
-    v.name.includes('Samantha') || v.name.includes('Google US English') ||
-    v.name.includes('Karen')    || v.name.includes('Moira')
-  ) || null;
-}
-
-function say(txt){
-  if(!window.speechSynthesis) return;
-  window.speechSynthesis.cancel();
-  _nar = txt;
-  const u = new SpeechSynthesisUtterance(txt);
-  u.rate = 0.87; u.pitch = 1.1; u.volume = 1;
-  const v = getVoice(); if(v) u.voice = v;
-  window.speechSynthesis.speak(u);
-}
-
-function reread(){ if(_nar) say(_nar); }
-
-function speakThen(text, cb){
-  if(!window.speechSynthesis){ setTimeout(cb, 100); return; }
-  window.speechSynthesis.cancel();
-  const u = new SpeechSynthesisUtterance(text);
-  u.rate = 0.85; u.pitch = 1.05; u.volume = 1;
-  const v = getVoice(); if(v) u.voice = v;
-  const fallback = setTimeout(()=>cb(), text.length * 85 + 2000);
-  u.onend = ()=>{ clearTimeout(fallback); cb(); };
-  window.speechSynthesis.speak(u);
-}
-
-// Animate a character image while speaking a line
-function speakWithAnim(imgId, text, cb){
-  const img = document.getElementById(imgId);
-  if(img) img.classList.add('speaking');
-  speakThen(text, ()=>{
-    if(img) img.classList.remove('speaking');
-    cb();
-  });
-}
-
-// ── STAR METER ──────────────────────────────────────────────
-
-function starMeterHTML(){
-  let h = '<div class="star-meter">';
-  for(let i=0; i<6; i++)
-    h += `<span class="star-slot ${i<G.stars?'earned':'empty'}">
-            ${i<G.stars?'⭐':'☆'}</span>`;
-  return h + '</div>';
-}
-
 // ── BLOCK CONFIGS ───────────────────────────────────────────
 
 const BCFG = {
@@ -360,12 +342,12 @@ const BSUFFIX = {
 };
 
 // ── TRIAL DATA ──────────────────────────────────────────────
-// NOTE: pinecones act.g and act.i now match exactly
 
 const TRIALS = {
   A:[
     {
       beh:'bugs', tgt:'Rowan', tg:'wug', pA:'Emery', gA:'flurp', pB:'Jules', gB:'zazzo',
+      key:'rowan',
       story: t=>`One day you see ${t} playing with bugs in the front yard.`,
       portraitImg:'rowan.png', actionImg:'rowan_bugs.png',
       act:{g:'play with bugs', i:'play with bugs'},
@@ -376,6 +358,7 @@ const TRIALS = {
     },
     {
       beh:'night', tgt:'Casey', tg:'wug', pA:'River', gA:'flurp', pB:'Morgan', gB:'zazzo',
+      key:'casey',
       story: t=>`One night you notice that ${t} stays up in the middle of the night while everyone else is sleeping.`,
       portraitImg:'casey.png', actionImg:'casey_night.png',
       act:{g:'stay up in the middle of the night', i:'stay up in the middle of the night'},
@@ -386,9 +369,10 @@ const TRIALS = {
     },
     {
       beh:'walls', tgt:'Taylor', tg:'wug', pA:'Finley', gA:'flurp', pB:'Robin', gB:'zazzo',
-  story: t=>`One day you see ${t} climbing the walls of a tall building.`,
-  portraitImg:'taylor.png', actionImg:'taylor_walls.png',
-  act:{g:'climb tall buildings', i:'climb tall buildings'},
+      key:'taylor',
+      story: t=>`One day you see ${t} climbing the walls of a tall building.`,
+      portraitImg:'taylor.png', actionImg:'taylor_walls.png',
+      act:{g:'climb tall buildings', i:'climb tall buildings'},
       ids:{hmm1c:'Walls_Hmm_1',   hmm2c:'Walls_Hmm_2',
            yes1c:'Climb_Yes_1',   yes2c:'Climb_Yes_2',
            hmm1b:'Walls_Hmm_1_b', hmm2b:'Walls_Hmm_2_b',
@@ -396,6 +380,7 @@ const TRIALS = {
     },
     {
       beh:'balls', tgt:'Alex', tg:'wug', pA:'Quinn', gA:'flurp', pB:'Drew', gB:'zazzo',
+      key:'alex',
       story: t=>`One day you see ${t} bouncing a ball on their head over and over again.`,
       portraitImg:'alex.png', actionImg:'alex_ball.png',
       act:{g:'bounce balls on their heads', i:'bounce balls on their heads'},
@@ -406,6 +391,7 @@ const TRIALS = {
     },
     {
       beh:'whisper', tgt:'Jordan', tg:'wug', pA:'Skyler', gA:'flurp', pB:'Reese', gB:'zazzo',
+      key:'jordan',
       story: t=>`One day you notice that ${t} whispers whenever they talk to someone.`,
       portraitImg:'jordan.png', actionImg:'jordan_whisper.png',
       act:{g:'whisper when they talk', i:'whisper when they talk'},
@@ -416,6 +402,7 @@ const TRIALS = {
     },
     {
       beh:'flowers', tgt:'Riley', tg:'wug', pA:'Ash', gA:'flurp', pB:'Charlie', gB:'zazzo',
+      key:'riley',
       story: t=>`One day you see ${t} eating flowers from their front yard.`,
       portraitImg:'riley.png', actionImg:'riley_flowers.png',
       act:{g:'eat flowers', i:'eat flowers'},
@@ -428,6 +415,7 @@ const TRIALS = {
   B:[
     {
       beh:'rocks', tgt:'Sam', tg:'wug', pA:'Nova', gA:'flurp', pB:'Finn', gB:'zazzo',
+      key:'sam',
       story: t=>`One day you see ${t} picking up rocks and putting them in their pocket.`,
       portraitImg:'sam.png', actionImg:'sam_rocks.png',
       act:{g:'pick up rocks and put them in their pocket',
@@ -439,6 +427,7 @@ const TRIALS = {
     },
     {
       beh:'backwards', tgt:'Theo', tg:'wug', pA:'Cleo', gA:'flurp', pB:'Moss', gB:'zazzo',
+      key:'theo',
       story: t=>`One day you see ${t} walking backwards down the path.`,
       portraitImg:'theo.png', actionImg:'theo_backwards.png',
       act:{g:'walk backwards', i:'walk backwards'},
@@ -449,6 +438,7 @@ const TRIALS = {
     },
     {
       beh:'plants', tgt:'Sage', tg:'wug', pA:'Juno', gA:'flurp', pB:'Reed', gB:'zazzo',
+      key:'sage',
       story: t=>`One day you see ${t} talking to a plant.`,
       portraitImg:'sage.png', actionImg:'sage_plants.png',
       act:{g:'talk to plants', i:'talk to plants'},
@@ -459,9 +449,9 @@ const TRIALS = {
     },
     {
       beh:'pinecones', tgt:'Blake', tg:'wug', pA:'Zara', gA:'flurp', pB:'Bryn', gB:'zazzo',
+      key:'blake',
       story: t=>`One day you see ${t} piling up pinecones into a tall tower.`,
       portraitImg:'blake.png', actionImg:'blake_pinecones.png',
-      // ── FIX: both act.g and act.i now use identical wording ──
       act:{g:'pile up pinecones into a tall tower',
            i:'pile up pinecones into a tall tower'},
       ids:{hmm1c:'Pinecones_Hmm_1',   hmm2c:'Pinecones_Hmm_2',
@@ -471,6 +461,7 @@ const TRIALS = {
     },
     {
       beh:'spinning', tgt:'Wren', tg:'wug', pA:'Lumi', gA:'flurp', pB:'Flint', gB:'zazzo',
+      key:'wren',
       story: t=>`One day you see ${t} spinning around before they sit down.`,
       portraitImg:'wren.png', actionImg:'wren_spinning.png',
       act:{g:'spin around before sitting down', i:'spin around before sitting down'},
@@ -481,6 +472,7 @@ const TRIALS = {
     },
     {
       beh:'sniffing', tgt:'Arlo', tg:'wug', pA:'Cora', gA:'flurp', pB:'Beau', gB:'zazzo',
+      key:'arlo',
       story: t=>`One day you see ${t} sniffing something before they pick it up.`,
       portraitImg:'arlo.png', actionImg:'arlo_sniffing.png',
       act:{g:'sniff things before touching them', i:'sniff things before touching them'},
@@ -492,7 +484,7 @@ const TRIALS = {
   ]
 };
 
-// ── SPEECH TEXT ─────────────────────────────────────────────
+// ── SPEECH TEXT (still needed for CSV export) ────────────────
 
 function mkSpeech(ep, role, tgt, act){
   if(ep === 'hmm'){
@@ -506,25 +498,43 @@ function mkSpeech(ep, role, tgt, act){
   }
 }
 
-// ── EFFECTIVE ROLES (per-trial swap) ────────────────────────
-// G.curSwap = true  → orange gets bRole, green gets aRole
-// G.curSwap = false → orange gets aRole, green gets bRole
+// ── AUDIO KEY HELPERS ────────────────────────────────────────
+
+/**
+ * Returns the audio key for a speech bubble line.
+ * ep: 'hmm' | 'yes'   role: 'group' | 'individual'
+ */
+function speechKey(ep, role, trKey) {
+  // e.g. 'rowan_hmm_group', 'rowan_yes_ind'
+  const r = role === 'group' ? 'group' : 'ind';
+  return `${trKey}_${ep}_${r}`;
+}
+
+/**
+ * Returns the audio key for the full question read-aloud.
+ * qType: 'close' | 'boss'
+ */
+function questionKey(qType, trKey) {
+  return `${trKey}_q_${qType}`;
+}
+
+// ── EFFECTIVE ROLES ──────────────────────────────────────────
 
 function effRoles(){
   const cfg = curCfg();
   return {
-    rA: G.curSwap ? cfg.bRole : cfg.aRole,   // orange character's actual role
-    rB: G.curSwap ? cfg.aRole : cfg.bRole    // green character's actual role
+    rA: G.curSwap ? cfg.bRole : cfg.aRole,
+    rB: G.curSwap ? cfg.aRole : cfg.bRole
   };
 }
 
-// ── GAME STATE ──────────────────────────────────────────────
+// ── GAME STATE ───────────────────────────────────────────────
 
 const G = {
   pid:'', age:null, t0:null,
   bossB:null, closeB:null,
-  order:[],              // e.g. ['close','boss']
-  versionMap:{},         // { close:'A', boss:'B' } or { close:'B', boss:'A' }
+  order:[],
+  versionMap:{},
   bIdx:0,
   tOrder:[], tIdx:0,
   curT:null,
@@ -532,7 +542,7 @@ const G = {
   curActionImg:null,
   curPAImg:null,
   curPBImg:null,
-  curSwap:false,         // ← per-trial role randomisation
+  curSwap:false,
   resp:[], locked:false,
   stars:0, totalDone:0,
   speechDone:false,
@@ -547,9 +557,15 @@ function render(h){ gc.innerHTML = `<div class="screen">${h}</div>`; }
 
 function curB()  { return G.order[G.bIdx] === 'boss' ? G.bossB : G.closeB; }
 function curCfg(){ return BCFG[curB()]; }
-
-// Return the version (A or B) for the current block
 function curVersion(){ return G.versionMap[G.order[G.bIdx]]; }
+
+function starMeterHTML(){
+  let h = '<div class="star-meter">';
+  for(let i=0; i<6; i++)
+    h += `<span class="star-slot ${i<G.stars?'earned':'empty'}">
+            ${i<G.stars?'⭐':'☆'}</span>`;
+  return h + '</div>';
+}
 
 // ═══════════════════════════════════════════════════════════
 //  WELCOME
@@ -567,7 +583,7 @@ function showWelcome(){
     </p>
     <button class="btn g" onclick="showSetup()">Let's go! 🚀</button>
   `);
-  say(`Welcome! Today we're going to visit ${VILLAGE} and meet some new friends!`);
+  say('welcome');
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -575,7 +591,7 @@ function showWelcome(){
 // ═══════════════════════════════════════════════════════════
 
 function showSetup(){
-  window.speechSynthesis && window.speechSynthesis.cancel();
+  if(_currentAudio){ _currentAudio.pause(); }
   G.selAge = null;
   render(`
     <h2>Before we start...</h2>
@@ -591,7 +607,7 @@ function showSetup(){
       onclick="launchGame()">Start! 🌟</button>
   `);
   document.getElementById('pidIn').addEventListener('input', checkReady);
-  say("What is your ID? And how old are you?");
+  say('setup');
 }
 
 function pickAge(a){
@@ -623,9 +639,6 @@ function launchGame(){
   G.closeB = pick(['hmm1_close','hmm2_close','yes1_close','yes2_close']);
   G.order  = Math.random() < .5 ? ['boss','close'] : ['close','boss'];
 
-  // ── VERSION ASSIGNMENT ─────────────────────────────────
-  // First block always gets a different version than second block
-  // Which block gets A vs B is random
   const firstVer  = Math.random() < .5 ? 'A' : 'B';
   const secondVer = firstVer === 'A' ? 'B' : 'A';
   G.versionMap[G.order[0]] = firstVer;
@@ -646,17 +659,14 @@ function launchGame(){
 // ═══════════════════════════════════════════════════════════
 
 const ISTEPS = [
-  {
-    title:`🌍 Welcome to ${VILLAGE}!`,
+  { title:`🌍 Welcome to ${VILLAGE}!`, audKey:'intro_village',
     body:`
       <img src="title_card.png" class="title-img" alt="${VILLAGE}"
         onerror="this.style.display='none'">
       <p class="txt">In <strong>${VILLAGE}</strong>, there are
-        <strong>three kinds of friends</strong>!</p>`,
-    aud:`In ${VILLAGE}, there are three kinds of friends!`
+        <strong>three kinds of friends</strong>!</p>`
   },
-  {
-    title:'Meet the Wugs!',
+  { title:'Meet the Wugs!', audKey:'intro_wugs',
     body:`
       <div style="display:flex;gap:18px;justify-content:center;flex-wrap:wrap;align-items:flex-end;">
         <img src="rowan.png"  class="char-img lg" onerror="this.style.opacity=0.15">
@@ -666,11 +676,9 @@ const ISTEPS = [
       <span class="cbadge bwug" style="font-size:1.4em;padding:9px 20px;">Wugs</span>
       <p class="txt">These are called
         <strong style="color:#2471a3">WUGS!</strong><br>
-        They are <strong>blue</strong> and <strong>tall</strong>.</p>`,
-    aud:"These are called Wugs! They are blue and tall."
+        They are <strong>blue</strong> and <strong>tall</strong>.</p>`
   },
-  {
-    title:'Meet the Flurps!',
+  { title:'Meet the Flurps!', audKey:'intro_flurps',
     body:`
       <div style="display:flex;gap:18px;justify-content:center;flex-wrap:wrap;align-items:flex-end;">
         <img src="orange3.png"  class="char-img lg" onerror="this.style.opacity=0.15">
@@ -680,11 +688,9 @@ const ISTEPS = [
       <span class="cbadge bflurp" style="font-size:1.4em;padding:9px 20px;">Flurps</span>
       <p class="txt">These are called
         <strong style="color:#ca6f1e">FLURPS!</strong><br>
-        They are <strong>orange</strong> and <strong>bright</strong>.</p>`,
-    aud:"These are called Flurps! They are orange and bright."
+        They are <strong>orange</strong> and <strong>bright</strong>.</p>`
   },
-  {
-    title:'Meet the Zazzos!',
+  { title:'Meet the Zazzos!', audKey:'intro_zazzos',
     body:`
       <div style="display:flex;gap:18px;justify-content:center;flex-wrap:wrap;align-items:flex-end;">
         <img src="green.png"  class="char-img lg" onerror="this.style.opacity=0.15">
@@ -694,18 +700,15 @@ const ISTEPS = [
       <span class="cbadge bzazzo" style="font-size:1.4em;padding:9px 20px;">Zazzos</span>
       <p class="txt">These are called
         <strong style="color:#1e8449">ZAZZOS!</strong><br>
-        They are <strong>green</strong> and <strong>soft</strong>.</p>`,
-    aud:"These are called Zazzos! They are green and soft."
+        They are <strong>green</strong> and <strong>soft</strong>.</p>`
   },
-  {
-    title:`🎉 All in ${VILLAGE}!`,
+  { title:`🎉 All in ${VILLAGE}!`, audKey:'intro_ready',
     body:`
       <img src="title_card.png" class="title-img" alt="All together"
         onerror="this.style.display='none'">
       <p class="txt">Wugs, Flurps, and Zazzos all live in
         <strong>${VILLAGE}</strong>!<br>
-        Are you ready to meet some of them?</p>`,
-    aud:`Wugs, Flurps, and Zazzos all live in ${VILLAGE}! Are you ready to meet some of them?`
+        Are you ready to meet some of them?</p>`
   },
 ];
 
@@ -726,7 +729,7 @@ function showIntro(){
       <button class="rrb" onclick="reread()">🔊</button>
     </div>
   `);
-  say(st.aud);
+  say(st.audKey);
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -739,8 +742,6 @@ function beginMain(){
   G.tIdx   = 0;
   showBkIntro();
 }
-
-// ── Block intro — now includes boss definition ───────────────
 
 function showBkIntro(){
   const cfg = curCfg();
@@ -770,10 +771,7 @@ function showBkIntro(){
     <button class="rrb" onclick="reread()">🔊</button>
   `);
 
-  say(isC
-    ? `After each story I will ask you: who is that person closer to? ${CLOSE_DEF}`
-    : `After each story I will ask you: who is that person's boss? ${BOSS_DEF.replace('[Name]','that person')}`
-  );
+  say(isC ? 'block_close' : 'block_boss');
 }
 
 function nextTrial(){
@@ -789,17 +787,13 @@ function nextTrial(){
   G.curActionImg   = tr.actionImg;
   G.curPAImg       = pick(ORANGE_IMGS);
   G.curPBImg       = pick(GREEN_IMGS);
-
-  // ── PER-TRIAL ROLE RANDOMISATION ─────────────────────────
-  // Randomly decide whether orange=aRole or orange=bRole
-  G.curSwap = Math.random() < 0.5;
+  G.curSwap        = Math.random() < 0.5;
 
   showTrialChars();
 }
 
 // ═══════════════════════════════════════════════════════════
-//  PHASE 0 — Introduce the three characters
-//  Side chars animate individually during "like each other" lines
+//  PHASE 0 — Character introductions
 // ═══════════════════════════════════════════════════════════
 
 function showTrialChars(){
@@ -837,33 +831,16 @@ function showTrialChars(){
     </div>
   `);
 
-  // Full text for re-read button
-  _nar = `This is ${tr.tgt}! ` +
-    `${tr.tgt} has two friends: ${tr.pA} and ${tr.pB}. ` +
-    `${tr.tgt} and ${tr.pA} like each other a lot. ` +
-    `${tr.tgt} and ${tr.pB} like each other a lot.`;
-
-  // ── Animated narration sequence ──────────────────────────
-  speakThen(
-    `This is ${tr.tgt}! ${tr.tgt} has two friends: ${tr.pA} and ${tr.pB}.`,
-    ()=>{
-      setTimeout(()=>{
-        // pA shakes while saying "like each other"
-        speakWithAnim('side-a',
-          `${tr.tgt} and ${tr.pA} like each other a lot.`,
-          ()=>{
-            setTimeout(()=>{
-              // pB shakes while saying "like each other"
-              speakWithAnim('side-b',
-                `${tr.tgt} and ${tr.pB} like each other a lot.`,
-                ()=>{}
-              );
-            }, 250);
-          }
-        );
-      }, 200);
-    }
-  );
+  // Animated narration sequence using pre-recorded audio
+  speakThen(tr.key + '_intro', () => {
+    setTimeout(() => {
+      speakWithAnim('side-a', tr.key + '_likeA', () => {
+        setTimeout(() => {
+          speakWithAnim('side-b', tr.key + '_likeB', () => {});
+        }, 250);
+      });
+    }, 200);
+  });
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -873,7 +850,6 @@ function showTrialChars(){
 function showTrialAction(){
   const tr  = TRIALS[curVersion()][G.curT];
   const tn  = G.bIdx * 6 + G.tIdx + 1;
-  const storyTxt = tr.story(tr.tgt);
 
   render(`
     ${starMeterHTML()}
@@ -887,7 +863,7 @@ function showTrialAction(){
       alt="${tr.tgt} ${tr.beh}"
       onerror="this.style.opacity=0.15">
 
-    <p class="txt">${storyTxt}</p>
+    <p class="txt">${tr.story(tr.tgt)}</p>
 
     <div style="display:flex;gap:11px;align-items:center;">
       <button class="btn" onclick="showTrialSpeech()">
@@ -897,11 +873,11 @@ function showTrialAction(){
     </div>
   `);
 
-  say(storyTxt);
+  say(tr.key + '_action');
 }
 
 // ═══════════════════════════════════════════════════════════
-//  PHASE 2 — Speech + Question
+//  PHASE 2 — Speech bubbles + Question
 // ═══════════════════════════════════════════════════════════
 
 function showTrialSpeech(){
@@ -971,7 +947,6 @@ function showTrialSpeech(){
     </div>
   `);
 
-  // If speech already played, reveal everything immediately
   if(G.speechDone){
     setTimeout(()=>{
       ['bub-a','bub-b'].forEach(id=>{
@@ -984,20 +959,17 @@ function showTrialSpeech(){
     }, 50);
   }
 
-  say(`You asked ${tr.pA} and ${tr.pB} about it. Press the orange button to hear what they say.`);
+  say(tr.key + '_ask');
 }
 
-// ── triggerSpeech ────────────────────────────────────────────
+// ── triggerSpeech ─────────────────────────────────────────────
 
 function triggerSpeech(){
   const tr  = TRIALS[curVersion()][G.curT];
   const cfg = curCfg();
   const er  = effRoles();
 
-  const spA = mkSpeech(cfg.ep, er.rA, tr.tgt, tr.act);
-  const spB = mkSpeech(cfg.ep, er.rB, tr.tgt, tr.act);
-
-  window.speechSynthesis.cancel();
+  if(_currentAudio){ _currentAudio.pause(); }
 
   const btn  = document.getElementById('playBtn');
   const bubA = document.getElementById('bub-a');
@@ -1005,23 +977,22 @@ function triggerSpeech(){
 
   if(btn){ btn.textContent = '🔊 Playing...'; btn.disabled = true; }
 
-  // pA speaks + shakes
+  const keyA = speechKey(cfg.ep, er.rA, tr.key);
+  const keyB = speechKey(cfg.ep, er.rB, tr.key);
+
+  // pA speaks + animates
   if(bubA) bubA.classList.add('visible');
-  speakWithAnim('spk-a', spA, ()=>{
-    setTimeout(()=>{
-      // pB speaks + shakes
+  speakWithAnim('spk-a', keyA, () => {
+    setTimeout(() => {
+      // pB speaks + animates
       if(bubB) bubB.classList.add('visible');
-      speakWithAnim('spk-b', spB, ()=>{
+      speakWithAnim('spk-b', keyB, () => {
         G.speechDone = true;
         revealQuestion();
         if(btn){ btn.textContent = '🔊 Hear again'; btn.disabled = false; }
 
-        // Read question aloud
-        const isC = cfg.qType === 'close';
-        const q = isC
-          ? `Who is ${tr.tgt} closer to, ${tr.pA} or ${tr.pB}? ${CLOSE_DEF}`
-          : `Who do you think is ${tr.tgt}'s boss, ${tr.pA} or ${tr.pB}? ${BOSS_DEF.replace('[Name]',tr.tgt)}`;
-        setTimeout(()=>say(q), 600);
+        // Read full question aloud
+        setTimeout(() => say(questionKey(cfg.qType, tr.key)), 600);
       });
     }, 400);
   });
@@ -1047,7 +1018,6 @@ function recordResp(choice, el){
   const rt  = Date.now() - (G.tStart || Date.now());
   const ver = curVersion();
 
-  // Which character was chosen and what was their effective role
   const chosenName  = choice === 0 ? tr.pA  : tr.pB;
   const chosenGroup = choice === 0 ? tr.gA  : tr.gB;
   const chosenRole  = choice === 0 ? er.rA  : er.rB;
@@ -1069,10 +1039,8 @@ function recordResp(choice, el){
     blockCurrent:        bk,
     questionType:        cfg.qType,
     epistemic:           cfg.ep,
-    // original block-level roles
     blockRoleA:          cfg.aRole,
     blockRoleB:          cfg.bRole,
-    // effective roles after per-trial swap
     rolesSwapped:        G.curSwap,
     effectiveRoleA:      er.rA,
     effectiveRoleB:      er.rB,
@@ -1132,12 +1100,7 @@ function showStarEarned(){
       : ''}
   `);
 
-  say(isDone
-    ? "You earned a star! You finished all the stories! Amazing!"
-    : isHalf
-    ? "You earned a star! Halfway there! You are doing so well!"
-    : "You earned a star! Great job!"
-  );
+  say(isDone ? 'star_done' : isHalf ? 'star_halfway' : 'star_generic');
 
   if(isDone) setTimeout(()=>showEnd(), 2800);
 }
@@ -1175,7 +1138,7 @@ function showEnd(){
     </p>
     <button class="btn g" onclick="dlCSV()">💾 Save My Data</button>
   `);
-  say(`You did it! Thank you so much for visiting ${VILLAGE}! You were absolutely amazing!`);
+  say('end');
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -1210,15 +1173,11 @@ function dlCSV(){
 }
 
 function skipEnd(){
-  window.speechSynthesis && window.speechSynthesis.cancel();
+  if(_currentAudio){ _currentAudio.pause(); }
   showEnd();
 }
 
 // ── Init ─────────────────────────────────────────────────────
-
-if(window.speechSynthesis){
-  window.speechSynthesis.onvoiceschanged = ()=>window.speechSynthesis.getVoices();
-}
 showWelcome();
 </script>
 </body>
