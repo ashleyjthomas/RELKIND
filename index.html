@@ -4,13 +4,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>Twizzle Town</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
     body{
-      font-family:'Comic Sans MS','Chalkboard SE',cursive;
+      font-family:'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
       background:linear-gradient(135deg,#87ceeb 0%,#a8e6cf 100%);
       min-height:100vh;display:flex;justify-content:center;
       align-items:flex-start;padding:12px;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
     }
     #gc{
       background:#fff;border-radius:24px;padding:22px;
@@ -25,7 +30,6 @@
       animation:fadeIn .3s ease;
     }
     @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-
     @keyframes speakBounce{
       0%,100%{transform:translateY(0)   rotate(0deg)  scale(1)}
       20%    {transform:translateY(-12px) rotate(-5deg) scale(1.05)}
@@ -33,93 +37,89 @@
       80%    {transform:translateY(-4px)  rotate(0deg)  scale(1.02)}
     }
     .speaking{animation:speakBounce 0.65s ease-in-out infinite}
-
     @keyframes starPop{
       0%  {transform:scale(0) rotate(-20deg);opacity:0}
       60% {transform:scale(1.5) rotate(10deg);opacity:1}
       100%{transform:scale(1)  rotate(0deg); opacity:1}
     }
-    .star-pop{animation:starPop .5s ease-out forwards}
-
-    h1{font-size:2em;color:#e74c3c;text-align:center;text-shadow:2px 2px #ffeaa7}
-    h2{font-size:1.45em;color:#2c3e50;text-align:center}
-    .txt{font-size:1.1em;line-height:1.65;color:#2c3e50;text-align:center;max-width:600px}
-
+    .star-pop{animation:starPop .5s ease-out forwards;color:#f39c12;line-height:1}
+    h1{font-size:2.1em;color:#e74c3c;text-align:center;font-weight:800;letter-spacing:-0.5px}
+    h2{font-size:1.55em;color:#2c3e50;text-align:center;font-weight:700}
+    .txt{font-size:1.1em;line-height:1.65;color:#2c3e50;text-align:center;max-width:600px;font-weight:600}
     .dirs{
       font-size:1.05em;color:#34495e;text-align:center;
       background:#eaf4ff;border-radius:14px;padding:11px 18px;
       width:100%;max-width:620px;
       border-left:5px solid #3498db;line-height:1.55;
+      font-weight:600;
     }
-
     .btn{
       background:linear-gradient(145deg,#3498db,#2980b9);color:#fff;
       border:none;padding:13px 26px;border-radius:50px;
-      font-size:1.15em;font-family:inherit;cursor:pointer;
+      font-size:1.15em;font-family:inherit;font-weight:700;cursor:pointer;
       box-shadow:0 4px 12px rgba(52,152,219,.4);
       transition:transform .1s,opacity .2s;touch-action:manipulation;
+      letter-spacing:.2px;
     }
     .btn:active{transform:scale(.97)}
     .btn.g {background:linear-gradient(145deg,#2ecc71,#27ae60)}
     .btn.or{
       background:linear-gradient(145deg,#f39c12,#e67e22);
       box-shadow:0 4px 14px rgba(243,156,18,.5);
-      font-size:1.3em;padding:16px 36px;
+      font-size:1.25em;padding:16px 36px;
     }
     .btn.sl{background:linear-gradient(145deg,#95a5a6,#7f8c8d)}
     .btn.sm{padding:8px 16px;font-size:.95em}
     .btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
-
     .age-row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
     .abtn{
       background:#ecf0f1;color:#2c3e50;border:3px solid transparent;
       padding:11px 18px;border-radius:14px;font-size:1.2em;
-      font-family:inherit;cursor:pointer;transition:all .2s;touch-action:manipulation;
+      font-family:inherit;font-weight:700;cursor:pointer;
+      transition:all .2s;touch-action:manipulation;
     }
     .abtn.sel{background:#3498db;color:#fff;border-color:#2980b9}
     .tinput{
       font-size:1.15em;padding:11px 18px;
       border:3px solid #3498db;border-radius:50px;
-      outline:none;font-family:inherit;
+      outline:none;font-family:inherit;font-weight:600;
       width:100%;max-width:270px;text-align:center;
     }
-
     .star-meter{
-      display:flex;gap:7px;align-items:center;justify-content:center;
-      padding:8px 18px;background:#fff9e6;border-radius:22px;
+      display:flex;gap:10px;align-items:center;justify-content:center;
+      padding:10px 22px;background:#fff9e6;border-radius:22px;
       border:2px solid #f39c12;
     }
-    .star-slot{font-size:1.9em;transition:transform .3s}
+    .star-slot{
+      width:28px;height:28px;display:inline-flex;
+      align-items:center;justify-content:center;
+      transition:transform .3s;
+    }
+    .star-slot svg{width:100%;height:100%;display:block}
     .star-slot.earned{color:#f39c12}
-    .star-slot.empty {color:#ddd}
-    .prog{text-align:center;font-size:.88em;color:#aaa;margin-top:-4px}
-
+    .star-slot.empty {color:#e0e0e0}
+    .prog{text-align:center;font-size:.88em;color:#aaa;margin-top:-4px;font-weight:600}
     .char-img{object-fit:contain;border-radius:12px;display:block}
     .char-img.sm {width:80px; height:80px}
     .char-img.md {width:120px;height:120px}
     .char-img.lg {width:170px;height:170px}
     .char-img.xl {width:230px;height:230px}
-
     .grp-img  {width:100%;max-width:420px;border-radius:16px;object-fit:contain}
     .title-img{width:100%;max-width:380px;border-radius:16px;object-fit:contain}
-
     .cw{display:flex;flex-direction:column;align-items:center;gap:6px}
-    .clbl{font-size:.95em;font-weight:700;color:#2c3e50;text-align:center}
-    .cbadge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.78em;font-weight:700}
+    .clbl{font-size:.98em;font-weight:700;color:#2c3e50;text-align:center}
+    .cbadge{display:inline-block;padding:3px 11px;border-radius:20px;font-size:.78em;font-weight:700;letter-spacing:.3px}
     .bwug  {background:#d6eaf8;color:#2471a3}
     .bflurp{background:#fdebd0;color:#ca6f1e}
     .bzazzo{background:#d5f5e3;color:#1e8449}
-
     .char-row{
       display:flex;align-items:flex-end;gap:24px;
       justify-content:center;flex-wrap:wrap;width:100%;
     }
-
     .scene-img{
       width:100%;max-width:460px;border-radius:16px;
       object-fit:contain;border:3px solid #90caf9;
     }
-
     .speech-section{
       width:100%;max-width:640px;
       display:flex;flex-direction:column;gap:20px;
@@ -129,13 +129,12 @@
     .spbub{
       background:#fffde7;border:2.5px solid #ffc107;
       border-radius:16px;padding:13px 17px;
-      font-size:1.08em;color:#2c3e50;flex:1;
-      line-height:1.55;
+      font-size:1.05em;color:#2c3e50;flex:1;
+      line-height:1.55;font-weight:600;
       opacity:0;transform:translateX(14px);
       transition:opacity .45s ease, transform .45s ease;
     }
     .spbub.visible{opacity:1;transform:translateX(0)}
-
     .qbox{
       background:#f0f8ff;border:3px solid #3498db;
       border-radius:16px;padding:15px 20px;
@@ -146,8 +145,7 @@
     .qbox.boss{background:#fef9e7;border-color:#e67e22}
     .qbox.show{opacity:1;transform:translateY(0)}
     .qtxt{font-size:1.22em;color:#2c3e50;font-weight:700}
-    .qdef{font-size:.9em;color:#7f8c8d;margin-top:7px;line-height:1.5;font-style:italic}
-
+    .qdef{font-size:.92em;color:#7f8c8d;margin-top:7px;line-height:1.5;font-style:italic;font-weight:500}
     .choices{
       display:flex;gap:28px;justify-content:center;flex-wrap:wrap;
       opacity:0;transform:translateY(8px);
@@ -159,47 +157,48 @@
       border-radius:18px;padding:16px 20px;
       cursor:pointer;display:flex;flex-direction:column;
       align-items:center;gap:8px;
-      transition:all .15s;min-width:150px;
+      transition:all .15s;min-width:150px;font-family:inherit;
       touch-action:manipulation;-webkit-tap-highlight-color:transparent;
     }
     .ccard:hover,.ccard:active{border-color:#3498db;background:#eaf4ff;transform:scale(1.05)}
     .ccard.chosen{border-color:#2ecc71;background:#eafaf1}
     .ccard.lock{pointer-events:none}
     .cname{font-size:1.15em;font-weight:700;color:#2c3e50}
-
     .rrb{
       background:#95a5a6;color:#fff;border:none;
-      border-radius:50%;width:44px;height:44px;
-      font-size:1.2em;cursor:pointer;flex-shrink:0;
-      display:flex;align-items:center;justify-content:center;
+      border-radius:50px;padding:8px 18px;font-size:.92em;
+      font-family:inherit;font-weight:700;cursor:pointer;
       touch-action:manipulation;
     }
-
     .defbox{
       background:#fef9e7;border:2px dashed #f39c12;
       border-radius:14px;padding:12px 18px;
       font-size:.98em;color:#7f8c8d;
       text-align:center;max-width:560px;
-      font-style:italic;line-height:1.55;
+      font-style:italic;line-height:1.55;font-weight:500;
     }
-
+    .big-celebrate{
+      width:90px;height:90px;display:flex;align-items:center;justify-content:center;
+      color:#f39c12;
+    }
+    .big-celebrate svg{width:100%;height:100%}
     #rbar{
       position:fixed;top:6px;right:6px;
       background:rgba(20,20,20,.88);color:#fff;
       padding:7px 11px;border-radius:10px;
-      font-family:monospace;font-size:.72em;
+      font-family:'SF Mono',Menlo,Consolas,monospace;font-size:.72em;
       z-index:9999;max-width:230px;
     }
     #rbar button{
       background:#c0392b;color:#fff;border:none;
       padding:4px 7px;border-radius:6px;cursor:pointer;
       margin-top:4px;display:block;width:100%;font-size:.88em;
+      font-family:inherit;
     }
     #rinfo{margin-top:5px;font-size:.73em;opacity:.82;line-height:1.45}
-
     @media(max-width:480px){
       #gc{padding:14px 10px}
-      h1{font-size:1.65em}
+      h1{font-size:1.75em}
       .ccard{min-width:120px;padding:12px 14px}
       .choices{gap:16px}
       .char-img.xl{width:180px;height:180px}
@@ -208,45 +207,46 @@
   </style>
 </head>
 <body>
-
 <div id="rbar">
-  🔬 Researcher
-  <button onclick="dlCSV()">💾 Download CSV</button>
-  <button onclick="skipEnd()">⏭ Skip to End</button>
+  Researcher
+  <button onclick="dlCSV()">Download CSV</button>
+  <button onclick="skipEnd()">Skip to End</button>
   <div id="rinfo">No session yet</div>
 </div>
-
 <div id="gc"></div>
-
 <script>
 // ═══════════════════════════════════════════════════════════
-//  TWIZZLE TOWN — Child Study Game v7
+//  TWIZZLE TOWN — Child Study Game v9
 //  ashleyjthomas/RELKIND
-//  All audio uses pre-recorded MP3s from repo root.
+//  - Nunito font
+//  - All emojis removed; SVG stars and clean typography only
 // ═══════════════════════════════════════════════════════════
-
 const VILLAGE   = "Twizzle Town";
 const CLOSE_DEF = "That means that they love each other more, tell each other more secrets, and give each other hugs.";
 const BOSS_DEF  = "That means they are in charge — they tell [Name] what to do, and [Name] listens.";
 
+// ── MID-GAME VIDEO ────────────────────────────────────────────
+const MID_VIDEO = {
+  type: 'local',
+  src:  'mixkit-three-funny-multicoloured-men-dancing-to-upbeat-music-44877-hd-ready.mp4'
+};
+
+// ── Reusable SVG star (filled — currentColor) ────────────────
+const STAR_SVG =
+  '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">' +
+  '<path d="M12 2.1l2.95 5.98 6.6.96-4.78 4.66 1.13 6.58L12 17.18l-5.9 3.1 1.13-6.58L2.45 9.04l6.6-.96L12 2.1z"/>' +
+  '</svg>';
+const STAR_SVG_OUTLINE =
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true">' +
+  '<path d="M12 2.6l2.95 5.98 6.6.96-4.78 4.66 1.13 6.58L12 17.68l-5.9 3.1 1.13-6.58L2.45 9.54l6.6-.96L12 2.6z"/>' +
+  '</svg>';
+
 // ═══════════════════════════════════════════════════════════
 //  AUDIO ENGINE
-//  All MP3s live in the repo root alongside index.html.
-//  Naming convention:
-//    UI          : welcome.mp3, setup.mp3, block_close.mp3 ...
-//    Per-char    : {key}_intro.mp3, {key}_action.mp3,
-//                  {key}_likeA.mp3, {key}_likeB.mp3,
-//                  {key}_ask.mp3,   {key}_q_close.mp3,
-//                  {key}_q_boss.mp3,
-//                  {key}_hmm_group.mp3, {key}_hmm_ind.mp3,
-//                  {key}_yes_group.mp3, {key}_yes_ind.mp3
 // ═══════════════════════════════════════════════════════════
-
-let _aud     = null;   // currently playing HTMLAudioElement
-let _lastKey = null;   // for reread()
+let _aud     = null;
+let _lastKey = null;
 let _audioUnlocked = false;
-
-// Unlock audio context on first user tap (required by mobile browsers)
 function _unlockAudio() {
   if (_audioUnlocked) return;
   _audioUnlocked = true;
@@ -256,12 +256,7 @@ function _unlockAudio() {
 document.addEventListener('click',  _unlockAudio, {once:false});
 document.addEventListener('touchend', _unlockAudio, {once:false});
 
-/**
- * Core player. key = filename without .mp3 extension.
- * onEnd is called when audio finishes OR if it fails.
- */
 function _play(key, onEnd) {
-  // Stop whatever is playing
   if (_aud) {
     _aud.pause();
     _aud.onended = null;
@@ -269,53 +264,33 @@ function _play(key, onEnd) {
     _aud = null;
   }
   if (!key) { if (onEnd) onEnd(); return; }
-
   _lastKey = key;
   const a  = new Audio(key + '.mp3');
   _aud     = a;
-
   const done = function() {
-    // Prevent double-fire
     a.onended = null;
     a.onerror = null;
     if (_aud === a) _aud = null;
     if (onEnd) onEnd();
   };
-
   a.onended = done;
   a.onerror = function() {
     console.warn('[Audio] missing or failed:', key + '.mp3');
     done();
   };
-
   const p = a.play();
   if (p && typeof p.catch === 'function') {
     p.catch(function(e) {
       console.warn('[Audio] play() blocked:', e.message, key + '.mp3');
-      // Don't call done() here — let onended/onerror handle it
-      // But if no playback starts at all, onerror won't fire on Safari,
-      // so we set a generous fallback timer
       setTimeout(function() {
         if (_aud === a) done();
       }, 300);
     });
   }
 }
-
-// ── Public API ──────────────────────────────────────────────
-
-/** Play and forget (no callback). */
-function say(key) {
-  _play(key, null);
-}
-
-/** Play, then call cb when done. */
-function speakThen(key, cb) {
-  _play(key, cb);
-}
-
-/** Play while animating imgId; call cb when done. */
-function speakWithAnim(imgId, key, cb) {
+function say(key)                       { _play(key, null); }
+function speakThen(key, cb)             { _play(key, cb);   }
+function speakWithAnim(imgId, key, cb)  {
   const img = document.getElementById(imgId);
   if (img) img.classList.add('speaking');
   _play(key, function() {
@@ -323,21 +298,12 @@ function speakWithAnim(imgId, key, cb) {
     if (cb) cb();
   });
 }
+function reread() { if (_lastKey) _play(_lastKey, null); }
 
-/** Replay last clip. */
-function reread() {
-  if (_lastKey) _play(_lastKey, null);
-}
-
-// ── Key helpers ─────────────────────────────────────────────
-
-// Returns e.g. 'rowan_hmm_group', 'rowan_yes_ind'
 function speechKey(ep, role, trKey) {
   const r = (role === 'group') ? 'group' : 'ind';
   return trKey + '_' + ep + '_' + r;
 }
-
-// Returns e.g. 'rowan_q_close', 'rowan_q_boss'
 function questionKey(qType, trKey) {
   return trKey + '_q_' + qType;
 }
@@ -345,13 +311,11 @@ function questionKey(qType, trKey) {
 // ═══════════════════════════════════════════════════════════
 //  IMAGE POOLS
 // ═══════════════════════════════════════════════════════════
-
 const ORANGE_IMGS = [
   'orange2.png','orange3.png','orange4.png','orange6.png',
   'orange7.png','orange8.png','orange9.png','orange10.png',
   'orange11.png','orange13.png','orange14.png','orange15.png'
 ];
-
 const GREEN_IMGS = [
   'green.png','green1.png','green2.png','green6.png',
   'green7.png','green9.png','green10.png','green11.png','green12.png'
@@ -360,7 +324,6 @@ const GREEN_IMGS = [
 // ═══════════════════════════════════════════════════════════
 //  UTILITIES
 // ═══════════════════════════════════════════════════════════
-
 function shuffle(a){
   const b=a.slice();
   for(let i=b.length-1;i>0;i--){
@@ -370,13 +333,11 @@ function shuffle(a){
   return b;
 }
 function pick(a){ return a[Math.floor(Math.random()*a.length)]; }
-
 function badge(g){
   const cl={wug:'bwug',flurp:'bflurp',zazzo:'bzazzo'};
   const lb={wug:'Wug',flurp:'Flurp',zazzo:'Zazzo'};
   return `<span class="cbadge ${cl[g]}">${lb[g]}</span>`;
 }
-
 function cimg(src, cls, id){
   const idStr = id ? `id="${id}"` : '';
   return `<img src="${src}" ${idStr} class="char-img ${cls||''}"
@@ -386,7 +347,6 @@ function cimg(src, cls, id){
 // ═══════════════════════════════════════════════════════════
 //  BLOCK CONFIGS
 // ═══════════════════════════════════════════════════════════
-
 const BCFG = {
   hmm1_close:{ep:'hmm',aRole:'group',      bRole:'individual',qType:'close'},
   hmm2_close:{ep:'hmm',aRole:'individual', bRole:'group',     qType:'close'},
@@ -397,7 +357,6 @@ const BCFG = {
   yes1_boss: {ep:'yes',aRole:'group',      bRole:'individual',qType:'boss'},
   yes2_boss: {ep:'yes',aRole:'individual', bRole:'group',     qType:'boss'},
 };
-
 const BSUFFIX = {
   hmm1_close:'hmm1c', hmm2_close:'hmm2c',
   yes1_close:'yes1c', yes2_close:'yes2c',
@@ -407,9 +366,7 @@ const BSUFFIX = {
 
 // ═══════════════════════════════════════════════════════════
 //  TRIAL DATA
-//  key = character name (used to build all audio filenames)
 // ═══════════════════════════════════════════════════════════
-
 const TRIALS = {
   A:[
     {
@@ -551,8 +508,6 @@ const TRIALS = {
   ]
 };
 
-// ── Speech text (CSV only — audio plays from MP3s) ────────────
-
 function mkSpeech(ep, role, tgt, act){
   if(ep==='hmm'){
     return role==='group'
@@ -565,8 +520,6 @@ function mkSpeech(ep, role, tgt, act){
   }
 }
 
-// ── Effective roles (per-trial swap) ─────────────────────────
-
 function effRoles(){
   const cfg = curCfg();
   return {
@@ -578,7 +531,6 @@ function effRoles(){
 // ═══════════════════════════════════════════════════════════
 //  GAME STATE
 // ═══════════════════════════════════════════════════════════
-
 const G = {
   pid:'', age:null, t0:null,
   bossB:null, closeB:null,
@@ -594,30 +546,26 @@ const G = {
   iStep:0
 };
 
-// ── Helpers ───────────────────────────────────────────────────
-
 const gc = document.getElementById('gc');
 function render(h){ gc.innerHTML = `<div class="screen">${h}</div>`; }
-
 function curB()      { return G.order[G.bIdx]==='boss' ? G.bossB : G.closeB; }
 function curCfg()    { return BCFG[curB()]; }
 function curVersion(){ return G.versionMap[G.order[G.bIdx]]; }
-
 function starMeterHTML(){
   let h = '<div class="star-meter">';
-  for(let i=0;i<6;i++)
-    h += `<span class="star-slot ${i<G.stars?'earned':'empty'}">${i<G.stars?'⭐':'☆'}</span>`;
+  for(let i=0;i<6;i++){
+    const earned = i < G.stars;
+    h += `<span class="star-slot ${earned?'earned':'empty'}">${earned?STAR_SVG:STAR_SVG_OUTLINE}</span>`;
+  }
   return h + '</div>';
 }
 
 // ═══════════════════════════════════════════════════════════
 //  WELCOME
-//  Audio: welcome.mp3
 // ═══════════════════════════════════════════════════════════
-
 function showWelcome(){
   render(`
-    <h1>🏘️ ${VILLAGE}! 🏘️</h1>
+    <h1>${VILLAGE}</h1>
     <img src="title_card.png" class="title-img" alt="${VILLAGE}"
       onerror="this.style.display='none'">
     <p class="txt" style="font-size:1.15em;">
@@ -625,16 +573,13 @@ function showWelcome(){
       Today we're going to visit <strong>${VILLAGE}</strong><br>
       and meet some new friends!
     </p>
-    <button class="btn g" onclick="_unlockAudio();showSetup()">Let's go! 🚀</button>
+    <button class="btn g" onclick="_unlockAudio();showSetup()">Let's go</button>
   `);
-  // Welcome plays after first click due to autoplay policy — that's fine
 }
 
 // ═══════════════════════════════════════════════════════════
 //  SETUP
-//  Audio: setup.mp3
 // ═══════════════════════════════════════════════════════════
-
 function showSetup(){
   if(_aud){ _aud.pause(); }
   G.selAge = null;
@@ -649,12 +594,11 @@ function showSetup(){
       ).join('')}
     </div>
     <button class="btn g" id="goBtn" style="opacity:.5" disabled
-      onclick="launchGame()">Start! 🌟</button>
+      onclick="launchGame()">Start</button>
   `);
   document.getElementById('pidIn').addEventListener('input', checkReady);
   say('setup');
 }
-
 function pickAge(a){
   G.selAge = a;
   [4,5,6,7,8].forEach(n=>{
@@ -663,7 +607,6 @@ function pickAge(a){
   });
   checkReady();
 }
-
 function checkReady(){
   const pid = document.getElementById('pidIn');
   const go  = document.getElementById('goBtn');
@@ -672,42 +615,34 @@ function checkReady(){
   go.disabled = !ok;
   go.style.opacity = ok ? '1' : '.5';
 }
-
 function launchGame(){
   const pid = document.getElementById('pidIn');
   if(!pid || !pid.value.trim()) return;
   G.pid  = pid.value.trim();
   G.age  = G.selAge;
   G.t0   = new Date().toISOString();
-
   G.bossB  = pick(['hmm1_boss','hmm2_boss','yes1_boss','yes2_boss']);
   G.closeB = pick(['hmm1_close','hmm2_close','yes1_close','yes2_close']);
   G.order  = Math.random() < .5 ? ['boss','close'] : ['close','boss'];
-
   const firstVer  = Math.random() < .5 ? 'A' : 'B';
   const secondVer = firstVer === 'A' ? 'B' : 'A';
   G.versionMap[G.order[0]] = firstVer;
   G.versionMap[G.order[1]] = secondVer;
-
   document.getElementById('rinfo').innerHTML =
     `PID: ${G.pid} | Age: ${G.age}<br>`+
-    `Order: ${G.order.join(' → ')}<br>`+
+    `Order: ${G.order.join(' &rarr; ')}<br>`+
     `${G.order[0]}: ${G.order[0]==='boss'?G.bossB:G.closeB} (Ver ${firstVer})<br>`+
     `${G.order[1]}: ${G.order[1]==='boss'?G.bossB:G.closeB} (Ver ${secondVer})`;
-
   G.iStep = 0;
   showIntro();
 }
 
 // ═══════════════════════════════════════════════════════════
 //  INTRO STEPS
-//  Audio keys: intro_village, intro_wugs, intro_flurps,
-//              intro_zazzos, intro_ready
 // ═══════════════════════════════════════════════════════════
-
 const ISTEPS = [
   {
-    title: `🌍 Welcome to ${VILLAGE}!`,
+    title: `Welcome to ${VILLAGE}!`,
     audKey: 'intro_village',
     body: `
       <img src="title_card.png" class="title-img" alt="${VILLAGE}"
@@ -758,7 +693,7 @@ const ISTEPS = [
         They are <strong>green</strong> and <strong>soft</strong>.</p>`
   },
   {
-    title: `🎉 All in ${VILLAGE}!`,
+    title: `All in ${VILLAGE}!`,
     audKey: 'intro_ready',
     body: `
       <img src="title_card.png" class="title-img" alt="All together"
@@ -768,7 +703,6 @@ const ISTEPS = [
         Are you ready to meet some of them?</p>`
   },
 ];
-
 function showIntro(){
   const st   = ISTEPS[G.iStep];
   const last = G.iStep === ISTEPS.length - 1;
@@ -777,13 +711,13 @@ function showIntro(){
     ${st.body}
     <div style="display:flex;gap:11px;align-items:center;">
       ${G.iStep > 0
-        ?`<button class="btn sl sm" onclick="G.iStep--;showIntro()">← Back</button>`
+        ?`<button class="btn sl sm" onclick="G.iStep--;showIntro()">Back</button>`
         :''}
       <button class="btn ${last?'g':''}"
         onclick="${last ? 'beginMain()' : 'G.iStep++;showIntro()'}">
-        ${last ? 'Play! 🎮' : 'Next →'}
+        ${last ? 'Play' : 'Next'}
       </button>
-      <button class="rrb" onclick="reread()" title="Replay">🔊</button>
+      <button class="rrb" onclick="reread()" title="Replay">Replay</button>
     </div>
   `);
   say(st.audKey);
@@ -792,7 +726,6 @@ function showIntro(){
 // ═══════════════════════════════════════════════════════════
 //  MAIN GAME
 // ═══════════════════════════════════════════════════════════
-
 function beginMain(){
   G.bIdx   = 0;
   G.tOrder = shuffle([0,1,2,3,4,5]);
@@ -800,16 +733,11 @@ function beginMain(){
   showBkIntro();
 }
 
-// ── Block intro ───────────────────────────────────────────────
-//  Audio: block_close.mp3 or block_boss.mp3
-
 function showBkIntro(){
   const cfg = curCfg();
   const isC = cfg.qType === 'close';
   const ver = curVersion();
-
   render(`
-    <div style="font-size:3.5em;">${isC ? '✨' : '👑'}</div>
     <h2>${isC ? 'A question about friends!' : 'A question about the boss!'}</h2>
     ${isC ? `
       <p class="txt">After each story I will ask:<br><br>
@@ -818,16 +746,14 @@ function showBkIntro(){
     ` : `
       <p class="txt">After each story I will ask:<br><br>
         <strong>"Who is [Name]'s boss?"</strong></p>
-      <div class="defbox">${BOSS_DEF}</div>
+      <div class="defbox">${BOSS_DEF.replace(/\[Name\]/g, 'the character')}</div>
     `}
     <p class="txt" style="font-size:.88em;color:#aaa;">
       Block: ${isC ? 'Closer' : 'Boss'} &nbsp;|&nbsp; Character set: ${ver}
     </p>
-    <button class="btn g" onclick="nextTrial()">Let's start! 🚀</button>
-    <button class="rrb" onclick="reread()">🔊</button>
+    <button class="btn g" onclick="nextTrial()">Let's start</button>
+    <button class="rrb" onclick="reread()">Replay</button>
   `);
-
-  // block_close.mp3 or block_boss.mp3
   say(isC ? 'block_close' : 'block_boss');
 }
 
@@ -835,39 +761,28 @@ function nextTrial(){
   G.speechDone = false;
   G.locked     = false;
   if(G.tIdx >= 6){ advBlock(); return; }
-
   G.curT = G.tOrder[G.tIdx];
   const tr = TRIALS[curVersion()][G.curT];
-
   G.curPortraitImg = tr.portraitImg;
   G.curActionImg   = tr.actionImg;
   G.curPAImg       = pick(ORANGE_IMGS);
   G.curPBImg       = pick(GREEN_IMGS);
   G.curSwap        = Math.random() < 0.5;
-
   showTrialChars();
 }
 
 // ═══════════════════════════════════════════════════════════
 //  PHASE 0 — Character introduction
-//  Audio sequence:
-//    {key}_intro.mp3  → "This is Rowan! Rowan has two friends..."
-//    {key}_likeA.mp3  → "{tgt} and {pA} like each other a lot."  (pA bounces)
-//    {key}_likeB.mp3  → "{tgt} and {pB} like each other a lot."  (pB bounces)
 // ═══════════════════════════════════════════════════════════
-
 function showTrialChars(){
   const tr = TRIALS[curVersion()][G.curT];
   const tn = G.bIdx * 6 + G.tIdx + 1;
-
   render(`
     ${starMeterHTML()}
     <p class="prog">Story ${tn} of 12</p>
-
     <div class="dirs">
       Meet <strong>${tr.tgt}</strong> and their two friends!
     </div>
-
     <div class="char-row">
       <div class="cw">
         ${cimg(G.curPAImg, 'lg', 'side-a')}
@@ -882,16 +797,13 @@ function showTrialChars(){
         <div class="clbl">${tr.pB}</div>${badge(tr.gB)}
       </div>
     </div>
-
     <div style="display:flex;gap:11px;align-items:center;margin-top:4px;">
       <button class="btn" onclick="showTrialAction()">
-        What happened? 👀
+        What happened?
       </button>
-      <button class="rrb" onclick="reread()">🔊</button>
+      <button class="rrb" onclick="reread()">Replay</button>
     </div>
   `);
-
-  // Play: intro → then pA bounces with likeA → then pB bounces with likeB
   speakThen(tr.key + '_intro', function() {
     setTimeout(function() {
       speakWithAnim('side-a', tr.key + '_likeA', function() {
@@ -905,73 +817,55 @@ function showTrialChars(){
 
 // ═══════════════════════════════════════════════════════════
 //  PHASE 1 — Action image
-//  Audio: {key}_action.mp3
 // ═══════════════════════════════════════════════════════════
-
 function showTrialAction(){
   const tr = TRIALS[curVersion()][G.curT];
   const tn = G.bIdx * 6 + G.tIdx + 1;
-
   render(`
     ${starMeterHTML()}
     <p class="prog">Story ${tn} of 12</p>
-
     <div class="dirs">
       Look what <strong>${tr.tgt}</strong> is doing!
     </div>
-
     <img src="${G.curActionImg}" class="scene-img"
       alt="${tr.tgt} ${tr.beh}"
       onerror="this.style.opacity=0.15">
-
     <p class="txt">${tr.story(tr.tgt)}</p>
-
     <div style="display:flex;gap:11px;align-items:center;">
       <button class="btn" onclick="showTrialSpeech()">
-        Ask the friends! 👂
+        Ask the friends
       </button>
-      <button class="rrb" onclick="reread()">🔊</button>
+      <button class="rrb" onclick="reread()">Replay</button>
     </div>
   `);
-
-  // e.g. rowan_action.mp3
   say(tr.key + '_action');
 }
 
 // ═══════════════════════════════════════════════════════════
 //  PHASE 2 — Speech bubbles + Question
-//  Audio: {key}_ask.mp3 (directions)
-//         then orange button triggers speech playback
 // ═══════════════════════════════════════════════════════════
-
 function showTrialSpeech(){
   const tr  = TRIALS[curVersion()][G.curT];
   const cfg = curCfg();
   const tn  = G.bIdx * 6 + G.tIdx + 1;
   const isC = cfg.qType === 'close';
   const er  = effRoles();
-
   const spA = mkSpeech(cfg.ep, er.rA, tr.tgt, tr.act);
   const spB = mkSpeech(cfg.ep, er.rB, tr.tgt, tr.act);
-
   const qTxt   = isC
     ? `Who is <strong>${tr.tgt}</strong> closer to?`
     : `Who do you think is <strong>${tr.tgt}'s boss</strong>?`;
-  const defTxt = isC ? CLOSE_DEF : BOSS_DEF.replace('[Name]', tr.tgt);
-
+  const defTxt = isC ? CLOSE_DEF : BOSS_DEF.replace(/\[Name\]/g, tr.tgt);
   G.tStart = Date.now();
-
   render(`
     ${starMeterHTML()}
     <p class="prog">Story ${tn} of 12</p>
-
     <div class="dirs">
       You asked <strong>${tr.pA}</strong>
       and <strong>${tr.pB}</strong> about it.<br>
       Press the <strong style="color:#e67e22;">orange button</strong>
       to hear what they say!
     </div>
-
     <div class="speech-section">
       <div class="speech-row">
         <div class="sp-char cw">
@@ -988,16 +882,13 @@ function showTrialSpeech(){
         <div id="bub-b" class="spbub">"${spB}"</div>
       </div>
     </div>
-
     <button id="playBtn" class="btn or" onclick="triggerSpeech()">
-      🔊 Hear what they say!
+      Hear what they say
     </button>
-
     <div id="qbox" class="qbox${isC ? '' : ' boss'}">
-      <div class="qtxt">${isC ? '✨' : '👑'} ${qTxt}</div>
+      <div class="qtxt">${qTxt}</div>
       <div class="qdef">${defTxt}</div>
     </div>
-
     <div id="choices" class="choices">
       <button class="ccard" onclick="recordResp(0,this)">
         ${cimg(G.curPAImg, 'md')}
@@ -1009,8 +900,6 @@ function showTrialSpeech(){
       </button>
     </div>
   `);
-
-  // If speeches were already played (revisit), reveal immediately
   if(G.speechDone){
     setTimeout(function(){
       ['bub-a','bub-b'].forEach(function(id){
@@ -1019,62 +908,38 @@ function showTrialSpeech(){
       });
       revealQuestion();
       const btn = document.getElementById('playBtn');
-      if(btn) btn.textContent = '🔊 Hear again';
+      if(btn) btn.textContent = 'Hear again';
     }, 50);
   }
-
-  // e.g. rowan_ask.mp3  ("You asked Emery and Jules...")
   say(tr.key + '_ask');
 }
-
-// ── Trigger speech playback ───────────────────────────────────
-//  Audio:
-//    pA: {key}_{ep}_{group|ind}.mp3   e.g. rowan_hmm_group.mp3
-//    pB: {key}_{ep}_{group|ind}.mp3   e.g. rowan_hmm_ind.mp3
-//  Then: {key}_q_{close|boss}.mp3     e.g. rowan_q_close.mp3
 
 function triggerSpeech(){
   const tr  = TRIALS[curVersion()][G.curT];
   const cfg = curCfg();
   const er  = effRoles();
-
   if(_aud){ _aud.pause(); }
-
   const btn  = document.getElementById('playBtn');
   const bubA = document.getElementById('bub-a');
   const bubB = document.getElementById('bub-b');
-
-  if(btn){ btn.textContent = '🔊 Playing...'; btn.disabled = true; }
-
-  // e.g. 'rowan_hmm_group', 'rowan_hmm_ind'
+  if(btn){ btn.textContent = 'Playing...'; btn.disabled = true; }
   const keyA = speechKey(cfg.ep, er.rA, tr.key);
   const keyB = speechKey(cfg.ep, er.rB, tr.key);
-
-  // Show pA bubble and animate while speaking
   if(bubA) bubA.classList.add('visible');
   speakWithAnim('spk-a', keyA, function() {
-
     setTimeout(function() {
-      // Show pB bubble and animate while speaking
       if(bubB) bubB.classList.add('visible');
       speakWithAnim('spk-b', keyB, function() {
-
         G.speechDone = true;
         revealQuestion();
-        if(btn){ btn.textContent = '🔊 Hear again'; btn.disabled = false; }
-
-        // Play the question audio after a short pause
-        // e.g. rowan_q_close.mp3
+        if(btn){ btn.textContent = 'Hear again'; btn.disabled = false; }
         setTimeout(function(){
           say(questionKey(cfg.qType, tr.key));
         }, 600);
-
       });
     }, 400);
-
   });
 }
-
 function revealQuestion(){
   const qbox    = document.getElementById('qbox');
   const choices = document.getElementById('choices');
@@ -1085,27 +950,22 @@ function revealQuestion(){
 // ═══════════════════════════════════════════════════════════
 //  RESPONSE RECORDING
 // ═══════════════════════════════════════════════════════════
-
 function recordResp(choice, el){
   if(G.locked) return;
   G.locked = true;
-
   const tr  = TRIALS[curVersion()][G.curT];
   const cfg = curCfg();
   const er  = effRoles();
   const bk  = curB();
   const rt  = Date.now() - (G.tStart || Date.now());
   const ver = curVersion();
-
   const chosenName  = choice === 0 ? tr.pA  : tr.pB;
   const chosenGroup = choice === 0 ? tr.gA  : tr.gB;
   const chosenRole  = choice === 0 ? er.rA  : er.rB;
-
   const responseRecode = chosenRole === 'group' ? 1 : 2;
   const hypothesisConsistent =
     (cfg.qType==='close' && chosenRole==='individual') ||
     (cfg.qType==='boss'  && chosenRole==='group') ? 1 : 0;
-
   G.resp.push({
     participantId:      G.pid,
     age:                G.age,
@@ -1141,14 +1001,11 @@ function recordResp(choice, el){
     rt_ms:              rt,
     timestamp:          new Date().toISOString()
   });
-
   el.classList.add('chosen');
   document.querySelectorAll('.ccard').forEach(c=>c.classList.add('lock'));
   try{ localStorage.setItem('twizzle_'+G.pid, JSON.stringify(G)); }catch(e){}
-
   G.totalDone++;
   G.tIdx++;
-
   setTimeout(function(){
     if(G.totalDone % 2 === 0){
       G.stars = Math.min(6, G.totalDone / 2);
@@ -1161,51 +1018,109 @@ function recordResp(choice, el){
 
 // ═══════════════════════════════════════════════════════════
 //  STAR EARNED
-//  Audio: star_done.mp3 | star_halfway.mp3 | star_generic.mp3
 // ═══════════════════════════════════════════════════════════
-
 function showStarEarned(){
   const isDone = G.totalDone === 12;
   const isHalf = G.totalDone === 6;
-
   render(`
-    <div class="star-pop" style="font-size:5.5em;">⭐</div>
+    <div class="star-pop big-celebrate" style="width:120px;height:120px;">${STAR_SVG}</div>
     <h2>You earned a star!</h2>
     ${starMeterHTML()}
     <p class="txt">
-      ${isDone ? 'You finished all the stories! 🎊'
-      : isHalf ? 'Halfway there! You are doing SO well!'
+      ${isDone ? 'You finished all the stories!'
+      : isHalf ? 'Halfway there! You are doing so well!'
       :          'Great job! Keep going!'}
     </p>
     ${!isDone
-      ? `<button class="btn g" onclick="nextTrial()">Keep going! 🚀</button>`
+      ? `<button class="btn g" onclick="nextTrial()">Keep going</button>`
       : ''}
   `);
-
   say(isDone ? 'star_done' : isHalf ? 'star_halfway' : 'star_generic');
-
   if(isDone) setTimeout(function(){ showEnd(); }, 2800);
 }
 
-// ── Between blocks ────────────────────────────────────────────
+// ═══════════════════════════════════════════════════════════
+//  MID-GAME VIDEO BREAK
+// ═══════════════════════════════════════════════════════════
+function showMidVideo(){
+  if(_aud){ _aud.pause(); _aud = null; }
 
+  render(`
+    <h2>Great job!</h2>
+    ${starMeterHTML()}
+    <p class="txt">
+      You still have some more questions —<br>
+      but first, watch this funny video!
+    </p>
+    <video
+      id="mid-video"
+      src="${MID_VIDEO.src}"
+      controls
+      autoplay
+      playsinline
+      style="
+        width:100%;
+        max-width:560px;
+        border-radius:16px;
+        box-shadow:0 6px 24px rgba(0,0,0,.18);
+      "
+      onerror="document.getElementById('mid-video-err').style.display='block'"
+    ></video>
+    <p id="mid-video-err"
+       style="display:none;color:#e74c3c;font-size:.9em;">
+      Oops — video couldn't load. Press Keep Going to continue!
+    </p>
+    <div style="display:flex;gap:11px;align-items:center;">
+      <button class="btn g"
+        onclick="onMidVideoContinue()"
+        style="margin-top:8px;">
+        Keep going
+      </button>
+      <button class="rrb" onclick="reread()">Replay</button>
+    </div>
+    <p class="txt" style="font-size:.82em;color:#aaa;">
+      Press <strong>Keep going</strong> whenever you are ready.
+    </p>
+  `);
+
+  say('mid_video');
+
+  const vid = document.getElementById('mid-video');
+  if(vid){
+    vid.addEventListener('ended', function(){
+      setTimeout(onMidVideoContinue, 1200);
+    });
+  }
+}
+
+function onMidVideoContinue(){
+  const vid = document.getElementById('mid-video');
+  if(vid && typeof vid.pause === 'function'){
+    vid.pause();
+  }
+  showBkIntro();
+}
+
+// ── Between blocks ────────────────────────────────────────────
 function advBlock(){
   G.bIdx++;
   if(G.bIdx >= 2){ showEnd(); return; }
   G.tOrder = shuffle([0,1,2,3,4,5]);
   G.tIdx   = 0;
-  showBkIntro();
+  if(MID_VIDEO){
+    showMidVideo();
+  } else {
+    showBkIntro();
+  }
 }
 
 // ═══════════════════════════════════════════════════════════
 //  END
-//  Audio: end.mp3
 // ═══════════════════════════════════════════════════════════
-
 function showEnd(){
   try{ localStorage.setItem('twizzle_'+G.pid, JSON.stringify(G)); }catch(e){}
   render(`
-    <div style="font-size:3.5em;">🎊 🌟 🎊</div>
+    <div class="big-celebrate" style="width:120px;height:120px;">${STAR_SVG}</div>
     <h1>You did it!</h1>
     <img src="star_reward.png"
       style="width:140px;height:140px;object-fit:contain;"
@@ -1214,23 +1129,20 @@ function showEnd(){
     <p class="txt" style="font-size:1.2em;">
       Thank you <strong>SO much</strong>
       for visiting ${VILLAGE}!<br>
-      You were absolutely <strong>AMAZING!</strong>
+      You were absolutely <strong>amazing!</strong>
     </p>
     <p class="txt" style="font-size:.9em;color:#95a5a6;">
-      ${G.resp.length} questions answered ✓
+      ${G.resp.length} questions answered
     </p>
-    <button class="btn g" onclick="dlCSV()">💾 Save My Data</button>
+    <button class="btn g" onclick="dlCSV()">Save my data</button>
   `);
   say('end');
-
-  // Send postMessage for CHS iframe detection
   try{ window.parent.postMessage({type:'GAME_COMPLETE'}, '*'); }catch(e){}
 }
 
 // ═══════════════════════════════════════════════════════════
 //  DATA EXPORT
 // ═══════════════════════════════════════════════════════════
-
 function dlCSV(){
   if(!G.resp.length){ alert('No data yet!'); return; }
   const cols = [
@@ -1257,13 +1169,11 @@ function dlCSV(){
   a.download = `twizzle_${G.pid}_${new Date().toISOString().slice(0,10)}.csv`;
   a.click();
 }
-
 function skipEnd(){
   if(_aud){ _aud.pause(); _aud = null; }
   showEnd();
 }
 
-// ── Init ─────────────────────────────────────────────────────
 showWelcome();
 </script>
 </body>
