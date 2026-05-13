@@ -26,19 +26,22 @@
     }
     @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 
+    /* ── Speaking bounce ── */
     @keyframes speakBounce{
-      0%,100%{transform:translateY(0) rotate(0deg)}
-      25%    {transform:translateY(-10px) rotate(-4deg)}
-      75%    {transform:translateY(-10px) rotate(4deg)}
+      0%,100%{transform:translateY(0)   rotate(0deg)  scale(1)}
+      20%    {transform:translateY(-12px) rotate(-5deg) scale(1.05)}
+      60%    {transform:translateY(-12px) rotate(5deg)  scale(1.05)}
+      80%    {transform:translateY(-4px)  rotate(0deg)  scale(1.02)}
     }
-    .speaking{ animation:speakBounce 0.6s ease-in-out infinite }
+    .speaking{animation:speakBounce 0.65s ease-in-out infinite}
 
+    /* ── Star pop ── */
     @keyframes starPop{
       0%  {transform:scale(0) rotate(-20deg);opacity:0}
       60% {transform:scale(1.5) rotate(10deg);opacity:1}
       100%{transform:scale(1)  rotate(0deg); opacity:1}
     }
-    .star-pop{animation:starPop 0.5s ease-out forwards}
+    .star-pop{animation:starPop .5s ease-out forwards}
 
     h1{font-size:2em;color:#e74c3c;text-align:center;text-shadow:2px 2px #ffeaa7}
     h2{font-size:1.45em;color:#2c3e50;text-align:center}
@@ -47,16 +50,17 @@
     .dirs{
       font-size:1.05em;color:#34495e;text-align:center;
       background:#eaf4ff;border-radius:14px;padding:11px 18px;
-      width:100%;max-width:600px;
+      width:100%;max-width:620px;
       border-left:5px solid #3498db;line-height:1.55;
     }
 
+    /* ── Buttons ── */
     .btn{
       background:linear-gradient(145deg,#3498db,#2980b9);color:#fff;
       border:none;padding:13px 26px;border-radius:50px;
       font-size:1.15em;font-family:inherit;cursor:pointer;
       box-shadow:0 4px 12px rgba(52,152,219,.4);
-      transition:transform .1s;touch-action:manipulation;
+      transition:transform .1s,opacity .2s;touch-action:manipulation;
     }
     .btn:active{transform:scale(.97)}
     .btn.g {background:linear-gradient(145deg,#2ecc71,#27ae60)}
@@ -67,8 +71,9 @@
     }
     .btn.sl{background:linear-gradient(145deg,#95a5a6,#7f8c8d)}
     .btn.sm{padding:8px 16px;font-size:.95em}
-    .btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+    .btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
 
+    /* ── Age picker ── */
     .age-row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
     .abtn{
       background:#ecf0f1;color:#2c3e50;border:3px solid transparent;
@@ -76,7 +81,6 @@
       font-family:inherit;cursor:pointer;transition:all .2s;touch-action:manipulation;
     }
     .abtn.sel{background:#3498db;color:#fff;border-color:#2980b9}
-
     .tinput{
       font-size:1.15em;padding:11px 18px;
       border:3px solid #3498db;border-radius:50px;
@@ -93,8 +97,6 @@
     .star-slot{font-size:1.9em;transition:transform .3s}
     .star-slot.earned{color:#f39c12}
     .star-slot.empty {color:#ddd}
-
-    /* ── Progress text ── */
     .prog{text-align:center;font-size:.88em;color:#aaa;margin-top:-4px}
 
     /* ── Character images ── */
@@ -104,7 +106,6 @@
     .char-img.lg {width:170px;height:170px}
     .char-img.xl {width:230px;height:230px}
 
-    /* ── Group intro ── */
     .grp-img  {width:100%;max-width:420px;border-radius:16px;object-fit:contain}
     .title-img{width:100%;max-width:380px;border-radius:16px;object-fit:contain}
 
@@ -115,28 +116,24 @@
     .bflurp{background:#fdebd0;color:#ca6f1e}
     .bzazzo{background:#d5f5e3;color:#1e8449}
 
-    /* ── Three-character row ── */
+    /* ── Three character row ── */
     .char-row{
       display:flex;align-items:flex-end;gap:24px;
       justify-content:center;flex-wrap:wrap;width:100%;
     }
 
-    /* ── Action scene ── */
+    /* ── Action image ── */
     .scene-img{
       width:100%;max-width:460px;border-radius:16px;
       object-fit:contain;border:3px solid #90caf9;
     }
 
-    /* ── Speech section ─────────────────────────────────────
-       Both characters on LEFT side, speech bubbles on RIGHT  */
+    /* ── Speech section ── both characters on LEFT ── */
     .speech-section{
-      width:100%;max-width:620px;
+      width:100%;max-width:640px;
       display:flex;flex-direction:column;gap:20px;
     }
-    .speech-row{
-      display:flex;align-items:center;gap:18px;
-    }
-    /* characters always on left */
+    .speech-row{display:flex;align-items:center;gap:18px}
     .sp-char{flex-shrink:0}
     .spbub{
       background:#fffde7;border:2.5px solid #ffc107;
@@ -144,7 +141,7 @@
       font-size:1.08em;color:#2c3e50;flex:1;
       line-height:1.55;
       opacity:0;transform:translateX(14px);
-      transition:opacity 0.45s ease, transform 0.45s ease;
+      transition:opacity .45s ease, transform .45s ease;
     }
     .spbub.visible{opacity:1;transform:translateX(0)}
 
@@ -152,7 +149,7 @@
     .qbox{
       background:#f0f8ff;border:3px solid #3498db;
       border-radius:16px;padding:15px 20px;
-      text-align:center;width:100%;max-width:600px;
+      text-align:center;width:100%;max-width:620px;
       opacity:0;transform:translateY(8px);
       transition:opacity .5s ease, transform .5s ease;
     }
@@ -161,7 +158,7 @@
     .qtxt{font-size:1.22em;color:#2c3e50;font-weight:700}
     .qdef{font-size:.9em;color:#7f8c8d;margin-top:7px;line-height:1.5;font-style:italic}
 
-    /* ── Choice cards ── */
+    /* ── Choices ── */
     .choices{
       display:flex;gap:28px;justify-content:center;flex-wrap:wrap;
       opacity:0;transform:translateY(8px);
@@ -189,12 +186,21 @@
       touch-action:manipulation;
     }
 
+    /* ── Definition callout box ── */
+    .defbox{
+      background:#fef9e7;border:2px dashed #f39c12;
+      border-radius:14px;padding:12px 18px;
+      font-size:.98em;color:#7f8c8d;
+      text-align:center;max-width:560px;
+      font-style:italic;line-height:1.55;
+    }
+
     #rbar{
       position:fixed;top:6px;right:6px;
       background:rgba(20,20,20,.88);color:#fff;
       padding:7px 11px;border-radius:10px;
       font-family:monospace;font-size:.72em;
-      z-index:9999;max-width:220px;
+      z-index:9999;max-width:230px;
     }
     #rbar button{
       background:#c0392b;color:#fff;border:none;
@@ -210,7 +216,6 @@
       .choices{gap:16px}
       .char-img.xl{width:180px;height:180px}
       .char-img.lg{width:130px;height:130px}
-      .speech-row{gap:12px}
     }
   </style>
 </head>
@@ -227,14 +232,20 @@
 
 <script>
 // ═══════════════════════════════════════════════════════════
-//  TWIZZLE TOWN — Child Study Game v4
+//  TWIZZLE TOWN — Child Study Game v5
 //  ashleyjthomas/RELKIND
+//
+//  Key changes from v4:
+//  1. Side chars animate during "like each other" narration
+//  2. Pinecones wording consistent
+//  3. Per-trial role swap (randomises which colour = group/individual)
+//  4. Boss definition added (mirrors closer definition)
+//  5. Version A ↔ B split across blocks (never same set twice)
 // ═══════════════════════════════════════════════════════════
 
 const VILLAGE   = "Twizzle Town";
-const CLOSE_DEF =
-  "That means that they love each other more, " +
-  "tell each other more secrets, and give each other hugs.";
+const CLOSE_DEF = "That means that they love each other more, tell each other more secrets, and give each other hugs.";
+const BOSS_DEF  = "That means they are in charge — they tell [Name] what to do, and [Name] listens.";
 
 // ── IMAGE POOLS ─────────────────────────────────────────────
 
@@ -303,9 +314,19 @@ function speakThen(text, cb){
   const u = new SpeechSynthesisUtterance(text);
   u.rate = 0.85; u.pitch = 1.05; u.volume = 1;
   const v = getVoice(); if(v) u.voice = v;
-  const fallback = setTimeout(()=>cb(), text.length * 90 + 2000);
+  const fallback = setTimeout(()=>cb(), text.length * 85 + 2000);
   u.onend = ()=>{ clearTimeout(fallback); cb(); };
   window.speechSynthesis.speak(u);
+}
+
+// Animate a character image while speaking a line
+function speakWithAnim(imgId, text, cb){
+  const img = document.getElementById(imgId);
+  if(img) img.classList.add('speaking');
+  speakThen(text, ()=>{
+    if(img) img.classList.remove('speaking');
+    cb();
+  });
 }
 
 // ── STAR METER ──────────────────────────────────────────────
@@ -314,8 +335,7 @@ function starMeterHTML(){
   let h = '<div class="star-meter">';
   for(let i=0; i<6; i++)
     h += `<span class="star-slot ${i<G.stars?'earned':'empty'}">
-            ${i<G.stars?'⭐':'☆'}
-          </span>`;
+            ${i<G.stars?'⭐':'☆'}</span>`;
   return h + '</div>';
 }
 
@@ -340,9 +360,7 @@ const BSUFFIX = {
 };
 
 // ── TRIAL DATA ──────────────────────────────────────────────
-// portraitImg → blue character neutral portrait (shown in Phase 0)
-// actionImg   → blue character doing the behavior (shown in Phase 1)
-// pA/pB images picked randomly from ORANGE_IMGS / GREEN_IMGS at trial start
+// NOTE: pinecones act.g and act.i now match exactly
 
 const TRIALS = {
   A:[
@@ -368,9 +386,9 @@ const TRIALS = {
     },
     {
       beh:'walls', tgt:'Taylor', tg:'wug', pA:'Finley', gA:'flurp', pB:'Robin', gB:'zazzo',
-      story: t=>`One day you see ${t} climbing a tall tree.`,
-      portraitImg:'taylor.png', actionImg:'taylor_walls.png',
-      act:{g:'climb trees', i:'climb trees'},
+  story: t=>`One day you see ${t} climbing the walls of a tall building.`,
+  portraitImg:'taylor.png', actionImg:'taylor_walls.png',
+  act:{g:'climb tall buildings', i:'climb tall buildings'},
       ids:{hmm1c:'Walls_Hmm_1',   hmm2c:'Walls_Hmm_2',
            yes1c:'Climb_Yes_1',   yes2c:'Climb_Yes_2',
            hmm1b:'Walls_Hmm_1_b', hmm2b:'Walls_Hmm_2_b',
@@ -380,7 +398,7 @@ const TRIALS = {
       beh:'balls', tgt:'Alex', tg:'wug', pA:'Quinn', gA:'flurp', pB:'Drew', gB:'zazzo',
       story: t=>`One day you see ${t} bouncing a ball on their head over and over again.`,
       portraitImg:'alex.png', actionImg:'alex_ball.png',
-      act:{g:'bounce balls on their heads', i:'bounce balls on their head'},
+      act:{g:'bounce balls on their heads', i:'bounce balls on their heads'},
       ids:{hmm1c:'Balls_Hmm_1',   hmm2c:'Balls_Hmm_2',
            yes1c:'Balls_Yes_1',   yes2c:'Ball_Yes_2',
            hmm1b:'Balls_Hmm_1_b', hmm2b:'Balls_Hmm_2_b',
@@ -412,7 +430,8 @@ const TRIALS = {
       beh:'rocks', tgt:'Sam', tg:'wug', pA:'Nova', gA:'flurp', pB:'Finn', gB:'zazzo',
       story: t=>`One day you see ${t} picking up rocks and putting them in their pocket.`,
       portraitImg:'sam.png', actionImg:'sam_rocks.png',
-      act:{g:'pick up rocks and put them in their pocket', i:'pick up rocks and put them in their pocket'},
+      act:{g:'pick up rocks and put them in their pocket',
+           i:'pick up rocks and put them in their pocket'},
       ids:{hmm1c:'Rocks_Hmm_1',   hmm2c:'Rocks_Hmm_2',
            yes1c:'Rocks_Yes_1',   yes2c:'Rocks_Yes_2',
            hmm1b:'Rocks_Hmm_1_b', hmm2b:'Rocks_Hmm_2_b',
@@ -442,7 +461,9 @@ const TRIALS = {
       beh:'pinecones', tgt:'Blake', tg:'wug', pA:'Zara', gA:'flurp', pB:'Bryn', gB:'zazzo',
       story: t=>`One day you see ${t} piling up pinecones into a tall tower.`,
       portraitImg:'blake.png', actionImg:'blake_pinecones.png',
-      act:{g:'pile up pinecones into towers', i:'pile up pinecones into a tower'},
+      // ── FIX: both act.g and act.i now use identical wording ──
+      act:{g:'pile up pinecones into a tall tower',
+           i:'pile up pinecones into a tall tower'},
       ids:{hmm1c:'Pinecones_Hmm_1',   hmm2c:'Pinecones_Hmm_2',
            yes1c:'Pinecones_Yes_1',   yes2c:'Pinecones_Yes_2',
            hmm1b:'Pinecones_Hmm_1_b', hmm2b:'Pinecones_Hmm_2_b',
@@ -485,18 +506,33 @@ function mkSpeech(ep, role, tgt, act){
   }
 }
 
+// ── EFFECTIVE ROLES (per-trial swap) ────────────────────────
+// G.curSwap = true  → orange gets bRole, green gets aRole
+// G.curSwap = false → orange gets aRole, green gets bRole
+
+function effRoles(){
+  const cfg = curCfg();
+  return {
+    rA: G.curSwap ? cfg.bRole : cfg.aRole,   // orange character's actual role
+    rB: G.curSwap ? cfg.aRole : cfg.bRole    // green character's actual role
+  };
+}
+
 // ── GAME STATE ──────────────────────────────────────────────
 
 const G = {
-  pid:'', age:null, version:null, t0:null,
+  pid:'', age:null, t0:null,
   bossB:null, closeB:null,
-  order:[], bIdx:0,
+  order:[],              // e.g. ['close','boss']
+  versionMap:{},         // { close:'A', boss:'B' } or { close:'B', boss:'A' }
+  bIdx:0,
   tOrder:[], tIdx:0,
   curT:null,
-  curPortraitImg:null,   // blue character neutral portrait
-  curActionImg:null,     // blue character doing behavior
-  curPAImg:null,         // randomly chosen orange (Flurp)
-  curPBImg:null,         // randomly chosen green (Zazzo)
+  curPortraitImg:null,
+  curActionImg:null,
+  curPAImg:null,
+  curPBImg:null,
+  curSwap:false,         // ← per-trial role randomisation
   resp:[], locked:false,
   stars:0, totalDone:0,
   speechDone:false,
@@ -504,12 +540,16 @@ const G = {
   iStep:0
 };
 
-// ── RENDER ──────────────────────────────────────────────────
+// ── HELPERS ──────────────────────────────────────────────────
 
 const gc = document.getElementById('gc');
 function render(h){ gc.innerHTML = `<div class="screen">${h}</div>`; }
-function curB()  { return G.order[G.bIdx]==='boss' ? G.bossB : G.closeB; }
+
+function curB()  { return G.order[G.bIdx] === 'boss' ? G.bossB : G.closeB; }
 function curCfg(){ return BCFG[curB()]; }
+
+// Return the version (A or B) for the current block
+function curVersion(){ return G.versionMap[G.order[G.bIdx]]; }
 
 // ═══════════════════════════════════════════════════════════
 //  WELCOME
@@ -566,28 +606,36 @@ function pickAge(a){
 function checkReady(){
   const pid = document.getElementById('pidIn');
   const go  = document.getElementById('goBtn');
-  if(!pid || !go) return;
+  if(!pid||!go) return;
   const ok = pid.value.trim().length > 0 && G.selAge !== null;
-  go.disabled    = !ok;
+  go.disabled = !ok;
   go.style.opacity = ok ? '1' : '.5';
 }
 
 function launchGame(){
   const pid = document.getElementById('pidIn');
   if(!pid || !pid.value.trim()) return;
-  G.pid     = pid.value.trim();
-  G.age     = G.selAge;
-  G.t0      = new Date().toISOString();
-  G.version = Math.random() < .5 ? 'A' : 'B';
-  G.bossB   = pick(['hmm1_boss','hmm2_boss','yes1_boss','yes2_boss']);
-  G.closeB  = pick(['hmm1_close','hmm2_close','yes1_close','yes2_close']);
-  G.order   = Math.random() < .5 ? ['boss','close'] : ['close','boss'];
+  G.pid  = pid.value.trim();
+  G.age  = G.selAge;
+  G.t0   = new Date().toISOString();
+
+  G.bossB  = pick(['hmm1_boss', 'hmm2_boss', 'yes1_boss', 'yes2_boss']);
+  G.closeB = pick(['hmm1_close','hmm2_close','yes1_close','yes2_close']);
+  G.order  = Math.random() < .5 ? ['boss','close'] : ['close','boss'];
+
+  // ── VERSION ASSIGNMENT ─────────────────────────────────
+  // First block always gets a different version than second block
+  // Which block gets A vs B is random
+  const firstVer  = Math.random() < .5 ? 'A' : 'B';
+  const secondVer = firstVer === 'A' ? 'B' : 'A';
+  G.versionMap[G.order[0]] = firstVer;
+  G.versionMap[G.order[1]] = secondVer;
 
   document.getElementById('rinfo').innerHTML =
     `PID: ${G.pid} | Age: ${G.age}<br>`+
-    `Ver: ${G.version}<br>`+
-    `Boss: ${G.bossB}<br>Close: ${G.closeB}<br>`+
-    `Order: ${G.order.join(' → ')}`;
+    `Order: ${G.order.join(' → ')}<br>`+
+    `${G.order[0]}: ${G.order[0]==='boss'?G.bossB:G.closeB} (Ver ${firstVer})<br>`+
+    `${G.order[1]}: ${G.order[1]==='boss'?G.bossB:G.closeB} (Ver ${secondVer})`;
 
   G.iStep = 0;
   showIntro();
@@ -599,56 +647,56 @@ function launchGame(){
 
 const ISTEPS = [
   {
-    title: `🌍 Welcome to ${VILLAGE}!`,
-    body: `
+    title:`🌍 Welcome to ${VILLAGE}!`,
+    body:`
       <img src="title_card.png" class="title-img" alt="${VILLAGE}"
         onerror="this.style.display='none'">
       <p class="txt">In <strong>${VILLAGE}</strong>, there are
         <strong>three kinds of friends</strong>!</p>`,
-    aud: `In ${VILLAGE}, there are three kinds of friends!`
+    aud:`In ${VILLAGE}, there are three kinds of friends!`
   },
   {
-    title: '💙 Meet the Wugs!',
-    body: `
+    title:'💙 Meet the Wugs!',
+    body:`
       <img src="wug_group_intro.png" class="grp-img" alt="Wugs"
         onerror="this.style.display='none'">
       <span class="cbadge bwug" style="font-size:1.4em;padding:9px 20px;">Wugs</span>
       <p class="txt">These are called
         <strong style="color:#2471a3">WUGS!</strong><br>
         They are <strong>blue</strong> and <strong>tall</strong>.</p>`,
-    aud: "These are called Wugs! They are blue and tall."
+    aud:"These are called Wugs! They are blue and tall."
   },
   {
-    title: '🧡 Meet the Flurps!',
-    body: `
+    title:'🧡 Meet the Flurps!',
+    body:`
       <img src="flurp_group_intro.png" class="grp-img" alt="Flurps"
         onerror="this.style.display='none'">
       <span class="cbadge bflurp" style="font-size:1.4em;padding:9px 20px;">Flurps</span>
       <p class="txt">These are called
         <strong style="color:#ca6f1e">FLURPS!</strong><br>
         They are <strong>orange</strong> and <strong>bright</strong>.</p>`,
-    aud: "These are called Flurps! They are orange and bright."
+    aud:"These are called Flurps! They are orange and bright."
   },
   {
-    title: '💚 Meet the Zazzos!',
-    body: `
+    title:'💚 Meet the Zazzos!',
+    body:`
       <img src="zazzo_group_intro.png" class="grp-img" alt="Zazzos"
         onerror="this.style.display='none'">
       <span class="cbadge bzazzo" style="font-size:1.4em;padding:9px 20px;">Zazzos</span>
       <p class="txt">These are called
         <strong style="color:#1e8449">ZAZZOS!</strong><br>
         They are <strong>green</strong> and <strong>soft</strong>.</p>`,
-    aud: "These are called Zazzos! They are green and soft."
+    aud:"These are called Zazzos! They are green and soft."
   },
   {
-    title: `🎉 All in ${VILLAGE}!`,
-    body: `
+    title:`🎉 All in ${VILLAGE}!`,
+    body:`
       <img src="title_card.png" class="title-img" alt="All together"
         onerror="this.style.display='none'">
-      <p class="txt">Wugs, Flurps, and Zazzos all live together in
+      <p class="txt">Wugs, Flurps, and Zazzos all live in
         <strong>${VILLAGE}</strong>!<br>
         Are you ready to meet some of them?</p>`,
-    aud: `Wugs, Flurps, and Zazzos all live together in ${VILLAGE}! Are you ready to meet some of them?`
+    aud:`Wugs, Flurps, and Zazzos all live in ${VILLAGE}! Are you ready to meet some of them?`
   },
 ];
 
@@ -660,13 +708,13 @@ function showIntro(){
     ${st.body}
     <div style="display:flex;gap:11px;align-items:center;">
       ${G.iStep > 0
-        ? `<button class="btn sl sm" onclick="G.iStep--;showIntro()">← Back</button>`
-        : ''}
+        ?`<button class="btn sl sm" onclick="G.iStep--;showIntro()">← Back</button>`
+        :''}
       <button class="btn ${last?'g':''}"
         onclick="${last ? 'beginMain()' : 'G.iStep++;showIntro()'}">
         ${last ? 'Play! 🎮' : 'Next →'}
       </button>
-      <button class="rrb" onclick="reread()" title="Replay">🔊</button>
+      <button class="rrb" onclick="reread()">🔊</button>
     </div>
   `);
   say(st.aud);
@@ -683,28 +731,39 @@ function beginMain(){
   showBkIntro();
 }
 
+// ── Block intro — now includes boss definition ───────────────
+
 function showBkIntro(){
   const cfg = curCfg();
   const isC = cfg.qType === 'close';
-  const icon = isC ? '✨' : '👑';
+  const ver = curVersion();
 
   render(`
-    <div style="font-size:3.5em;">${icon}</div>
-    <h2>${isC ? 'A question about friends!' : 'A question about who is the boss!'}</h2>
-    ${isC
-      ? `<p class="txt">After each story I'll ask:<br><br>
-           <strong>"Who is [Name] closer to?"</strong><br><br>
-           <span style="color:#7f8c8d;font-size:.95em;">${CLOSE_DEF}</span></p>`
-      : `<p class="txt">After each story I'll ask:<br><br>
-           <strong>"Who is [Name]'s boss?"</strong></p>`
-    }
+    <div style="font-size:3.5em;">${isC ? '✨' : '👑'}</div>
+    <h2>${isC ? 'A question about friends!' : 'A question about the boss!'}</h2>
+
+    ${isC ? `
+      <p class="txt">After each story I will ask:<br><br>
+        <strong>"Who is [Name] closer to?"</strong></p>
+      <div class="defbox">${CLOSE_DEF}</div>
+    ` : `
+      <p class="txt">After each story I will ask:<br><br>
+        <strong>"Who is [Name]'s boss?"</strong></p>
+      <div class="defbox">${BOSS_DEF}</div>
+    `}
+
+    <p class="txt" style="font-size:.88em;color:#aaa;">
+      Block: ${isC ? 'Closer' : 'Boss'} &nbsp;|&nbsp;
+      Character set: ${ver}
+    </p>
+
     <button class="btn g" onclick="nextTrial()">Let's start! 🚀</button>
     <button class="rrb" onclick="reread()">🔊</button>
   `);
 
   say(isC
-    ? `After each story I'll ask you: who is that person closer to? ${CLOSE_DEF}`
-    : `After each story I'll ask you: who is that person's boss?`
+    ? `After each story I will ask you: who is that person closer to? ${CLOSE_DEF}`
+    : `After each story I will ask you: who is that person's boss? ${BOSS_DEF.replace('[Name]','that person')}`
   );
 }
 
@@ -714,32 +773,29 @@ function nextTrial(){
   if(G.tIdx >= 6){ advBlock(); return; }
 
   G.curT = G.tOrder[G.tIdx];
-  const tr = TRIALS[G.version][G.curT];
+  const ver = curVersion();
+  const tr  = TRIALS[ver][G.curT];
 
-  // Blue character images (specific per trial)
   G.curPortraitImg = tr.portraitImg;
   G.curActionImg   = tr.actionImg;
+  G.curPAImg       = pick(ORANGE_IMGS);
+  G.curPBImg       = pick(GREEN_IMGS);
 
-  // Side character images (randomly picked from pools)
-  G.curPAImg = pick(ORANGE_IMGS);
-  G.curPBImg = pick(GREEN_IMGS);
+  // ── PER-TRIAL ROLE RANDOMISATION ─────────────────────────
+  // Randomly decide whether orange=aRole or orange=bRole
+  G.curSwap = Math.random() < 0.5;
 
   showTrialChars();
 }
 
 // ═══════════════════════════════════════════════════════════
-//  PHASE 0 — Three characters introduction
+//  PHASE 0 — Introduce the three characters
+//  Side chars animate individually during "like each other" lines
 // ═══════════════════════════════════════════════════════════
 
 function showTrialChars(){
-  const tr = TRIALS[G.version][G.curT];
+  const tr = TRIALS[curVersion()][G.curT];
   const tn = G.bIdx * 6 + G.tIdx + 1;
-
-  const nar =
-    `This is ${tr.tgt}! ` +
-    `${tr.tgt} has two friends: ${tr.pA} the Flurp and ${tr.pB} the Zazzo. ` +
-    `${tr.tgt} and ${tr.pA} like each other a lot. ` +
-    `${tr.tgt} and ${tr.pB} like each other a lot.`;
 
   render(`
     ${starMeterHTML()}
@@ -751,7 +807,7 @@ function showTrialChars(){
 
     <div class="char-row">
       <div class="cw">
-        ${cimg(G.curPAImg, 'lg')}
+        ${cimg(G.curPAImg, 'lg', 'side-a')}
         <div class="clbl">${tr.pA}</div>${badge(tr.gA)}
       </div>
       <div class="cw">
@@ -759,19 +815,12 @@ function showTrialChars(){
         <div class="clbl">${tr.tgt}</div>${badge(tr.tg)}
       </div>
       <div class="cw">
-        ${cimg(G.curPBImg, 'lg')}
+        ${cimg(G.curPBImg, 'lg', 'side-b')}
         <div class="clbl">${tr.pB}</div>${badge(tr.gB)}
       </div>
     </div>
 
-    <p class="txt" style="font-size:.95em;">
-      <strong>${tr.tgt}</strong> and <strong>${tr.pA}</strong>
-      like each other a lot.<br>
-      <strong>${tr.tgt}</strong> and <strong>${tr.pB}</strong>
-      like each other a lot.
-    </p>
-
-    <div style="display:flex;gap:11px;align-items:center;">
+    <div style="display:flex;gap:11px;align-items:center;margin-top:4px;">
       <button class="btn" onclick="showTrialAction()">
         What happened? 👀
       </button>
@@ -779,7 +828,33 @@ function showTrialChars(){
     </div>
   `);
 
-  say(nar);
+  // Full text for re-read button
+  _nar = `This is ${tr.tgt}! ` +
+    `${tr.tgt} has two friends: ${tr.pA} and ${tr.pB}. ` +
+    `${tr.tgt} and ${tr.pA} like each other a lot. ` +
+    `${tr.tgt} and ${tr.pB} like each other a lot.`;
+
+  // ── Animated narration sequence ──────────────────────────
+  speakThen(
+    `This is ${tr.tgt}! ${tr.tgt} has two friends: ${tr.pA} and ${tr.pB}.`,
+    ()=>{
+      setTimeout(()=>{
+        // pA shakes while saying "like each other"
+        speakWithAnim('side-a',
+          `${tr.tgt} and ${tr.pA} like each other a lot.`,
+          ()=>{
+            setTimeout(()=>{
+              // pB shakes while saying "like each other"
+              speakWithAnim('side-b',
+                `${tr.tgt} and ${tr.pB} like each other a lot.`,
+                ()=>{}
+              );
+            }, 250);
+          }
+        );
+      }, 200);
+    }
+  );
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -787,7 +862,7 @@ function showTrialChars(){
 // ═══════════════════════════════════════════════════════════
 
 function showTrialAction(){
-  const tr  = TRIALS[G.version][G.curT];
+  const tr  = TRIALS[curVersion()][G.curT];
   const tn  = G.bIdx * 6 + G.tIdx + 1;
   const storyTxt = tr.story(tr.tgt);
 
@@ -817,21 +892,24 @@ function showTrialAction(){
 }
 
 // ═══════════════════════════════════════════════════════════
-//  PHASE 2 — Speech bubbles + Question
+//  PHASE 2 — Speech + Question
 // ═══════════════════════════════════════════════════════════
 
 function showTrialSpeech(){
-  const tr  = TRIALS[G.version][G.curT];
+  const tr  = TRIALS[curVersion()][G.curT];
   const cfg = curCfg();
   const tn  = G.bIdx * 6 + G.tIdx + 1;
   const isC = cfg.qType === 'close';
+  const er  = effRoles();
 
-  const spA = mkSpeech(cfg.ep, cfg.aRole, tr.tgt, tr.act);
-  const spB = mkSpeech(cfg.ep, cfg.bRole, tr.tgt, tr.act);
+  const spA = mkSpeech(cfg.ep, er.rA, tr.tgt, tr.act);
+  const spB = mkSpeech(cfg.ep, er.rB, tr.tgt, tr.act);
 
   const qTxt = isC
     ? `Who is <strong>${tr.tgt}</strong> closer to?`
     : `Who do you think is <strong>${tr.tgt}'s boss</strong>?`;
+
+  const defTxt = isC ? CLOSE_DEF : BOSS_DEF.replace('[Name]', tr.tgt);
 
   G.tStart = Date.now();
 
@@ -842,8 +920,7 @@ function showTrialSpeech(){
     <div class="dirs">
       You asked <strong>${tr.pA}</strong>
       and <strong>${tr.pB}</strong> about it.<br>
-      Press the
-      <strong style="color:#e67e22;">orange button</strong>
+      Press the <strong style="color:#e67e22;">orange button</strong>
       to hear what they say!
     </div>
 
@@ -870,7 +947,7 @@ function showTrialSpeech(){
 
     <div id="qbox" class="qbox${isC ? '' : ' boss'}">
       <div class="qtxt">${isC ? '✨' : '👑'} ${qTxt}</div>
-      ${isC ? `<div class="qdef">${CLOSE_DEF}</div>` : ''}
+      <div class="qdef">${defTxt}</div>
     </div>
 
     <div id="choices" class="choices">
@@ -885,7 +962,7 @@ function showTrialSpeech(){
     </div>
   `);
 
-  // If speech was already played (re-visit), show everything immediately
+  // If speech already played, reveal everything immediately
   if(G.speechDone){
     setTimeout(()=>{
       ['bub-a','bub-b'].forEach(id=>{
@@ -901,49 +978,40 @@ function showTrialSpeech(){
   say(`You asked ${tr.pA} and ${tr.pB} about it. Press the orange button to hear what they say.`);
 }
 
-// ── triggerSpeech ─────────────────────────────────────────
+// ── triggerSpeech ────────────────────────────────────────────
 
 function triggerSpeech(){
-  const tr  = TRIALS[G.version][G.curT];
+  const tr  = TRIALS[curVersion()][G.curT];
   const cfg = curCfg();
-  const spA = mkSpeech(cfg.ep, cfg.aRole, tr.tgt, tr.act);
-  const spB = mkSpeech(cfg.ep, cfg.bRole, tr.tgt, tr.act);
+  const er  = effRoles();
+
+  const spA = mkSpeech(cfg.ep, er.rA, tr.tgt, tr.act);
+  const spB = mkSpeech(cfg.ep, er.rB, tr.tgt, tr.act);
 
   window.speechSynthesis.cancel();
 
   const btn  = document.getElementById('playBtn');
   const bubA = document.getElementById('bub-a');
   const bubB = document.getElementById('bub-b');
-  const imgA = document.getElementById('spk-a');
-  const imgB = document.getElementById('spk-b');
 
   if(btn){ btn.textContent = '🔊 Playing...'; btn.disabled = true; }
 
-  // ── pA speaks ──
+  // pA speaks + shakes
   if(bubA) bubA.classList.add('visible');
-  if(imgA) imgA.classList.add('speaking');
-
-  speakThen(spA, ()=>{
-    if(imgA) imgA.classList.remove('speaking');
-
+  speakWithAnim('spk-a', spA, ()=>{
     setTimeout(()=>{
-      // ── pB speaks ──
+      // pB speaks + shakes
       if(bubB) bubB.classList.add('visible');
-      if(imgB) imgB.classList.add('speaking');
-
-      speakThen(spB, ()=>{
-        if(imgB) imgB.classList.remove('speaking');
-
+      speakWithAnim('spk-b', spB, ()=>{
         G.speechDone = true;
         revealQuestion();
-
         if(btn){ btn.textContent = '🔊 Hear again'; btn.disabled = false; }
 
-        // Read the question aloud
+        // Read question aloud
         const isC = cfg.qType === 'close';
         const q = isC
           ? `Who is ${tr.tgt} closer to, ${tr.pA} or ${tr.pB}? ${CLOSE_DEF}`
-          : `Who do you think is ${tr.tgt}'s boss, ${tr.pA} or ${tr.pB}?`;
+          : `Who do you think is ${tr.tgt}'s boss, ${tr.pA} or ${tr.pB}? ${BOSS_DEF.replace('[Name]',tr.tgt)}`;
         setTimeout(()=>say(q), 600);
       });
     }, 400);
@@ -957,59 +1025,69 @@ function revealQuestion(){
   if(choices) choices.classList.add('show');
 }
 
-// ── Response Recording ────────────────────────────────────
+// ── Response Recording ────────────────────────────────────────
 
 function recordResp(choice, el){
   if(G.locked) return;
   G.locked = true;
 
-  const tr  = TRIALS[G.version][G.curT];
+  const tr  = TRIALS[curVersion()][G.curT];
   const cfg = curCfg();
+  const er  = effRoles();
   const bk  = curB();
   const rt  = Date.now() - (G.tStart || Date.now());
+  const ver = curVersion();
 
-  const chosenName  = choice === 0 ? tr.pA    : tr.pB;
-  const chosenGroup = choice === 0 ? tr.gA    : tr.gB;
-  const chosenRole  = choice === 0 ? cfg.aRole : cfg.bRole;
+  // Which character was chosen and what was their effective role
+  const chosenName  = choice === 0 ? tr.pA  : tr.pB;
+  const chosenGroup = choice === 0 ? tr.gA  : tr.gB;
+  const chosenRole  = choice === 0 ? er.rA  : er.rB;
+
   const responseRecode = chosenRole === 'group' ? 1 : 2;
   const hypothesisConsistent =
     (cfg.qType==='close' && chosenRole==='individual') ||
     (cfg.qType==='boss'  && chosenRole==='group') ? 1 : 0;
 
   G.resp.push({
-    participantId:      G.pid,
-    age:                G.age,
-    version:            G.version,
-    blockBoss:          G.bossB,
-    blockClose:         G.closeB,
-    blockOrder:         G.order.join('_'),
-    blockCurrent:       bk,
-    questionType:       cfg.qType,
-    epistemic:          cfg.ep,
-    personA_role:       cfg.aRole,
-    personB_role:       cfg.bRole,
-    dataExportTag:      tr.ids[BSUFFIX[bk]],
-    target:             tr.tgt,
-    behavior:           tr.beh,
-    personA:            tr.pA,
-    groupA:             tr.gA,
-    personB:            tr.pB,
-    groupB:             tr.gB,
-    speechA:            mkSpeech(cfg.ep, cfg.aRole, tr.tgt, tr.act),
-    speechB:            mkSpeech(cfg.ep, cfg.bRole, tr.tgt, tr.act),
-    portraitImgShown:   G.curPortraitImg,
-    actionImgShown:     G.curActionImg,
-    orangeImgShown:     G.curPAImg,
-    greenImgShown:      G.curPBImg,
+    participantId:       G.pid,
+    age:                 G.age,
+    versionThisBlock:    ver,
+    versionClose:        G.versionMap['close'],
+    versionBoss:         G.versionMap['boss'],
+    blockBoss:           G.bossB,
+    blockClose:          G.closeB,
+    blockOrder:          G.order.join('_'),
+    blockCurrent:        bk,
+    questionType:        cfg.qType,
+    epistemic:           cfg.ep,
+    // original block-level roles
+    blockRoleA:          cfg.aRole,
+    blockRoleB:          cfg.bRole,
+    // effective roles after per-trial swap
+    rolesSwapped:        G.curSwap,
+    effectiveRoleA:      er.rA,
+    effectiveRoleB:      er.rB,
+    dataExportTag:       tr.ids[BSUFFIX[bk]],
+    target:              tr.tgt,
+    behavior:            tr.beh,
+    personA:             tr.pA,
+    groupA:              tr.gA,
+    personB:             tr.pB,
+    groupB:              tr.gB,
+    speechA:             mkSpeech(cfg.ep, er.rA, tr.tgt, tr.act),
+    speechB:             mkSpeech(cfg.ep, er.rB, tr.tgt, tr.act),
+    portraitImgShown:    G.curPortraitImg,
+    actionImgShown:      G.curActionImg,
+    orangeImgShown:      G.curPAImg,
+    greenImgShown:       G.curPBImg,
     chosenName, chosenGroup, chosenRole,
     responseRecode, hypothesisConsistent,
-    rt_ms:              rt,
-    timestamp:          new Date().toISOString()
+    rt_ms:               rt,
+    timestamp:           new Date().toISOString()
   });
 
   el.classList.add('chosen');
   document.querySelectorAll('.ccard').forEach(c=>c.classList.add('lock'));
-
   try{ localStorage.setItem('twizzle_'+G.pid, JSON.stringify(G)); }catch(e){}
 
   G.totalDone++;
@@ -1025,7 +1103,7 @@ function recordResp(choice, el){
   }, 700);
 }
 
-// ── Star earned ───────────────────────────────────────────
+// ── Star earned ───────────────────────────────────────────────
 
 function showStarEarned(){
   const isDone = G.totalDone === 12;
@@ -1048,14 +1126,14 @@ function showStarEarned(){
   say(isDone
     ? "You earned a star! You finished all the stories! Amazing!"
     : isHalf
-    ? "You earned a star! Halfway there! You are doing SO well!"
+    ? "You earned a star! Halfway there! You are doing so well!"
     : "You earned a star! Great job!"
   );
 
   if(isDone) setTimeout(()=>showEnd(), 2800);
 }
 
-// ── Between blocks ────────────────────────────────────────
+// ── Between blocks ────────────────────────────────────────────
 
 function advBlock(){
   G.bIdx++;
@@ -1098,9 +1176,12 @@ function showEnd(){
 function dlCSV(){
   if(!G.resp.length){ alert('No data yet!'); return; }
   const cols = [
-    'participantId','age','version',
+    'participantId','age',
+    'versionThisBlock','versionClose','versionBoss',
     'blockBoss','blockClose','blockOrder','blockCurrent',
-    'questionType','epistemic','personA_role','personB_role',
+    'questionType','epistemic',
+    'blockRoleA','blockRoleB',
+    'rolesSwapped','effectiveRoleA','effectiveRoleB',
     'dataExportTag','target','behavior',
     'personA','groupA','personB','groupB',
     'speechA','speechB',
@@ -1110,7 +1191,7 @@ function dlCSV(){
     'responseRecode','hypothesisConsistent',
     'rt_ms','timestamp'
   ];
-  const esc = v => `"${String(v===undefined?'':v).replace(/"/g,'""')}"`;
+  const esc  = v => `"${String(v===undefined?'':v).replace(/"/g,'""')}"`;
   const rows = G.resp.map(r => cols.map(c => esc(r[c])).join(','));
   const csv  = [cols.join(','), ...rows].join('\n');
   const a    = document.createElement('a');
@@ -1124,7 +1205,7 @@ function skipEnd(){
   showEnd();
 }
 
-// ── Init ─────────────────────────────────────────────────
+// ── Init ─────────────────────────────────────────────────────
 
 if(window.speechSynthesis){
   window.speechSynthesis.onvoiceschanged = ()=>window.speechSynthesis.getVoices();
