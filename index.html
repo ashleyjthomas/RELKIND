@@ -13,20 +13,20 @@
       font-family:'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
       background:linear-gradient(135deg,#87ceeb 0%,#a8e6cf 100%);
       min-height:100vh;display:flex;justify-content:center;
-      align-items:flex-start;padding:12px;
+      align-items:flex-start;padding:6px;
       -webkit-font-smoothing:antialiased;
       -moz-osx-font-smoothing:grayscale;
     }
     #gc{
-      background:#fff;border-radius:24px;padding:22px;
-      max-width:780px;width:100%;
+      background:#fff;border-radius:20px;padding:14px 16px;
+      max-width:860px;width:100%;
       box-shadow:0 8px 32px rgba(0,0,0,.12);
-      min-height:90vh;display:flex;flex-direction:column;
-      align-items:center;gap:14px;
+      display:flex;flex-direction:column;
+      align-items:center;gap:8px;
     }
     .screen{
       width:100%;display:flex;flex-direction:column;
-      align-items:center;gap:13px;
+      align-items:center;gap:8px;
       animation:fadeIn .3s ease;
     }
     @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
@@ -43,20 +43,20 @@
       100%{transform:scale(1)  rotate(0deg); opacity:1}
     }
     .star-pop{animation:starPop .5s ease-out forwards;color:#f39c12;line-height:1}
-    h1{font-size:2.1em;color:#e74c3c;text-align:center;font-weight:800;letter-spacing:-0.5px}
-    h2{font-size:1.55em;color:#2c3e50;text-align:center;font-weight:700}
-    .txt{font-size:1.1em;line-height:1.65;color:#2c3e50;text-align:center;max-width:600px;font-weight:600}
+    h1{font-size:1.85em;color:#e74c3c;text-align:center;font-weight:800;letter-spacing:-0.5px;margin:2px 0}
+    h2{font-size:1.4em;color:#2c3e50;text-align:center;font-weight:700;margin:2px 0}
+    .txt{font-size:1.02em;line-height:1.5;color:#2c3e50;text-align:center;max-width:640px;font-weight:600}
     .dirs{
-      font-size:1.05em;color:#34495e;text-align:center;
-      background:#eaf4ff;border-radius:14px;padding:11px 18px;
-      width:100%;max-width:620px;
-      border-left:5px solid #3498db;line-height:1.55;
+      font-size:1em;color:#34495e;text-align:center;
+      background:#eaf4ff;border-radius:12px;padding:9px 16px;
+      width:100%;max-width:680px;
+      border-left:5px solid #3498db;line-height:1.5;
       font-weight:600;
     }
     .btn{
       background:linear-gradient(145deg,#3498db,#2980b9);color:#fff;
-      border:none;padding:13px 26px;border-radius:50px;
-      font-size:1.15em;font-family:inherit;font-weight:700;cursor:pointer;
+      border:none;padding:11px 22px;border-radius:50px;
+      font-size:1.08em;font-family:inherit;font-weight:700;cursor:pointer;
       box-shadow:0 4px 12px rgba(52,152,219,.4);
       transition:transform .1s,opacity .2s;touch-action:manipulation;
       letter-spacing:.2px;
@@ -100,12 +100,14 @@
     .star-slot.empty {color:#e0e0e0}
     .prog{text-align:center;font-size:.88em;color:#aaa;margin-top:-4px;font-weight:600}
     .char-img{object-fit:contain;border-radius:12px;display:block}
-    .char-img.sm {width:80px; height:80px}
-    .char-img.md {width:120px;height:120px}
-    .char-img.lg {width:170px;height:170px}
-    .char-img.xl {width:230px;height:230px}
-    .grp-img  {width:100%;max-width:420px;border-radius:16px;object-fit:contain}
-    .title-img{width:100%;max-width:380px;border-radius:16px;object-fit:contain}
+    .char-img.sm {width:70px; height:70px}
+    .char-img.md {width:96px; height:96px}
+    .char-img.lg {width:130px;height:130px}
+    .char-img.xl {width:170px;height:170px}
+    .grp-img  {width:100%;max-width:380px;border-radius:16px;object-fit:contain}
+    .title-img{width:100%;max-width:300px;border-radius:16px;object-fit:contain}
+    .def-img  {width:100%;max-width:200px;border-radius:14px;object-fit:contain;display:block;margin:2px auto}
+    .def-img.sm{max-width:120px}
     .cw{display:flex;flex-direction:column;align-items:center;gap:6px}
     .clbl{font-size:.98em;font-weight:700;color:#2c3e50;text-align:center}
     .cbadge{display:inline-block;padding:3px 11px;border-radius:20px;font-size:.78em;font-weight:700;letter-spacing:.3px}
@@ -113,51 +115,52 @@
     .bflurp{background:#fdebd0;color:#ca6f1e}
     .bzazzo{background:#d5f5e3;color:#1e8449}
     .char-row{
-      display:flex;align-items:flex-end;gap:24px;
+      display:flex;align-items:flex-end;gap:18px;
       justify-content:center;flex-wrap:wrap;width:100%;
     }
     .scene-img{
-      width:100%;max-width:460px;border-radius:16px;
+      width:100%;max-width:380px;border-radius:14px;
       object-fit:contain;border:3px solid #90caf9;
     }
     .speech-section{
-      width:100%;max-width:640px;
-      display:flex;flex-direction:column;gap:20px;
+      width:100%;max-width:680px;
+      display:flex;flex-direction:column;gap:10px;
     }
-    .speech-row{display:flex;align-items:center;gap:18px}
+    .speech-row{display:flex;align-items:center;gap:14px}
     .sp-char{flex-shrink:0}
     .spbub{
       background:#fffde7;border:2.5px solid #ffc107;
-      border-radius:16px;padding:13px 17px;
-      font-size:1.05em;color:#2c3e50;flex:1;
-      line-height:1.55;font-weight:600;
+      border-radius:14px;padding:10px 14px;
+      font-size:1em;color:#2c3e50;flex:1;
+      line-height:1.45;font-weight:600;
       opacity:0;transform:translateX(14px);
       transition:opacity .45s ease, transform .45s ease;
     }
     .spbub.visible{opacity:1;transform:translateX(0)}
     .qbox{
       background:#f0f8ff;border:3px solid #3498db;
-      border-radius:16px;padding:15px 20px;
-      text-align:center;width:100%;max-width:620px;
+      border-radius:14px;padding:10px 16px;
+      text-align:center;width:100%;max-width:680px;
       opacity:0;transform:translateY(8px);
       transition:opacity .5s ease, transform .5s ease;
+      display:flex;flex-direction:column;align-items:center;gap:4px;
     }
     .qbox.boss{background:#fef9e7;border-color:#e67e22}
     .qbox.show{opacity:1;transform:translateY(0)}
-    .qtxt{font-size:1.22em;color:#2c3e50;font-weight:700}
-    .qdef{font-size:.92em;color:#7f8c8d;margin-top:7px;line-height:1.5;font-style:italic;font-weight:500}
+    .qtxt{font-size:1.15em;color:#2c3e50;font-weight:700}
+    .qdef{font-size:.88em;color:#7f8c8d;margin-top:2px;line-height:1.4;font-style:italic;font-weight:500}
     .choices{
-      display:flex;gap:28px;justify-content:center;flex-wrap:wrap;
+      display:flex;gap:22px;justify-content:center;flex-wrap:wrap;
       opacity:0;transform:translateY(8px);
       transition:opacity .5s ease .2s, transform .5s ease .2s;
     }
     .choices.show{opacity:1;transform:translateY(0)}
     .ccard{
       background:#fff;border:4px solid #dfe6e9;
-      border-radius:18px;padding:16px 20px;
+      border-radius:16px;padding:10px 14px;
       cursor:pointer;display:flex;flex-direction:column;
-      align-items:center;gap:8px;
-      transition:all .15s;min-width:150px;font-family:inherit;
+      align-items:center;gap:6px;
+      transition:all .15s;min-width:130px;font-family:inherit;
       touch-action:manipulation;-webkit-tap-highlight-color:transparent;
     }
     .ccard:hover,.ccard:active{border-color:#3498db;background:#eaf4ff;transform:scale(1.05)}
@@ -197,12 +200,17 @@
     }
     #rinfo{margin-top:5px;font-size:.73em;opacity:.82;line-height:1.45}
     @media(max-width:480px){
-      #gc{padding:14px 10px}
-      h1{font-size:1.75em}
-      .ccard{min-width:120px;padding:12px 14px}
-      .choices{gap:16px}
-      .char-img.xl{width:180px;height:180px}
-      .char-img.lg{width:130px;height:130px}
+      #gc{padding:10px 8px}
+      h1{font-size:1.55em}
+      h2{font-size:1.2em}
+      .ccard{min-width:110px;padding:9px 12px}
+      .choices{gap:14px}
+      .char-img.xl{width:140px;height:140px}
+      .char-img.lg{width:100px;height:100px}
+      .char-img.md{width:80px;height:80px}
+      .char-row{gap:10px}
+      .speech-row{gap:10px}
+      .scene-img{max-width:300px}
     }
   </style>
 </head>
@@ -216,17 +224,47 @@
 <div id="gc"></div>
 <script>
 // ═══════════════════════════════════════════════════════════
-//  TWIZZLE TOWN — Child Study Game v9
+//  TWIZZLE TOWN — Child Study Game v10
 //  ashleyjthomas/RELKIND
-//  - Nunito font
-//  - All emojis removed; SVG stars and clean typography only
+//  - Restored relationship-setup story text (adult-version style)
+//  - Tighter layout (no scrolling on tablets/laptops)
+//  - First-name field; CHS ID auto-grabbed from URL
+//  - Closer/Boss definition shown as images (CShugging/ARchair)
+//  - Mid-game video + end-screen video
 // ═══════════════════════════════════════════════════════════
 const VILLAGE   = "Twizzle Town";
 const CLOSE_DEF = "That means that they love each other more, tell each other more secrets, and give each other hugs.";
 const BOSS_DEF  = "That means they are in charge — they tell [Name] what to do, and [Name] listens.";
 
-// ── MID-GAME VIDEO ────────────────────────────────────────────
+// ── CHS ID auto-capture ───────────────────────────────────────
+// Pulls the participant identifier from common URL params used by
+// CHS (Children Helping Science) and similar platforms. If nothing
+// is found, we fall back to the child's first name as the ID.
+function _getChsId(){
+  try{
+    const p = new URLSearchParams(window.location.search);
+    const KEYS = [
+      'child_hashed_id','child_id','childId','childID',
+      'chs_child_id','chsId','chs_id',
+      'participantId','participant_id','pid',
+      'sessionId','session_id','response_id',
+      'subject_id','subjectId'
+    ];
+    for(const k of KEYS){
+      const v = p.get(k);
+      if(v && v.trim()) return v.trim();
+    }
+  }catch(e){}
+  return '';
+}
+const _CHS_ID = _getChsId();
+
+// ── MID-GAME + END-GAME VIDEOS ────────────────────────────────
 const MID_VIDEO = {
+  type: 'local',
+  src:  'mixkit-three-funny-multicoloured-men-dancing-to-upbeat-music-44877-hd-ready.mp4'
+};
+const END_VIDEO = {
   type: 'local',
   src:  'mixkit-three-funny-multicoloured-men-dancing-to-upbeat-music-44877-hd-ready.mp4'
 };
@@ -532,7 +570,8 @@ function effRoles(){
 //  GAME STATE
 // ═══════════════════════════════════════════════════════════
 const G = {
-  pid:'', age:null, t0:null,
+  pid:'', firstName:'', chsId:_CHS_ID,
+  age:null, t0:null,
   bossB:null, closeB:null,
   order:[], versionMap:{},
   bIdx:0, tOrder:[], tIdx:0,
@@ -585,9 +624,9 @@ function showSetup(){
   G.selAge = null;
   render(`
     <h2>Before we start...</h2>
-    <p class="txt">What is your <strong>ID</strong>?</p>
-    <input class="tinput" id="pidIn" type="text" placeholder="Type here!"/>
-    <p class="txt" style="margin-top:6px;">How old are you?</p>
+    <p class="txt">What's your <strong>first name</strong>?</p>
+    <input class="tinput" id="pidIn" type="text" placeholder="Type your name!" autocomplete="off"/>
+    <p class="txt" style="margin-top:4px;">How old are you?</p>
     <div class="age-row">
       ${[4,5,6,7,8].map(a=>
         `<button class="abtn" id="ab${a}" onclick="pickAge(${a})">${a}</button>`
@@ -618,9 +657,11 @@ function checkReady(){
 function launchGame(){
   const pid = document.getElementById('pidIn');
   if(!pid || !pid.value.trim()) return;
-  G.pid  = pid.value.trim();
-  G.age  = G.selAge;
-  G.t0   = new Date().toISOString();
+  G.firstName = pid.value.trim();
+  // Participant identifier in data: CHS ID if present in URL, else first name
+  G.pid       = G.chsId || G.firstName;
+  G.age       = G.selAge;
+  G.t0        = new Date().toISOString();
   G.bossB  = pick(['hmm1_boss','hmm2_boss','yes1_boss','yes2_boss']);
   G.closeB = pick(['hmm1_close','hmm2_close','yes1_close','yes2_close']);
   G.order  = Math.random() < .5 ? ['boss','close'] : ['close','boss'];
@@ -629,7 +670,8 @@ function launchGame(){
   G.versionMap[G.order[0]] = firstVer;
   G.versionMap[G.order[1]] = secondVer;
   document.getElementById('rinfo').innerHTML =
-    `PID: ${G.pid} | Age: ${G.age}<br>`+
+    `Name: ${G.firstName} | Age: ${G.age}<br>`+
+    `CHS: ${G.chsId || '(none)'}<br>`+
     `Order: ${G.order.join(' &rarr; ')}<br>`+
     `${G.order[0]}: ${G.order[0]==='boss'?G.bossB:G.closeB} (Ver ${firstVer})<br>`+
     `${G.order[1]}: ${G.order[1]==='boss'?G.bossB:G.closeB} (Ver ${secondVer})`;
@@ -736,23 +778,23 @@ function beginMain(){
 function showBkIntro(){
   const cfg = curCfg();
   const isC = cfg.qType === 'close';
-  const ver = curVersion();
   render(`
-    <h2>${isC ? 'A question about friends!' : 'A question about the boss!'}</h2>
+    <h2>${isC ? 'A question about being close!' : 'A question about the boss!'}</h2>
     ${isC ? `
-      <p class="txt">After each story I will ask:<br><br>
+      <p class="txt">After each story I will ask:<br>
         <strong>"Who is [Name] closer to?"</strong></p>
-      <div class="defbox">${CLOSE_DEF}</div>
+      <img src="CShugging.png" class="def-img" alt="Two friends hugging"
+        onerror="this.style.display='none'">
     ` : `
-      <p class="txt">After each story I will ask:<br><br>
+      <p class="txt">After each story I will ask:<br>
         <strong>"Who is [Name]'s boss?"</strong></p>
-      <div class="defbox">${BOSS_DEF.replace(/\[Name\]/g, 'the character')}</div>
+      <img src="ARchair.png" class="def-img" alt="The boss in a chair"
+        onerror="this.style.display='none'">
     `}
-    <p class="txt" style="font-size:.88em;color:#aaa;">
-      Block: ${isC ? 'Closer' : 'Boss'} &nbsp;|&nbsp; Character set: ${ver}
-    </p>
-    <button class="btn g" onclick="nextTrial()">Let's start</button>
-    <button class="rrb" onclick="reread()">Replay</button>
+    <div style="display:flex;gap:10px;align-items:center;">
+      <button class="btn g" onclick="nextTrial()">Let's start</button>
+      <button class="rrb" onclick="reread()">Replay</button>
+    </div>
   `);
   say(isC ? 'block_close' : 'block_boss');
 }
@@ -781,7 +823,10 @@ function showTrialChars(){
     ${starMeterHTML()}
     <p class="prog">Story ${tn} of 12</p>
     <div class="dirs">
-      Meet <strong>${tr.tgt}</strong> and their two friends!
+      Now you'll meet <strong>${tr.tgt}</strong>.<br>
+      ${tr.tgt} has known <strong>${tr.pA}</strong> and
+      <strong>${tr.pB}</strong> for several years and has spent
+      equal time with both of them.
     </div>
     <div class="char-row">
       <div class="cw">
@@ -797,7 +842,7 @@ function showTrialChars(){
         <div class="clbl">${tr.pB}</div>${badge(tr.gB)}
       </div>
     </div>
-    <div style="display:flex;gap:11px;align-items:center;margin-top:4px;">
+    <div style="display:flex;gap:10px;align-items:center;margin-top:2px;">
       <button class="btn" onclick="showTrialAction()">
         What happened?
       </button>
@@ -855,7 +900,9 @@ function showTrialSpeech(){
   const qTxt   = isC
     ? `Who is <strong>${tr.tgt}</strong> closer to?`
     : `Who do you think is <strong>${tr.tgt}'s boss</strong>?`;
-  const defTxt = isC ? CLOSE_DEF : BOSS_DEF.replace(/\[Name\]/g, tr.tgt);
+  const defImg = isC
+    ? `<img src="CShugging.png" class="def-img sm" alt="Two friends hugging" onerror="this.style.display='none'">`
+    : `<img src="ARchair.png" class="def-img sm" alt="The boss in a chair" onerror="this.style.display='none'">`;
   G.tStart = Date.now();
   render(`
     ${starMeterHTML()}
@@ -887,7 +934,7 @@ function showTrialSpeech(){
     </button>
     <div id="qbox" class="qbox${isC ? '' : ' boss'}">
       <div class="qtxt">${qTxt}</div>
-      <div class="qdef">${defTxt}</div>
+      ${defImg}
     </div>
     <div id="choices" class="choices">
       <button class="ccard" onclick="recordResp(0,this)">
@@ -968,6 +1015,8 @@ function recordResp(choice, el){
     (cfg.qType==='boss'  && chosenRole==='group') ? 1 : 0;
   G.resp.push({
     participantId:      G.pid,
+    chsId:              G.chsId,
+    firstName:          G.firstName,
     age:                G.age,
     versionThisBlock:   ver,
     versionClose:       G.versionMap['close'],
@@ -1120,23 +1169,39 @@ function advBlock(){
 function showEnd(){
   try{ localStorage.setItem('twizzle_'+G.pid, JSON.stringify(G)); }catch(e){}
   render(`
-    <div class="big-celebrate" style="width:120px;height:120px;">${STAR_SVG}</div>
+    <div class="big-celebrate" style="width:100px;height:100px;">${STAR_SVG}</div>
     <h1>You did it!</h1>
-    <img src="star_reward.png"
-      style="width:140px;height:140px;object-fit:contain;"
-      alt="Star" onerror="this.style.display='none'">
     ${starMeterHTML()}
-    <p class="txt" style="font-size:1.2em;">
+    <p class="txt" style="font-size:1.1em;">
       Thank you <strong>SO much</strong>
       for visiting ${VILLAGE}!<br>
       You were absolutely <strong>amazing!</strong>
     </p>
-    <p class="txt" style="font-size:.9em;color:#95a5a6;">
+    <video
+      id="end-video"
+      src="${END_VIDEO.src}"
+      controls
+      autoplay
+      playsinline
+      style="
+        width:100%;
+        max-width:500px;
+        border-radius:16px;
+        box-shadow:0 6px 24px rgba(0,0,0,.18);
+      "
+      onerror="document.getElementById('end-video-err').style.display='block'"
+    ></video>
+    <p id="end-video-err"
+       style="display:none;color:#e74c3c;font-size:.9em;">
+      Oops — video couldn't load.
+    </p>
+    <p class="txt" style="font-size:.85em;color:#95a5a6;">
       ${G.resp.length} questions answered
     </p>
     <button class="btn g" onclick="dlCSV()">Save my data</button>
   `);
-  say('end');
+  // Play end narration alongside the video
+  say('end_video');
   try{ window.parent.postMessage({type:'GAME_COMPLETE'}, '*'); }catch(e){}
 }
 
@@ -1146,7 +1211,7 @@ function showEnd(){
 function dlCSV(){
   if(!G.resp.length){ alert('No data yet!'); return; }
   const cols = [
-    'participantId','age',
+    'participantId','chsId','firstName','age',
     'versionThisBlock','versionClose','versionBoss',
     'blockBoss','blockClose','blockOrder','blockCurrent',
     'questionType','epistemic',
