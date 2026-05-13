@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>Wug Village 🏘️</title>
+  <title>Twizzle Town</title>
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
     body{
@@ -14,7 +14,7 @@
     }
     #gc{
       background:#fff;border-radius:24px;padding:22px;
-      max-width:700px;width:100%;
+      max-width:740px;width:100%;
       box-shadow:0 8px 32px rgba(0,0,0,.12);
       min-height:90vh;display:flex;flex-direction:column;
       align-items:center;gap:14px;
@@ -26,10 +26,36 @@
     }
     @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 
+    /* ── Speaking animation ── */
+    @keyframes speakBounce{
+      0%,100%{transform:translateY(0) rotate(0deg)}
+      20%    {transform:translateY(-8px) rotate(-4deg)}
+      60%    {transform:translateY(-8px) rotate(4deg)}
+      80%    {transform:translateY(-3px)}
+    }
+    .speaking{animation:speakBounce 0.65s ease-in-out infinite}
+
+    /* ── Star pop ── */
+    @keyframes starPop{
+      0%  {transform:scale(0) rotate(-20deg);opacity:0}
+      60% {transform:scale(1.4) rotate(10deg);opacity:1}
+      100%{transform:scale(1)  rotate(0deg); opacity:1}
+    }
+    .star-pop{animation:starPop 0.55s ease-out forwards}
+
     h1{font-size:2.1em;color:#e74c3c;text-align:center;text-shadow:2px 2px #ffeaa7}
     h2{font-size:1.5em;color:#2c3e50;text-align:center}
-    .txt{font-size:1.1em;line-height:1.65;color:#2c3e50;text-align:center;max-width:560px}
+    .txt{font-size:1.1em;line-height:1.65;color:#2c3e50;text-align:center;max-width:580px}
 
+    /* ── Direction box ── */
+    .dirs{
+      font-size:1.08em;color:#34495e;text-align:center;
+      background:#eaf4ff;border-radius:14px;padding:11px 18px;
+      width:100%;max-width:580px;
+      border-left:5px solid #3498db;line-height:1.55;
+    }
+
+    /* ── Buttons ── */
     .btn{
       background:linear-gradient(145deg,#3498db,#2980b9);color:#fff;
       border:none;padding:13px 26px;border-radius:50px;
@@ -38,10 +64,14 @@
       transition:transform .1s;touch-action:manipulation;
     }
     .btn:active{transform:scale(.97)}
-    .btn.g{background:linear-gradient(145deg,#2ecc71,#27ae60)}
-    .btn.sl{background:linear-gradient(145deg,#95a5a6,#7f8c8d)}
-    .btn.sm{padding:8px 16px;font-size:.95em}
+    .btn.g  {background:linear-gradient(145deg,#2ecc71,#27ae60);box-shadow:0 4px 12px rgba(46,204,113,.4)}
+    .btn.or {background:linear-gradient(145deg,#f39c12,#e67e22);box-shadow:0 4px 12px rgba(243,156,18,.5);
+             font-size:1.3em;padding:16px 34px}
+    .btn.sl {background:linear-gradient(145deg,#95a5a6,#7f8c8d)}
+    .btn.sm {padding:8px 16px;font-size:.95em}
+    .btn:disabled{opacity:.55;cursor:not-allowed;transform:none}
 
+    /* ── Age picker ── */
     .age-row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
     .abtn{
       background:#ecf0f1;color:#2c3e50;border:3px solid transparent;
@@ -57,80 +87,104 @@
       width:100%;max-width:270px;text-align:center;
     }
 
-    .pw{width:100%;max-width:400px}
-    .pbar{background:#ecf0f1;border-radius:20px;height:14px;overflow:hidden}
-    .pfill{background:linear-gradient(90deg,#3498db,#2ecc71);height:100%;
-           border-radius:20px;transition:width .5s}
-    .plbl{text-align:center;font-size:.9em;color:#7f8c8d;margin-top:3px}
+    /* ── Star meter ── */
+    .star-meter{
+      display:flex;gap:7px;align-items:center;justify-content:center;
+      padding:8px 18px;background:#fff9e6;border-radius:22px;
+      border:2px solid #f39c12;
+    }
+    .star-slot{font-size:1.9em;display:inline-block;transition:transform .3s}
+    .star-slot.earned{color:#f39c12}
+    .star-slot.empty {color:#ddd}
 
-    .char-img{width:120px;height:120px;object-fit:contain;border-radius:12px}
-    .char-img.sm{width:80px;height:80px}
-    .char-img.lg{width:200px;height:200px}
+    /* ── Character images ── */
+    .char-img{object-fit:contain;border-radius:12px}
+    .char-img.sm{width:80px; height:80px}
+    .char-img.md{width:110px;height:110px}
+    .char-img.lg{width:160px;height:160px}
+    .char-img.xl{width:220px;height:220px}
+
+    /* ── Group intro image ── */
+    .grp-img{width:100%;max-width:400px;border-radius:16px;object-fit:contain}
+    .title-img{width:100%;max-width:380px;border-radius:16px;object-fit:contain}
 
     .cw{display:flex;flex-direction:column;align-items:center;gap:5px}
     .clbl{font-size:.95em;font-weight:700;color:#2c3e50;text-align:center}
     .cbadge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:.78em;font-weight:700}
-    .bwug{background:#d6eaf8;color:#2471a3}
+    .bwug  {background:#d6eaf8;color:#2471a3}
     .bflurp{background:#fdebd0;color:#ca6f1e}
     .bzazzo{background:#d5f5e3;color:#1e8449}
 
-    .frow{display:flex;align-items:flex-end;gap:12px;justify-content:center;flex-wrap:wrap}
-    .hrt{font-size:1.4em;padding-bottom:18px}
-
-    .scene{
-      background:linear-gradient(180deg,#e3f2fd 0%,#c8e6c9 65%,#a5d6a7 100%);
-      border-radius:16px;padding:14px;
-      width:100%;max-width:470px;
-      display:flex;flex-direction:column;align-items:center;gap:7px;
-      border:2px solid #90caf9;
+    /* ── Three-character intro row ── */
+    .char-row{
+      display:flex;align-items:flex-end;gap:20px;
+      justify-content:center;flex-wrap:wrap;
+      width:100%;
     }
 
-    .spsec{width:100%;max-width:530px;display:flex;flex-direction:column;gap:11px}
-    .sprow{display:flex;align-items:flex-start;gap:11px}
-    .sprow.flip{flex-direction:row-reverse}
+    /* ── Action scene ── */
+    .scene-img{
+      width:100%;max-width:440px;border-radius:16px;
+      object-fit:contain;border:3px solid #90caf9;
+    }
+
+    /* ── Speech section ── */
+    .speech-section{
+      width:100%;max-width:580px;
+      display:flex;flex-direction:column;gap:16px;
+    }
+    .speech-row{
+      display:flex;align-items:center;gap:16px;
+    }
     .spbub{
       background:#fffde7;border:2.5px solid #ffc107;
-      border-radius:14px;padding:11px 15px;
-      font-size:1.05em;color:#2c3e50;flex:1;
+      border-radius:16px;padding:13px 17px;
+      font-size:1.08em;color:#2c3e50;flex:1;
+      line-height:1.55;
+      opacity:0;transform:translateX(10px);
+      transition:opacity 0.45s ease, transform 0.45s ease;
     }
+    .spbub.visible{opacity:1;transform:translateX(0)}
 
+    /* ── Question box ── */
     .qbox{
       background:#f0f8ff;border:3px solid #3498db;
-      border-radius:16px;padding:14px 18px;
-      text-align:center;width:100%;max-width:500px;
+      border-radius:16px;padding:15px 20px;
+      text-align:center;width:100%;max-width:580px;
+      opacity:0;transform:translateY(8px);
+      transition:opacity 0.5s ease, transform 0.5s ease;
     }
     .qbox.boss{background:#fef9e7;border-color:#e67e22}
-    .qtxt{font-size:1.2em;color:#2c3e50;font-weight:700}
+    .qbox.show{opacity:1;transform:translateY(0)}
+    .qtxt{font-size:1.22em;color:#2c3e50;font-weight:700}
+    .qdef{font-size:.9em;color:#7f8c8d;margin-top:7px;line-height:1.5;font-style:italic}
 
-    .choices{display:flex;gap:22px;justify-content:center;flex-wrap:wrap}
+    /* ── Choices ── */
+    .choices{
+      display:flex;gap:24px;justify-content:center;flex-wrap:wrap;
+      opacity:0;transform:translateY(8px);
+      transition:opacity 0.5s ease 0.2s, transform 0.5s ease 0.2s;
+    }
+    .choices.show{opacity:1;transform:translateY(0)}
     .ccard{
       background:#fff;border:4px solid #dfe6e9;
       border-radius:18px;padding:14px 18px;
       cursor:pointer;display:flex;flex-direction:column;
-      align-items:center;gap:7px;
-      transition:all .15s;min-width:118px;
+      align-items:center;gap:8px;
+      transition:all .15s;min-width:140px;
       touch-action:manipulation;-webkit-tap-highlight-color:transparent;
     }
-    .ccard:hover,.ccard:active{border-color:#3498db;background:#eaf4ff;transform:scale(1.04)}
+    .ccard:hover,.ccard:active{border-color:#3498db;background:#eaf4ff;transform:scale(1.05)}
     .ccard.chosen{border-color:#2ecc71;background:#eafaf1}
     .ccard.lock{pointer-events:none}
     .cname{font-size:1.15em;font-weight:700;color:#2c3e50}
 
     .rrb{
-      background:#f39c12;color:#fff;border:none;
-      border-radius:50%;width:46px;height:46px;
-      font-size:1.35em;cursor:pointer;flex-shrink:0;
+      background:#95a5a6;color:#fff;border:none;
+      border-radius:50%;width:44px;height:44px;
+      font-size:1.25em;cursor:pointer;flex-shrink:0;
       display:flex;align-items:center;justify-content:center;
-      box-shadow:0 3px 10px rgba(243,156,18,.4);touch-action:manipulation;
-    }
-
-    .title-img{width:100%;max-width:380px;border-radius:16px;object-fit:contain}
-
-    .pshape{
-      width:80px;height:80px;border-radius:50%;
-      display:flex;align-items:center;justify-content:center;
-      font-size:1.8em;font-weight:bold;color:white;
-      box-shadow:0 4px 12px rgba(0,0,0,.15);
+      touch-action:manipulation;
     }
 
     #rbar{
@@ -138,7 +192,7 @@
       background:rgba(20,20,20,.88);color:#fff;
       padding:7px 11px;border-radius:10px;
       font-family:monospace;font-size:.72em;
-      z-index:9999;max-width:210px;
+      z-index:9999;max-width:215px;
     }
     #rbar button{
       background:#c0392b;color:#fff;border:none;
@@ -147,17 +201,18 @@
     }
     #rinfo{margin-top:5px;font-size:.73em;opacity:.82;line-height:1.45}
 
-    @media(max-width:440px){
+    @media(max-width:460px){
       #gc{padding:14px 10px}
       h1{font-size:1.7em}
-      .ccard{min-width:95px;padding:11px 12px}
+      .ccard{min-width:110px;padding:11px 12px}
       .choices{gap:14px}
+      .char-img.lg{width:130px;height:130px}
+      .speech-row{gap:10px}
     }
   </style>
 </head>
 <body>
 
-<!-- ══ Researcher Panel ══════════════════════════ -->
 <div id="rbar">
   🔬 Researcher
   <button onclick="dlCSV()">💾 Download CSV</button>
@@ -165,15 +220,18 @@
   <div id="rinfo">No session yet</div>
 </div>
 
-<!-- ══ Game Container ════════════════════════════ -->
 <div id="gc"></div>
 
 <script>
 // ═══════════════════════════════════════════════════════════
-//  WUG VILLAGE — Child Study Game v2
-//  GitHub repo: ashleyjthomas/RELKIND
-//  Images in root directory alongside index.html
+//  TWIZZLE TOWN — Child Study Game v3
+//  ashleyjthomas/RELKIND
 // ═══════════════════════════════════════════════════════════
+
+const VILLAGE = "Twizzle Town";
+const CLOSE_DEF =
+  "That means that they love each other more, " +
+  "tell each other more secrets, and give each other hugs.";
 
 // ── UTILITIES ───────────────────────────────────────────────
 
@@ -193,31 +251,57 @@ function badge(g){
   return `<span class="cbadge ${cl[g]}">${lb[g]}</span>`;
 }
 
-function cimg(src,cls){
-  return `<img src="${src}" class="char-img ${cls||''}" alt=""
-    onerror="this.style.opacity=0.15">`;
+function cimg(src,cls,id){
+  const idStr = id ? `id="${id}"` : '';
+  return `<img src="${src}" ${idStr} class="char-img ${cls||''}"
+    alt="" onerror="this.style.opacity=0.15">`;
 }
 
-// ── SPEECH SYNTHESIS ────────────────────────────────────────
+// ── SPEECH ──────────────────────────────────────────────────
 
 let _nar='';
+
+function getVoice(){
+  const vs=window.speechSynthesis.getVoices();
+  return vs.find(v=>
+    v.name.includes('Samantha')||v.name.includes('Google US English')||
+    v.name.includes('Karen')||v.name.includes('Moira')
+  )||null;
+}
+
 function say(txt){
   if(!window.speechSynthesis) return;
   window.speechSynthesis.cancel();
   _nar=txt;
   const u=new SpeechSynthesisUtterance(txt);
   u.rate=0.87; u.pitch=1.1; u.volume=1;
-  const vs=window.speechSynthesis.getVoices();
-  const pref=vs.find(v=>
-    v.name.includes('Samantha')||v.name.includes('Google US English')||
-    v.name.includes('Karen')||v.name.includes('Moira')
-  );
-  if(pref) u.voice=pref;
+  const v=getVoice(); if(v) u.voice=v;
   window.speechSynthesis.speak(u);
 }
+
 function reread(){ if(_nar) say(_nar); }
 
-// ── BLOCK CONFIGURATIONS ────────────────────────────────────
+function speakThen(text, cb){
+  if(!window.speechSynthesis){ setTimeout(cb,100); return; }
+  window.speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);
+  u.rate=0.85; u.pitch=1.05; u.volume=1;
+  const v=getVoice(); if(v) u.voice=v;
+  const fallback=setTimeout(()=>cb(), text.length*90+1800);
+  u.onend=()=>{ clearTimeout(fallback); cb(); };
+  window.speechSynthesis.speak(u);
+}
+
+// ── STAR METER ──────────────────────────────────────────────
+
+function starMeterHTML(){
+  let h='<div class="star-meter">';
+  for(let i=0;i<6;i++)
+    h+=`<span class="star-slot ${i<G.stars?'earned':'empty'}">${i<G.stars?'⭐':'☆'}</span>`;
+  return h+'</div>';
+}
+
+// ── BLOCK CONFIGS ───────────────────────────────────────────
 
 const BCFG={
   hmm1_close:{ep:'hmm',aRole:'group',      bRole:'individual',qType:'close'},
@@ -265,12 +349,12 @@ const TRIALS={
     },
     {
       beh:'walls', tgt:'Taylor', tg:'wug', pA:'Finley', gA:'flurp', pB:'Robin', gB:'zazzo',
-      story: t=>`One day you see ${t} climbing the walls of a tall building.`,
-      icon:'🧱',
+      story: t=>`One day you see ${t} climbing a tall tree.`,
+      icon:'🌳',
       actionImgs:['taylor_walls_v1.png','taylor_walls_v2.png','taylor_walls_v3.png','taylor_walls_v4.png'],
       pAImgs:['finley_portrait_v1.png','finley_portrait_v2.png'],
       pBImgs:['robin_portrait_v1.png','robin_portrait_v2.png'],
-      act:{g:'climb walls',i:'climb walls'},
+      act:{g:'climb trees',i:'climb trees'},
       ids:{hmm1c:'Walls_Hmm_1',hmm2c:'Walls_Hmm_2',yes1c:'Climb_Yes_1',yes2c:'Climb_Yes_2',
            hmm1b:'Walls_Hmm_1_b',hmm2b:'Walls_Hmm_2_b',yes1b:'Walls_Yes_1_b',yes2b:'Walls_Yes_2_b'}
     },
@@ -383,32 +467,35 @@ const TRIALS={
 function mkSpeech(ep,role,tgt,act){
   if(ep==='hmm'){
     return role==='group'
-      ? `Hmm, Wugs must like to ${act.g}.`
-      : `Hmm, ${tgt} must like to ${act.i}.`;
+      ?`Hmm, Wugs must like to ${act.g}.`
+      :`Hmm, ${tgt} must like to ${act.i}.`;
   } else {
     return role==='group'
-      ? `Yes, Wugs like to ${act.g}.`
-      : `Yes, ${tgt} likes to ${act.i}.`;
+      ?`Yes, Wugs like to ${act.g}.`
+      :`Yes, ${tgt} likes to ${act.i}.`;
   }
 }
 
 // ── GAME STATE ──────────────────────────────────────────────
 
 const G={
-  pid:'',age:null,version:null,t0:null,
-  bossB:null,closeB:null,
-  order:[],
-  bIdx:0,tOrder:[],tIdx:0,
-  curT:null,tStart:null,
-  curActionImg:null,curPAImg:null,curPBImg:null,
-  resp:[],locked:false,iStep:0
+  pid:'', age:null, version:null, t0:null,
+  bossB:null, closeB:null,
+  order:[], bIdx:0,
+  tOrder:[], tIdx:0,
+  curT:null,
+  curActionImg:null, curPAImg:null, curPBImg:null,
+  resp:[], locked:false,
+  stars:0, totalDone:0,
+  speechDone:false,
+  iStep:0
 };
 
 // ── RENDER ──────────────────────────────────────────────────
 
 const gc=document.getElementById('gc');
 function render(h){ gc.innerHTML=`<div class="screen">${h}</div>`; }
-function curB()  { return G.order[G.bIdx]==='boss' ? G.bossB : G.closeB; }
+function curB()  { return G.order[G.bIdx]==='boss'?G.bossB:G.closeB; }
 function curCfg(){ return BCFG[curB()]; }
 
 // ═══════════════════════════════════════════════════════════
@@ -417,17 +504,17 @@ function curCfg(){ return BCFG[curB()]; }
 
 function showWelcome(){
   render(`
-    <h1>🏘️ Wug Village! 🏘️</h1>
-    <img src="title_card.png" class="title-img" alt="Wug Village"
+    <h1>🏘️ ${VILLAGE}! 🏘️</h1>
+    <img src="title_card.png" class="title-img" alt="${VILLAGE}"
       onerror="this.style.display='none'">
     <p class="txt" style="font-size:1.2em;">
       Welcome!<br>
-      Today we're going to meet some new friends<br>
-      and answer some fun questions!
+      Today we're going to visit ${VILLAGE}<br>
+      and meet some new friends!
     </p>
     <button class="btn g" onclick="showSetup()">Let's go! 🚀</button>
   `);
-  say("Welcome to Wug Village! Today we're going to meet some new friends and answer some fun questions!");
+  say(`Welcome! Today we're going to visit ${VILLAGE} and meet some new friends!`);
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -484,8 +571,7 @@ function launchGame(){
   G.order  =Math.random()<.5?['boss','close']:['close','boss'];
 
   document.getElementById('rinfo').innerHTML=
-    `PID: ${G.pid} | Age: ${G.age}<br>`+
-    `Version: ${G.version}<br>`+
+    `PID: ${G.pid} | Age: ${G.age}<br>Ver: ${G.version}<br>`+
     `Boss: ${G.bossB}<br>Close: ${G.closeB}<br>`+
     `Order: ${G.order.join(' → ')}`;
 
@@ -499,58 +585,56 @@ function launchGame(){
 
 const ISTEPS=[
   {
-    title:'🌍 A Far-Away Place!',
+    title:`🌍 Welcome to ${VILLAGE}!`,
     body:`
-      <img src="title_card.png" class="title-img" alt="Wug Village"
+      <img src="title_card.png" class="title-img" alt="${VILLAGE}"
         onerror="this.style.display='none'">
-      <p class="txt">Imagine you visit a place
-        <strong>far, far away!</strong><br><br>
-        There are <strong>three kinds of friends</strong>
-        who live there!</p>`,
-    aud:"Imagine you visit a place far, far away! There are three kinds of friends who live there!"
+      <p class="txt">In ${VILLAGE}, there are
+        <strong>three kinds of friends</strong>!</p>`,
+    aud:`In ${VILLAGE}, there are three kinds of friends!`
   },
   {
     title:'💙 Meet the Wugs!',
     body:`
-      <div style="font-size:3.5em;">💙</div>
-      <span class="cbadge bwug" style="font-size:1.5em;padding:10px 22px;">Wugs</span>
+      <img src="wug_group_intro.png" class="grp-img" alt="Wugs"
+        onerror="this.style.display='none'">
+      <span class="cbadge bwug" style="font-size:1.4em;padding:9px 20px;">Wugs</span>
       <p class="txt">These are called
         <strong style="color:#2471a3">WUGS!</strong><br>
-        They are <strong>blue</strong>!<br>
-        They are tall and love to think!</p>`,
-    aud:"These are called Wugs! They are blue! They are tall and love to think!"
+        They are <strong>blue</strong> and <strong>tall</strong>.</p>`,
+    aud:"These are called Wugs! They are blue and tall."
   },
   {
     title:'🧡 Meet the Flurps!',
     body:`
-      <div style="font-size:3.5em;">🧡</div>
-      <span class="cbadge bflurp" style="font-size:1.5em;padding:10px 22px;">Flurps</span>
+      <img src="flurp_group_intro.png" class="grp-img" alt="Flurps"
+        onerror="this.style.display='none'">
+      <span class="cbadge bflurp" style="font-size:1.4em;padding:9px 20px;">Flurps</span>
       <p class="txt">These are called
         <strong style="color:#ca6f1e">FLURPS!</strong><br>
-        They are <strong>orange</strong>!<br>
-        They are bright and love to move!</p>`,
-    aud:"These are called Flurps! They are orange! They are bright and love to move!"
+        They are <strong>orange</strong> and <strong>bright</strong>.</p>`,
+    aud:"These are called Flurps! They are orange and bright."
   },
   {
     title:'💚 Meet the Zazzos!',
     body:`
-      <div style="font-size:3.5em;">💚</div>
-      <span class="cbadge bzazzo" style="font-size:1.5em;padding:10px 22px;">Zazzos</span>
+      <img src="zazzo_group_intro.png" class="grp-img" alt="Zazzos"
+        onerror="this.style.display='none'">
+      <span class="cbadge bzazzo" style="font-size:1.4em;padding:9px 20px;">Zazzos</span>
       <p class="txt">These are called
         <strong style="color:#1e8449">ZAZZOS!</strong><br>
-        They are <strong>green</strong>!<br>
-        They are cozy and love to be calm!</p>`,
-    aud:"These are called Zazzos! They are green! They are cozy and love to be calm!"
+        They are <strong>green</strong> and <strong>soft</strong>.</p>`,
+    aud:"These are called Zazzos! They are green and soft."
   },
   {
-    title:'🎉 All Together!',
+    title:`🎉 All in ${VILLAGE}!`,
     body:`
       <img src="title_card.png" class="title-img" alt="All together"
         onerror="this.style.display='none'">
       <p class="txt">Wugs, Flurps, and Zazzos all live together in
-        <strong>Wug Village!</strong><br>
+        <strong>${VILLAGE}</strong>!<br>
         Are you ready to meet some of them?</p>`,
-    aud:"Wugs, Flurps, and Zazzos all live together in Wug Village! Are you ready to meet some of them?"
+    aud:`Wugs, Flurps, and Zazzos all live together in ${VILLAGE}! Are you ready to meet some of them?`
   },
 ];
 
@@ -565,146 +649,13 @@ function showIntro(){
         ?`<button class="btn sl sm" onclick="G.iStep--;showIntro()">← Back</button>`
         :''}
       <button class="btn ${last?'g':''}"
-        onclick="${last?'showPractice(1)':'G.iStep++;showIntro()'}">
+        onclick="${last?'beginMain()':'G.iStep++;showIntro()'}">
         ${last?'Play! 🎮':'Next →'}
       </button>
-      <button class="rrb" onclick="reread()">🔊</button>
+      <button class="rrb" onclick="reread()" title="Replay">🔊</button>
     </div>
   `);
   say(st.aud);
-}
-
-// ═══════════════════════════════════════════════════════════
-//  PRACTICE
-// ═══════════════════════════════════════════════════════════
-
-function showPractice(n){
-  if(n===1){
-    render(`
-      <div class="pw">
-        <div class="plbl" style="color:#e67e22;font-weight:700">
-          ⭐ Let's practice first! ⭐
-        </div>
-      </div>
-      <div class="frow">
-        <div class="cw">
-          <div class="pshape" style="background:#3498db;">😊</div>
-          <div class="clbl">Milo</div>
-          <span class="cbadge bwug">Wug</span>
-        </div>
-        <span class="hrt">💛</span>
-        <div class="cw">
-          <div class="pshape" style="background:#e8732a;">😊</div>
-          <div class="clbl">Pip</div>
-          <span class="cbadge bflurp">Flurp</span>
-        </div>
-        <span class="hrt">💛</span>
-        <div class="cw">
-          <div class="pshape" style="background:#4caf50;">😊</div>
-          <div class="clbl">Dot</div>
-          <span class="cbadge bzazzo">Zazzo</span>
-        </div>
-      </div>
-      <div class="txt">
-        This is <strong>Milo</strong> the Wug!<br>
-        Milo has two friends: <strong>Pip</strong> the Flurp
-        and <strong>Dot</strong> the Zazzo.<br><br>
-        🌟 Milo and Pip
-          <strong>play together every single day!</strong><br>
-        😴 Milo and Dot
-          <strong>have never even met before!</strong>
-      </div>
-      <div class="qbox">
-        <div class="qtxt">💕 Who does Milo like to be with more?</div>
-      </div>
-      <div class="choices">
-        <button class="ccard" onclick="pfb(1,true,this)">
-          <div class="pshape" style="background:#e8732a;width:64px;height:64px;font-size:1.4em;">😊</div>
-          <div class="cname">Pip</div>
-          <span class="cbadge bflurp">Flurp</span>
-        </button>
-        <button class="ccard" onclick="pfb(1,false,this)">
-          <div class="pshape" style="background:#4caf50;width:64px;height:64px;font-size:1.4em;">😊</div>
-          <div class="cname">Dot</div>
-          <span class="cbadge bzazzo">Zazzo</span>
-        </button>
-      </div>
-      <button class="rrb" onclick="reread()">🔊</button>
-    `);
-    say("This is Milo the Wug! Milo has two friends: Pip the Flurp and Dot the Zazzo. Milo and Pip play together every single day! Milo and Dot have never even met before. Who does Milo like to be with more?");
-  } else {
-    render(`
-      <div class="pw">
-        <div class="plbl" style="color:#e67e22;font-weight:700">
-          ⭐ One more practice! ⭐
-        </div>
-      </div>
-      <div class="frow">
-        <div class="cw">
-          <div class="pshape" style="background:#3498db;">😊</div>
-          <div class="clbl">Sam</div>
-          <span class="cbadge bwug">Wug</span>
-        </div>
-        <span class="hrt">💛</span>
-        <div class="cw">
-          <div class="pshape" style="background:#e8732a;">😊</div>
-          <div class="clbl">Bo</div>
-          <span class="cbadge bflurp">Flurp</span>
-        </div>
-        <span class="hrt">💛</span>
-        <div class="cw">
-          <div class="pshape" style="background:#4caf50;">😊</div>
-          <div class="clbl">Zee</div>
-          <span class="cbadge bzazzo">Zazzo</span>
-        </div>
-      </div>
-      <div class="txt">
-        This is <strong>Sam</strong> the Wug!<br>
-        Sam has two friends: <strong>Bo</strong> the Flurp
-        and <strong>Zee</strong> the Zazzo.<br><br>
-        👑 <strong>Bo tells Sam what to do</strong> every single day!<br>
-        🎉 Zee just plays with Sam.
-      </div>
-      <div class="qbox boss">
-        <div class="qtxt">👑 Who is Sam's boss?</div>
-      </div>
-      <div class="choices">
-        <button class="ccard" onclick="pfb(2,true,this)">
-          <div class="pshape" style="background:#e8732a;width:64px;height:64px;font-size:1.4em;">😊</div>
-          <div class="cname">Bo</div>
-          <span class="cbadge bflurp">Flurp</span>
-        </button>
-        <button class="ccard" onclick="pfb(2,false,this)">
-          <div class="pshape" style="background:#4caf50;width:64px;height:64px;font-size:1.4em;">😊</div>
-          <div class="cname">Zee</div>
-          <span class="cbadge bzazzo">Zazzo</span>
-        </button>
-      </div>
-      <button class="rrb" onclick="reread()">🔊</button>
-    `);
-    say("This is Sam the Wug! Sam has two friends: Bo the Flurp and Zee the Zazzo. Bo tells Sam what to do every single day! Zee just plays with Sam. Who is Sam's boss?");
-  }
-}
-
-function pfb(n,correct,el){
-  el.classList.add('chosen');
-  document.querySelectorAll('.ccard').forEach(c=>c.classList.add('lock'));
-  const fb=correct
-    ?"That's right! Great job! 🌟"
-    :(n===1
-      ?"Good try! Milo plays with Pip every day, so Pip is the answer!"
-      :"Good try! Bo tells Sam what to do, so Bo is the answer!");
-  const nx=n===1?'showPractice(2)':'beginMain()';
-  const nt=n===1?'Next practice →':'Ready to play! 🎮';
-  setTimeout(()=>{
-    render(`
-      <div style="font-size:4em;">${correct?'🌟':'😊'}</div>
-      <h2>${correct?'Great job!':'Good try!'}</h2>
-      <p class="txt">${fb}</p>
-      <button class="btn g" onclick="${nx}">${nt}</button>
-    `);
-    say(fb);
-  },600);
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -721,90 +672,83 @@ function beginMain(){
 function showBkIntro(){
   const cfg=curCfg();
   const isC=cfg.qType==='close';
+  const icon=isC?'✨':'👑';
+  const title=isC?'A question about friends!':'A question about who is the boss!';
+  const body=isC
+    ?`<p class="txt">After each story, I'll ask you:<br><br>
+       <strong>"Who is [Name] closer to?"</strong><br><br>
+       <span style="color:#7f8c8d;font-size:.95em;">${CLOSE_DEF}</span></p>`
+    :`<p class="txt">After each story, I'll ask you:<br><br>
+       <strong>"Who is [Name]'s boss?"</strong></p>`;
+
   render(`
-    <div style="font-size:3.2em;">${isC?'💕':'👑'}</div>
-    <h2>${isC?"Who are they closer to?":"Who is the boss?"}</h2>
-    <p class="txt">${isC
-      ?`For each friend we meet, I'll ask you:<br><br>
-        <strong>Who are they closer to?</strong><br><br>
-        That means — who is their better friend?`
-      :`For each friend we meet, I'll ask you:<br><br>
-        <strong>Who is their boss?</strong>`
-    }</p>
-    <button class="btn g" onclick="nextTrial()">Ready! 🚀</button>
+    <div style="font-size:3.5em;">${icon}</div>
+    <h2>${title}</h2>
+    ${body}
+    <button class="btn g" onclick="nextTrial()">Let's start! 🚀</button>
     <button class="rrb" onclick="reread()">🔊</button>
   `);
   say(isC
-    ?"For each friend we meet, I'll ask you: who are they closer to? That means, who is their better friend?"
-    :"For each friend we meet, I'll ask you: who is their boss?"
+    ?`After each story I'll ask you: who is that person closer to? That means that they love each other more, tell each other more secrets, and give each other hugs.`
+    :`After each story I'll ask you: who is that person's boss?`
   );
 }
 
 function nextTrial(){
+  G.speechDone=false;
+  G.locked=false;
   if(G.tIdx>=6){ advBlock(); return; }
   G.curT=G.tOrder[G.tIdx];
   const tr=TRIALS[G.version][G.curT];
   G.curActionImg=pick(tr.actionImgs);
   G.curPAImg    =pick(tr.pAImgs);
   G.curPBImg    =pick(tr.pBImgs);
-  showTrialStory();
+  showTrialChars();
 }
 
-// ── Phase 1: Story ────────────────────────────────────────
+// ── PHASE 0: Three Characters ────────────────────────────────
 
-function showTrialStory(){
+function showTrialChars(){
   const tr=TRIALS[G.version][G.curT];
   const tn=G.bIdx*6+G.tIdx+1;
 
   const nar=
     `This is ${tr.tgt}! `+
-    `${tr.tgt} has known ${tr.pA} and ${tr.pB} for several years `+
-    `and has spent equal time with both of them. `+
+    `${tr.tgt} has two friends: ${tr.pA} the Flurp and ${tr.pB} the Zazzo. `+
     `${tr.tgt} and ${tr.pA} like each other a lot. `+
-    `${tr.tgt} and ${tr.pB} like each other a lot. `+
-    `${tr.tgt} is a Wug, ${tr.pA} is a Flurp, and ${tr.pB} is a Zazzo. `+
-    tr.story(tr.tgt);
+    `${tr.tgt} and ${tr.pB} like each other a lot.`;
 
   render(`
-    <div class="pw">
-      <div class="pbar">
-        <div class="pfill" style="width:${tn/12*100}%"></div>
-      </div>
-      <div class="plbl">Story ${tn} of 12</div>
+    ${starMeterHTML()}
+    <p class="txt" style="font-size:.88em;color:#aaa;">Story ${tn} of 12</p>
+
+    <div class="dirs">
+      Meet <strong>${tr.tgt}</strong> and their friends!
     </div>
 
-    <div class="scene">
-      <img src="${G.curActionImg}" class="char-img lg" alt="${tr.tgt}"
-        onerror="this.style.opacity=0.15">
-      <div class="txt" style="font-size:.95em;">${tr.story(tr.tgt)}</div>
-    </div>
-
-    <div class="frow">
+    <div class="char-row">
       <div class="cw">
-        ${cimg(G.curPAImg,'sm')}
+        ${cimg(G.curPAImg,'lg')}
         <div class="clbl">${tr.pA}</div>${badge(tr.gA)}
       </div>
-      <span class="hrt">💛</span>
       <div class="cw">
-        <div style="font-size:2em;">${tr.icon}</div>
-        <div class="clbl" style="font-size:.82em;">${tr.tgt}</div>
-        ${badge(tr.tg)}
+        ${cimg(G.curActionImg,'xl')}
+        <div class="clbl">${tr.tgt}</div>${badge(tr.tg)}
       </div>
-      <span class="hrt">💛</span>
       <div class="cw">
-        ${cimg(G.curPBImg,'sm')}
+        ${cimg(G.curPBImg,'lg')}
         <div class="clbl">${tr.pB}</div>${badge(tr.gB)}
       </div>
     </div>
 
-    <div class="txt" style="font-size:.88em;color:#7f8c8d;">
-      ${tr.tgt} likes ${tr.pA} a lot &amp;
-      ${tr.tgt} likes ${tr.pB} a lot.
-    </div>
+    <p class="txt" style="font-size:.95em;">
+      ${tr.tgt} and <strong>${tr.pA}</strong> like each other a lot.<br>
+      ${tr.tgt} and <strong>${tr.pB}</strong> like each other a lot.
+    </p>
 
     <div style="display:flex;gap:11px;align-items:center;">
-      <button class="btn" onclick="showTrialQ()">
-        What did they say? 👂
+      <button class="btn" onclick="showTrialAction()">
+        What happened? 👀
       </button>
       <button class="rrb" onclick="reread()">🔊</button>
     </div>
@@ -812,9 +756,39 @@ function showTrialStory(){
   say(nar);
 }
 
-// ── Phase 2: Speech + Question ────────────────────────────
+// ── PHASE 1: Action ───────────────────────────────────────────
 
-function showTrialQ(){
+function showTrialAction(){
+  const tr=TRIALS[G.version][G.curT];
+  const tn=G.bIdx*6+G.tIdx+1;
+  const storyTxt=tr.story(tr.tgt);
+
+  render(`
+    ${starMeterHTML()}
+    <p class="txt" style="font-size:.88em;color:#aaa;">Story ${tn} of 12</p>
+
+    <div class="dirs">
+      Look what <strong>${tr.tgt}</strong> is doing!
+    </div>
+
+    <img src="${G.curActionImg}" class="scene-img" alt="${tr.tgt} ${tr.beh}"
+      onerror="this.style.opacity=0.15">
+
+    <p class="txt">${storyTxt}</p>
+
+    <div style="display:flex;gap:11px;align-items:center;">
+      <button class="btn" onclick="showTrialSpeech()">
+        Ask the friends! 👂
+      </button>
+      <button class="rrb" onclick="reread()">🔊</button>
+    </div>
+  `);
+  say(storyTxt);
+}
+
+// ── PHASE 2: Speech + Question ────────────────────────────────
+
+function showTrialSpeech(){
   const tr =TRIALS[G.version][G.curT];
   const cfg=curCfg();
   const tn =G.bIdx*6+G.tIdx+1;
@@ -824,74 +798,139 @@ function showTrialQ(){
   const spB=mkSpeech(cfg.ep,cfg.bRole,tr.tgt,tr.act);
 
   const qTxt=isC
-    ?`Who do you think <strong>${tr.tgt}</strong> is <strong>closer to</strong>?`
+    ?`Who is <strong>${tr.tgt}</strong> closer to?`
     :`Who do you think is <strong>${tr.tgt}'s boss</strong>?`;
 
-  const narQ=
-    `You ask ${tr.pA} about it, and they say: "${spA}" `+
-    `You ask ${tr.pB} about it, and they say: "${spB}" `+
-    (isC
-      ?`Who do you think ${tr.tgt} is closer to, ${tr.pA} or ${tr.pB}?`
-      :`Who do you think is ${tr.tgt}'s boss, ${tr.pA} or ${tr.pB}?`);
-
-  G.tStart=Date.now();
-  G.locked=false;
-
   render(`
-    <div class="pw">
-      <div class="pbar">
-        <div class="pfill" style="width:${tn/12*100}%"></div>
-      </div>
-      <div class="plbl">Story ${tn} of 12</div>
+    ${starMeterHTML()}
+    <p class="txt" style="font-size:.88em;color:#aaa;">Story ${tn} of 12</p>
+
+    <div class="dirs">
+      You asked <strong>${tr.pA}</strong> and <strong>${tr.pB}</strong> about it!<br>
+      Press the <strong style="color:#e67e22;">orange button</strong>
+      to hear what they say.
     </div>
 
-    <div class="spsec">
-      <div class="sprow">
-        <div class="cw">
-          ${cimg(G.curPAImg,'sm')}
-          <div class="clbl" style="font-size:.82em;">${tr.pA}</div>
+    <div class="speech-section">
+      <div class="speech-row">
+        <div class="cw" style="flex-shrink:0;">
+          ${cimg(G.curPAImg,'lg','spk-a')}
+          <div class="clbl">${tr.pA}</div>${badge(tr.gA)}
         </div>
-        <div class="spbub">"${spA}"</div>
+        <div id="bub-a" class="spbub">"${spA}"</div>
       </div>
-      <div class="sprow flip">
-        <div class="cw">
-          ${cimg(G.curPBImg,'sm')}
-          <div class="clbl" style="font-size:.82em;">${tr.pB}</div>
+      <div class="speech-row">
+        <div class="cw" style="flex-shrink:0;">
+          ${cimg(G.curPBImg,'lg','spk-b')}
+          <div class="clbl">${tr.pB}</div>${badge(tr.gB)}
         </div>
-        <div class="spbub">"${spB}"</div>
+        <div id="bub-b" class="spbub">"${spB}"</div>
       </div>
     </div>
 
-    <div class="qbox${isC?'':' boss'}">
-      <div class="qtxt">${isC?'💕':'👑'} ${qTxt}</div>
+    <button id="playBtn" class="btn or" onclick="triggerSpeech()">
+      🔊 Hear what they say!
+    </button>
+
+    <div id="qbox" class="qbox${isC?'':' boss'}">
+      <div class="qtxt">${isC?'✨':'👑'} ${qTxt}</div>
+      ${isC?`<div class="qdef">${CLOSE_DEF}</div>`:''}
     </div>
 
-    <div class="choices">
+    <div id="choices" class="choices">
       <button class="ccard" onclick="recordResp(0,this)">
-        ${cimg(G.curPAImg,'sm')}
+        ${cimg(G.curPAImg,'md')}
         <div class="cname">${tr.pA}</div>${badge(tr.gA)}
       </button>
       <button class="ccard" onclick="recordResp(1,this)">
-        ${cimg(G.curPBImg,'sm')}
+        ${cimg(G.curPBImg,'md')}
         <div class="cname">${tr.pB}</div>${badge(tr.gB)}
       </button>
     </div>
-
-    <button class="rrb" onclick="reread()">🔊</button>
   `);
-  say(narQ);
+
+  // If speeches already played (e.g. researcher revisited), show question immediately
+  if(G.speechDone){
+    setTimeout(()=>{
+      ['bub-a','bub-b'].forEach(id=>{
+        const el=document.getElementById(id);
+        if(el) el.classList.add('visible');
+      });
+      revealQuestion();
+      const btn=document.getElementById('playBtn');
+      if(btn) btn.textContent='🔊 Hear again';
+    },50);
+  }
+
+  say(`You asked ${tr.pA} and ${tr.pB} about it! Press the orange button to hear what they say.`);
 }
 
-// ── Response Recording ────────────────────────────────────
+function triggerSpeech(){
+  const tr =TRIALS[G.version][G.curT];
+  const cfg=curCfg();
+  const spA=mkSpeech(cfg.ep,cfg.aRole,tr.tgt,tr.act);
+  const spB=mkSpeech(cfg.ep,cfg.bRole,tr.tgt,tr.act);
 
-function recordResp(choice,el){
+  window.speechSynthesis.cancel();
+
+  const btn =document.getElementById('playBtn');
+  const bubA=document.getElementById('bub-a');
+  const bubB=document.getElementById('bub-b');
+  const imgA=document.getElementById('spk-a');
+  const imgB=document.getElementById('spk-b');
+
+  if(btn){ btn.textContent='🔊 Playing...'; btn.disabled=true; }
+
+  // Show pA bubble + animate
+  if(bubA) bubA.classList.add('visible');
+  if(imgA) imgA.classList.add('speaking');
+
+  speakThen(spA, ()=>{
+    if(imgA) imgA.classList.remove('speaking');
+
+    // Pause between A and B
+    setTimeout(()=>{
+      if(bubB) bubB.classList.add('visible');
+      if(imgB) imgB.classList.add('speaking');
+
+      speakThen(spB, ()=>{
+        if(imgB) imgB.classList.remove('speaking');
+        onBothDone();
+      });
+    }, 350);
+  });
+
+  function onBothDone(){
+    G.speechDone=true;
+    revealQuestion();
+    if(btn){ btn.textContent='🔊 Hear again'; btn.disabled=false; }
+
+    // Read question aloud
+    const isC=cfg.qType==='close';
+    const q=isC
+      ?`Who is ${tr.tgt} closer to, ${tr.pA} or ${tr.pB}? ${CLOSE_DEF}`
+      :`Who do you think is ${tr.tgt}'s boss, ${tr.pA} or ${tr.pB}?`;
+    setTimeout(()=>say(q), 600);
+  }
+}
+
+function revealQuestion(){
+  const qbox   =document.getElementById('qbox');
+  const choices=document.getElementById('choices');
+  if(qbox)    qbox.classList.add('show');
+  if(choices) choices.classList.add('show');
+}
+
+// ── Response Recording ────────────────────────────────────────
+
+function recordResp(choice, el){
   if(G.locked) return;
   G.locked=true;
 
   const tr =TRIALS[G.version][G.curT];
   const cfg=curCfg();
   const bk =curB();
-  const rt =Date.now()-G.tStart;
+  const rt =Date.now()-(G.tStart||Date.now());
 
   const chosenName =choice===0?tr.pA:tr.pB;
   const chosenGroup=choice===0?tr.gA:tr.gB;
@@ -902,69 +941,91 @@ function recordResp(choice,el){
     (cfg.qType==='boss' &&chosenRole==='group')?1:0;
 
   G.resp.push({
-    participantId:       G.pid,
-    age:                 G.age,
-    version:             G.version,
-    blockBoss:           G.bossB,
-    blockClose:          G.closeB,
-    blockOrder:          G.order.join('_'),
-    blockCurrent:        bk,
-    questionType:        cfg.qType,
-    epistemic:           cfg.ep,
-    personA_role:        cfg.aRole,
-    personB_role:        cfg.bRole,
-    dataExportTag:       tr.ids[BSUFFIX[bk]],
-    target:              tr.tgt,
-    behavior:            tr.beh,
-    personA:             tr.pA,
-    groupA:              tr.gA,
-    personB:             tr.pB,
-    groupB:              tr.gB,
-    speechA:             mkSpeech(cfg.ep,cfg.aRole,tr.tgt,tr.act),
-    speechB:             mkSpeech(cfg.ep,cfg.bRole,tr.tgt,tr.act),
-    actionImageShown:    G.curActionImg,
-    portraitAShown:      G.curPAImg,
-    portraitBShown:      G.curPBImg,
-    chosenName,
-    chosenGroup,
-    chosenRole,
-    responseRecode,
-    hypothesisConsistent,
-    rt_ms:               rt,
-    timestamp:           new Date().toISOString()
+    participantId:      G.pid,
+    age:                G.age,
+    version:            G.version,
+    blockBoss:          G.bossB,
+    blockClose:         G.closeB,
+    blockOrder:         G.order.join('_'),
+    blockCurrent:       bk,
+    questionType:       cfg.qType,
+    epistemic:          cfg.ep,
+    personA_role:       cfg.aRole,
+    personB_role:       cfg.bRole,
+    dataExportTag:      tr.ids[BSUFFIX[bk]],
+    target:             tr.tgt,
+    behavior:           tr.beh,
+    personA:            tr.pA,
+    groupA:             tr.gA,
+    personB:            tr.pB,
+    groupB:             tr.gB,
+    speechA:            mkSpeech(cfg.ep,cfg.aRole,tr.tgt,tr.act),
+    speechB:            mkSpeech(cfg.ep,cfg.bRole,tr.tgt,tr.act),
+    actionImageShown:   G.curActionImg,
+    portraitAShown:     G.curPAImg,
+    portraitBShown:     G.curPBImg,
+    chosenName, chosenGroup, chosenRole,
+    responseRecode, hypothesisConsistent,
+    rt_ms:              rt,
+    timestamp:          new Date().toISOString()
   });
 
   el.classList.add('chosen');
   document.querySelectorAll('.ccard').forEach(c=>c.classList.add('lock'));
 
-  try{ localStorage.setItem('wugVillage_'+G.pid,JSON.stringify(G)); }catch(e){}
+  try{ localStorage.setItem('twizzle_'+G.pid, JSON.stringify(G)); }catch(e){}
 
-  setTimeout(()=>{ G.tIdx++; nextTrial(); },700);
+  G.totalDone++;
+  G.tIdx++;
+
+  setTimeout(()=>{
+    if(G.totalDone%2===0){
+      G.stars=Math.min(6, G.totalDone/2);
+      showStarEarned();
+    } else {
+      nextTrial();
+    }
+  }, 700);
 }
 
-// ── Between Blocks ────────────────────────────────────────
+// ── Star Earned ───────────────────────────────────────────────
+
+function showStarEarned(){
+  const isDone=G.totalDone===12;
+  const isHalf=G.totalDone===6;
+
+  render(`
+    <div class="star-pop" style="font-size:5.5em;">⭐</div>
+    <h2>You earned a star!</h2>
+    ${starMeterHTML()}
+    <p class="txt">
+      ${isHalf  ? `Amazing! Halfway there!`
+      : isDone  ? `You finished all the stories! 🎊`
+      :           `Great job! Keep going!`}
+    </p>
+    ${!isDone
+      ?`<button class="btn g" onclick="nextTrial()">Keep going! 🚀</button>`
+      :''}
+  `);
+
+  say(isHalf
+    ?"You earned a star! Amazing! Halfway there!"
+    :isDone
+    ?"You earned a star! You finished all the stories! Amazing!"
+    :"You earned a star! Great job!"
+  );
+
+  if(isDone) setTimeout(()=>showEnd(), 2800);
+}
+
+// ── Between Blocks ────────────────────────────────────────────
 
 function advBlock(){
   G.bIdx++;
   if(G.bIdx>=2){ showEnd(); return; }
   G.tOrder=shuffle([0,1,2,3,4,5]);
   G.tIdx=0;
-  showBreak();
-}
-
-function showBreak(){
-  render(`
-    <img src="star_reward.png"
-      style="width:130px;height:130px;object-fit:contain;"
-      alt="Star" onerror="this.style.display='none'">
-    <h2>Amazing job!</h2>
-    <p class="txt">
-      You're halfway done!<br>
-      Let's keep going — you're doing great!
-    </p>
-    <button class="btn g" onclick="showBkIntro()">Keep going! 🚀</button>
-  `);
-  say("Amazing job! You're halfway done! Let's keep going, you're doing great!");
+  showBkIntro();
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -972,16 +1033,17 @@ function showBreak(){
 // ═══════════════════════════════════════════════════════════
 
 function showEnd(){
-  try{ localStorage.setItem('wugVillage_'+G.pid,JSON.stringify(G)); }catch(e){}
+  try{ localStorage.setItem('twizzle_'+G.pid, JSON.stringify(G)); }catch(e){}
   render(`
     <div style="font-size:3.5em;">🎊 🌟 🎊</div>
     <h1>You did it!</h1>
     <img src="star_reward.png"
       style="width:140px;height:140px;object-fit:contain;"
       alt="Star" onerror="this.style.display='none'">
+    ${starMeterHTML()}
     <p class="txt" style="font-size:1.2em;">
       Thank you <strong>SO much</strong>
-      for visiting Wug Village!<br>
+      for visiting ${VILLAGE}!<br>
       You were absolutely <strong>AMAZING!</strong>
     </p>
     <p class="txt" style="font-size:.9em;color:#95a5a6;">
@@ -989,7 +1051,7 @@ function showEnd(){
     </p>
     <button class="btn g" onclick="dlCSV()">💾 Save My Data</button>
   `);
-  say("You did it! Thank you so much for visiting Wug Village! You were absolutely amazing!");
+  say(`You did it! Thank you so much for visiting ${VILLAGE}! You were absolutely amazing!`);
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -1015,24 +1077,23 @@ function dlCSV(){
   const csv=[cols.join(','),...rows].join('\n');
   const a=document.createElement('a');
   a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
-  a.download=`wugvillage_${G.pid}_${new Date().toISOString().slice(0,10)}.csv`;
+  a.download=`twizzle_${G.pid}_${new Date().toISOString().slice(0,10)}.csv`;
   a.click();
 }
 
-// ── Researcher helpers ────────────────────────────────────
+// ── Researcher helpers ────────────────────────────────────────
 
 function skipEnd(){
   window.speechSynthesis&&window.speechSynthesis.cancel();
   showEnd();
 }
 
-// ── Init ─────────────────────────────────────────────────
+// ── Init ─────────────────────────────────────────────────────
 
 if(window.speechSynthesis){
   window.speechSynthesis.onvoiceschanged=()=>window.speechSynthesis.getVoices();
 }
 showWelcome();
-
 </script>
 </body>
 </html>
