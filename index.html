@@ -187,18 +187,42 @@
     .big-celebrate svg{width:100%;height:100%}
     #rbar{
       position:fixed;top:6px;right:6px;
-      background:rgba(20,20,20,.88);color:#fff;
-      padding:7px 11px;border-radius:10px;
+      background:rgba(20,20,20,.92);color:#fff;
+      padding:8px 11px;border-radius:10px;
       font-family:'SF Mono',Menlo,Consolas,monospace;font-size:.72em;
-      z-index:9999;max-width:230px;
+      z-index:9999;max-width:240px;display:none;
     }
+    #rbar.shown{display:block}
     #rbar button{
       background:#c0392b;color:#fff;border:none;
-      padding:4px 7px;border-radius:6px;cursor:pointer;
-      margin-top:4px;display:block;width:100%;font-size:.88em;
+      padding:5px 8px;border-radius:6px;cursor:pointer;
+      margin-top:4px;display:block;width:100%;font-size:.85em;
       font-family:inherit;
     }
-    #rinfo{margin-top:5px;font-size:.73em;opacity:.82;line-height:1.45}
+    #rbar button.alt{background:#34495e}
+    #rbar .rclose{
+      background:transparent;color:#bbb;border:none;cursor:pointer;
+      position:absolute;top:4px;right:6px;font-size:1em;padding:0;
+      width:auto;margin:0;
+    }
+    #rinfo{margin-top:6px;font-size:.73em;opacity:.82;line-height:1.45;padding-right:14px}
+    #rsecret{
+      position:fixed;top:0;right:0;width:48px;height:48px;
+      z-index:9998;cursor:default;background:transparent;
+    }
+    #fsbtn{
+      position:fixed;top:8px;left:8px;
+      width:36px;height:36px;border-radius:50%;
+      background:rgba(255,255,255,.85);color:#2c3e50;
+      border:none;cursor:pointer;z-index:9997;
+      display:flex;align-items:center;justify-content:center;
+      box-shadow:0 2px 8px rgba(0,0,0,.15);
+      transition:background .15s, transform .1s;
+      padding:0;
+    }
+    #fsbtn:hover{background:#fff}
+    #fsbtn:active{transform:scale(.94)}
+    #fsbtn svg{width:18px;height:18px}
     @media(max-width:480px){
       #gc{padding:10px 8px}
       h1{font-size:1.55em}
@@ -215,8 +239,18 @@
   </style>
 </head>
 <body>
+<button id="fsbtn" title="Toggle fullscreen" aria-label="Toggle fullscreen" onclick="toggleFullscreen()">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>
+  </svg>
+</button>
+<div id="rsecret" onclick="_secretTap()" ontouchend="_secretTap()" aria-hidden="true"></div>
 <div id="rbar">
+  <button class="rclose" onclick="toggleResearcher()" aria-label="Close researcher panel">&times;</button>
   Researcher
+  <button onclick="researcherSkipTrial()">Next Trial &rarr;</button>
+  <button onclick="researcherSkipBlock()">Skip Block &rarr;</button>
+  <button onclick="researcherJumpToTrial()" class="alt">Jump to Trial #...</button>
   <button onclick="dlCSV()">Download CSV</button>
   <button onclick="skipEnd()">Skip to End</button>
   <div id="rinfo">No session yet</div>
@@ -224,7 +258,7 @@
 <div id="gc"></div>
 <script>
 // ═══════════════════════════════════════════════════════════
-//  TWIZZLE TOWN — Child Study Game v10.1
+//  TWIZZLE TOWN — Child Study Game v10.2
 //  ashleyjthomas/RELKIND
 //  - Restored relationship-setup story text (adult-version style)
 //  - Tighter layout (no scrolling on tablets/laptops)
@@ -337,6 +371,39 @@ function speakWithAnim(imgId, key, cb)  {
   });
 }
 function reread() { if (_lastKey) _play(_lastKey, null); }
+
+// ── Audio chain (cancellable on navigation) ──────────────────
+// Fixes the bug where setTimeout-scheduled likeA/likeB playback
+// could fire after the user clicked "What happened?", playing
+// the wrong audio over the new screen.
+let _pendingTimeouts = [];
+function _chainTimeout(fn, ms) {
+  const id = setTimeout(function() {
+    _pendingTimeouts = _pendingTimeouts.filter(function(t){ return t !== id; });
+    fn();
+  }, ms);
+  _pendingTimeouts.push(id);
+}
+function _cancelChain() {
+  _pendingTimeouts.forEach(function(t){ clearTimeout(t); });
+  _pendingTimeouts = [];
+}
+function speakChain(steps) {
+  // Steps: [{key, imgId?, delay?}]. Cancellable on render().
+  let i = 0;
+  function next() {
+    if (i >= steps.length) return;
+    const s = steps[i++];
+    _chainTimeout(function() {
+      if (s.imgId) {
+        speakWithAnim(s.imgId, s.key, next);
+      } else {
+        speakThen(s.key, next);
+      }
+    }, s.delay || 0);
+  }
+  next();
+}
 
 function speechKey(ep, role, trKey) {
   const r = (role === 'group') ? 'group' : 'ind';
@@ -586,7 +653,11 @@ const G = {
 };
 
 const gc = document.getElementById('gc');
-function render(h){ gc.innerHTML = `<div class="screen">${h}</div>`; }
+function render(h){
+  // Kill any pending audio-chain timeouts so we never play yesterday's audio on today's screen.
+  _cancelChain();
+  gc.innerHTML = `<div class="screen">${h}</div>`;
+}
 function curB()      { return G.order[G.bIdx]==='boss' ? G.bossB : G.closeB; }
 function curCfg()    { return BCFG[curB()]; }
 function curVersion(){ return G.versionMap[G.order[G.bIdx]]; }
@@ -840,15 +911,11 @@ function showTrialChars(){
       <button class="rrb" onclick="reread()">Replay</button>
     </div>
   `);
-  speakThen(tr.key + '_intro', function() {
-    setTimeout(function() {
-      speakWithAnim('side-a', tr.key + '_likeA', function() {
-        setTimeout(function() {
-          speakWithAnim('side-b', tr.key + '_likeB', function() {});
-        }, 300);
-      });
-    }, 250);
-  });
+  speakChain([
+    { key: tr.key + '_intro',  delay: 0   },
+    { key: tr.key + '_likeA',  imgId: 'side-a', delay: 250 },
+    { key: tr.key + '_likeB',  imgId: 'side-b', delay: 300 },
+  ]);
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -907,14 +974,14 @@ function showTrialSpeech(){
     <div class="speech-section">
       <div class="speech-row">
         <div class="sp-char cw">
-          ${cimg(G.curPAImg, 'lg', 'spk-a')}
+          ${cimg(G.curPAImg, 'md', 'spk-a')}
           <div class="clbl">${tr.pA}</div>${badge(tr.gA)}
         </div>
         <div id="bub-a" class="spbub">"${spA}"</div>
       </div>
       <div class="speech-row">
         <div class="sp-char cw">
-          ${cimg(G.curPBImg, 'lg', 'spk-b')}
+          ${cimg(G.curPBImg, 'md', 'spk-b')}
           <div class="clbl">${tr.pB}</div>${badge(tr.gB)}
         </div>
         <div id="bub-b" class="spbub">"${spB}"</div>
@@ -929,11 +996,11 @@ function showTrialSpeech(){
     </div>
     <div id="choices" class="choices">
       <button class="ccard" onclick="recordResp(0,this)">
-        ${cimg(G.curPAImg, 'md')}
+        ${cimg(G.curPAImg, 'sm')}
         <div class="cname">${tr.pA}</div>${badge(tr.gA)}
       </button>
       <button class="ccard" onclick="recordResp(1,this)">
-        ${cimg(G.curPBImg, 'md')}
+        ${cimg(G.curPBImg, 'sm')}
         <div class="cname">${tr.pB}</div>${badge(tr.gB)}
       </button>
     </div>
@@ -956,6 +1023,8 @@ function triggerSpeech(){
   const tr  = TRIALS[curVersion()][G.curT];
   const cfg = curCfg();
   const er  = effRoles();
+  // Cancel any in-flight chain (e.g. character intro) before kicking off the speech sequence
+  _cancelChain();
   if(_aud){ _aud.pause(); }
   const btn  = document.getElementById('playBtn');
   const bubA = document.getElementById('bub-a');
@@ -965,13 +1034,13 @@ function triggerSpeech(){
   const keyB = speechKey(cfg.ep, er.rB, tr.key);
   if(bubA) bubA.classList.add('visible');
   speakWithAnim('spk-a', keyA, function() {
-    setTimeout(function() {
+    _chainTimeout(function() {
       if(bubB) bubB.classList.add('visible');
       speakWithAnim('spk-b', keyB, function() {
         G.speechDone = true;
         revealQuestion();
         if(btn){ btn.textContent = 'Hear again'; btn.disabled = false; }
-        setTimeout(function(){
+        _chainTimeout(function(){
           say(questionKey(cfg.qType, tr.key));
         }, 600);
       });
@@ -983,6 +1052,12 @@ function revealQuestion(){
   const choices = document.getElementById('choices');
   if(qbox)    qbox.classList.add('show');
   if(choices) choices.classList.add('show');
+  // Make sure the kid can see the answer buttons without scrolling themselves
+  setTimeout(function(){
+    if(choices && typeof choices.scrollIntoView === 'function'){
+      try{ choices.scrollIntoView({behavior:'smooth', block:'center'}); }catch(e){}
+    }
+  }, 300);
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -1228,6 +1303,96 @@ function dlCSV(){
 function skipEnd(){
   if(_aud){ _aud.pause(); _aud = null; }
   showEnd();
+}
+
+// ═══════════════════════════════════════════════════════════
+//  FULLSCREEN + RESEARCHER PANEL
+// ═══════════════════════════════════════════════════════════
+function toggleFullscreen(){
+  const doc  = document;
+  const root = document.documentElement;
+  const fsEl = doc.fullscreenElement || doc.webkitFullscreenElement;
+  if(!fsEl){
+    if(root.requestFullscreen)        root.requestFullscreen().catch(function(e){console.warn(e)});
+    else if(root.webkitRequestFullscreen) root.webkitRequestFullscreen();
+  } else {
+    if(doc.exitFullscreen)        doc.exitFullscreen().catch(function(e){console.warn(e)});
+    else if(doc.webkitExitFullscreen) doc.webkitExitFullscreen();
+  }
+}
+
+// Secret reveal: 5 taps in the top-right corner within 3 seconds
+let _secretTaps = [];
+function _secretTap(){
+  const now = Date.now();
+  _secretTaps = _secretTaps.filter(function(t){ return now - t < 3000; });
+  _secretTaps.push(now);
+  if(_secretTaps.length >= 5){
+    _secretTaps = [];
+    toggleResearcher();
+  }
+}
+function toggleResearcher(){
+  const rbar = document.getElementById('rbar');
+  if(rbar) rbar.classList.toggle('shown');
+}
+// Keyboard backup: Shift + R toggles the researcher panel
+document.addEventListener('keydown', function(e){
+  if(e.shiftKey && (e.key === 'R' || e.key === 'r')){
+    e.preventDefault();
+    toggleResearcher();
+  }
+});
+
+// ─── Researcher skip controls ────────────────────────────────
+function researcherSkipTrial(){
+  if(_aud){ _aud.pause(); }
+  _cancelChain();
+  if(!G.t0){ alert('Start the game first.'); return; }
+  // Record an empty placeholder so the trial index advances cleanly
+  G.tIdx++;
+  G.totalDone++;
+  if(G.totalDone % 2 === 0){
+    G.stars = Math.min(6, G.totalDone / 2);
+  }
+  if(G.tIdx >= 6){
+    advBlock();
+  } else {
+    nextTrial();
+  }
+}
+function researcherSkipBlock(){
+  if(_aud){ _aud.pause(); }
+  _cancelChain();
+  if(!G.t0){ alert('Start the game first.'); return; }
+  // Jump out of the current block
+  const before = G.bIdx;
+  G.tIdx = 6;
+  G.totalDone = Math.max(G.totalDone, (before + 1) * 6);
+  G.stars = Math.min(6, Math.floor(G.totalDone / 2));
+  advBlock();
+}
+function researcherJumpToTrial(){
+  if(!G.t0){ alert('Start the game first.'); return; }
+  const raw = prompt('Jump to story # (1–12):', '1');
+  if(raw === null) return;
+  const n = parseInt(raw, 10);
+  if(!(n >= 1 && n <= 12)){ alert('Enter a number 1–12.'); return; }
+  if(_aud){ _aud.pause(); }
+  _cancelChain();
+  const targetBlockIdx = n > 6 ? 1 : 0;
+  const targetTrialInBlock = ((n - 1) % 6);
+  G.bIdx = targetBlockIdx;
+  G.tIdx = targetTrialInBlock;
+  G.totalDone = n - 1;
+  G.stars = Math.min(6, Math.floor(G.totalDone / 2));
+  if(targetTrialInBlock === 0){
+    // Start of a block — show block intro
+    if(!G.tOrder.length) G.tOrder = shuffle([0,1,2,3,4,5]);
+    showBkIntro();
+  } else {
+    nextTrial();
+  }
 }
 
 showWelcome();
