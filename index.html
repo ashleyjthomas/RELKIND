@@ -258,7 +258,7 @@
 <div id="gc"></div>
 <script>
 // ═══════════════════════════════════════════════════════════
-//  TWIZZLE TOWN — Child Study Game v10.2
+//  TWIZZLE TOWN — Child Study Game v11
 //  ashleyjthomas/RELKIND
 //  - Restored relationship-setup story text (adult-version style)
 //  - Tighter layout (no scrolling on tablets/laptops)
@@ -292,6 +292,43 @@ function _getChsId(){
   return '';
 }
 const _CHS_ID = _getChsId();
+
+// ── Google Sheets webhook ─────────────────────────────────────
+// Paste the Web App URL from your Apps Script deployment here.
+// Format: https://script.google.com/macros/s/AKfycb.../exec
+// Leave empty to disable auto-upload.
+const SHEETS_WEBHOOK = 'PASTE_YOUR_WEB_APP_URL_HERE';
+
+// Column order shared by the CSV export and the Google Sheet
+const CSV_COLS = [
+  'participantId','chsId','firstName','age',
+  'versionThisBlock','versionClose','versionBoss',
+  'blockBoss','blockClose','blockOrder','blockCurrent',
+  'questionType','epistemic',
+  'blockRoleA','blockRoleB',
+  'rolesSwapped','effectiveRoleA','effectiveRoleB',
+  'dataExportTag','target','behavior',
+  'personA','groupA','personB','groupB',
+  'speechA','speechB',
+  'portraitImgShown','actionImgShown',
+  'orangeImgShown','greenImgShown',
+  'chosenName','chosenGroup','chosenRole',
+  'responseRecode','hypothesisConsistent',
+  'rt_ms','timestamp'
+];
+
+function _postToSheets(row){
+  if(!SHEETS_WEBHOOK || SHEETS_WEBHOOK.indexOf('PASTE_') === 0) return;
+  try{
+    // text/plain body avoids CORS preflight; Apps Script reads e.postData.contents
+    fetch(SHEETS_WEBHOOK, {
+      method:  'POST',
+      mode:    'no-cors',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body:    JSON.stringify({ headers: CSV_COLS, row: row })
+    }).catch(function(e){ console.warn('[Sheets] post failed:', e); });
+  }catch(e){ console.warn('[Sheets] post threw:', e); }
+}
 
 // ── MID-GAME + END-GAME VIDEOS ────────────────────────────────
 const MID_VIDEO = {
@@ -1079,7 +1116,7 @@ function recordResp(choice, el){
   const hypothesisConsistent =
     (cfg.qType==='close' && chosenRole==='individual') ||
     (cfg.qType==='boss'  && chosenRole==='group') ? 1 : 0;
-  G.resp.push({
+  const rowData = {
     participantId:      G.pid,
     chsId:              G.chsId,
     firstName:          G.firstName,
@@ -1115,7 +1152,10 @@ function recordResp(choice, el){
     responseRecode, hypothesisConsistent,
     rt_ms:              rt,
     timestamp:          new Date().toISOString()
-  });
+  };
+  G.resp.push(rowData);
+  // Auto-upload to Google Sheets (no-op if SHEETS_WEBHOOK is not set)
+  _postToSheets(rowData);
   el.classList.add('chosen');
   document.querySelectorAll('.ccard').forEach(c=>c.classList.add('lock'));
   try{ localStorage.setItem('twizzle_'+G.pid, JSON.stringify(G)); }catch(e){}
@@ -1276,25 +1316,9 @@ function showEnd(){
 // ═══════════════════════════════════════════════════════════
 function dlCSV(){
   if(!G.resp.length){ alert('No data yet!'); return; }
-  const cols = [
-    'participantId','chsId','firstName','age',
-    'versionThisBlock','versionClose','versionBoss',
-    'blockBoss','blockClose','blockOrder','blockCurrent',
-    'questionType','epistemic',
-    'blockRoleA','blockRoleB',
-    'rolesSwapped','effectiveRoleA','effectiveRoleB',
-    'dataExportTag','target','behavior',
-    'personA','groupA','personB','groupB',
-    'speechA','speechB',
-    'portraitImgShown','actionImgShown',
-    'orangeImgShown','greenImgShown',
-    'chosenName','chosenGroup','chosenRole',
-    'responseRecode','hypothesisConsistent',
-    'rt_ms','timestamp'
-  ];
   const esc  = v => `"${String(v===undefined?'':v).replace(/"/g,'""')}"`;
-  const rows = G.resp.map(r => cols.map(c => esc(r[c])).join(','));
-  const csv  = [cols.join(','), ...rows].join('\n');
+  const rows = G.resp.map(r => CSV_COLS.map(c => esc(r[c])).join(','));
+  const csv  = [CSV_COLS.join(','), ...rows].join('\n');
   const a    = document.createElement('a');
   a.href     = URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
   a.download = `twizzle_${G.pid}_${new Date().toISOString().slice(0,10)}.csv`;
