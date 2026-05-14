@@ -258,7 +258,7 @@
 <div id="gc"></div>
 <script>
 // ═══════════════════════════════════════════════════════════
-//  TWIZZLE TOWN — Child Study Game v11.3
+//  TWIZZLE TOWN — Child Study Game v11.4
 //  ashleyjthomas/RELKIND
 //  - Restored relationship-setup story text (adult-version style)
 //  - Tighter layout (no scrolling on tablets/laptops)
@@ -1310,10 +1310,29 @@ function showEnd(){
     <p class="txt" style="font-size:.85em;color:#95a5a6;">
       ${G.resp.length} questions answered
     </p>
+    <div class="parent-instr" style="
+      background:#fff9e6;border:2px dashed #f39c12;
+      border-radius:14px;padding:14px 22px;
+      max-width:560px;text-align:center;
+      margin-top:4px;font-size:1em;line-height:1.55;
+      color:#7d5e10;font-weight:600;
+    ">
+      <strong>Parents:</strong> when you're ready, press
+      <kbd style="background:#fff;border:1px solid #aaa;border-radius:4px;padding:1px 6px;font-family:inherit;font-size:.9em;">Esc</kbd>
+      to leave fullscreen, then click back into the
+      <strong>CHS tab</strong> to continue.
+    </div>
     <button class="btn g" onclick="dlCSV()">Save my data</button>
   `);
-  // Play end narration alongside the video
-  say('end_video');
+  // End-screen narration chain:
+  //   1. Alert any kid whose parent stepped away
+  //   2. Celebratory message
+  //   3. Tell parents how to exit and return to CHS
+  speakChain([
+    { key: 'audio_end_parent', delay: 200  },
+    { key: 'end_video',        delay: 800  },
+    { key: 'end_exit',         delay: 1000 },
+  ]);
   // Notify the CHS tab (the window that opened us) that the game is done,
   // and pull focus back so the parent sees the next CHS screen.
   try{
