@@ -224,7 +224,7 @@
 <div id="gc"></div>
 <script>
 // ═══════════════════════════════════════════════════════════
-//  TWIZZLE TOWN — Child Study Game v10
+//  TWIZZLE TOWN — Child Study Game v10.1
 //  ashleyjthomas/RELKIND
 //  - Restored relationship-setup story text (adult-version style)
 //  - Tighter layout (no scrolling on tablets/laptops)
@@ -610,7 +610,7 @@ function showWelcome(){
     <p class="txt" style="font-size:1.15em;">
       Welcome!<br>
       Today we're going to visit <strong>${VILLAGE}</strong><br>
-      and meet some new friends!
+      and meet some new characters!
     </p>
     <button class="btn g" onclick="_unlockAudio();showSetup()">Let's go</button>
   `);
@@ -685,12 +685,13 @@ function launchGame(){
 const ISTEPS = [
   {
     title: `Welcome to ${VILLAGE}!`,
-    audKey: 'intro_village',
+    audKey: 'intro_ready',
     body: `
       <img src="title_card.png" class="title-img" alt="${VILLAGE}"
         onerror="this.style.display='none'">
-      <p class="txt">In <strong>${VILLAGE}</strong>, there are
-        <strong>three kinds of friends</strong>!</p>`
+      <p class="txt">Wugs, Flurps, and Zazzos all live in
+        <strong>${VILLAGE}</strong>!<br>
+        Are you ready to meet some of them?</p>`
   },
   {
     title: 'Meet the Wugs!',
@@ -733,16 +734,6 @@ const ISTEPS = [
       <p class="txt">These are called
         <strong style="color:#1e8449">ZAZZOS!</strong><br>
         They are <strong>green</strong> and <strong>soft</strong>.</p>`
-  },
-  {
-    title: `All in ${VILLAGE}!`,
-    audKey: 'intro_ready',
-    body: `
-      <img src="title_card.png" class="title-img" alt="All together"
-        onerror="this.style.display='none'">
-      <p class="txt">Wugs, Flurps, and Zazzos all live in
-        <strong>${VILLAGE}</strong>!<br>
-        Are you ready to meet some of them?</p>`
   },
 ];
 function showIntro(){
@@ -878,7 +869,7 @@ function showTrialAction(){
     <p class="txt">${tr.story(tr.tgt)}</p>
     <div style="display:flex;gap:11px;align-items:center;">
       <button class="btn" onclick="showTrialSpeech()">
-        Ask the friends
+        Ask them
       </button>
       <button class="rrb" onclick="reread()">Replay</button>
     </div>
