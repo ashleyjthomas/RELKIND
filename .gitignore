@@ -1,0 +1,8 @@
+# Stray test artifacts from earlier sandbox probing
+.write_test
+index_test.html
+*.aside
+*.dead
+
+# macOS
+.DS_Store
