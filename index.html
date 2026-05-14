@@ -258,7 +258,7 @@
 <div id="gc"></div>
 <script>
 // ═══════════════════════════════════════════════════════════
-//  TWIZZLE TOWN — Child Study Game v11.2
+//  TWIZZLE TOWN — Child Study Game v11.3
 //  ashleyjthomas/RELKIND
 //  - Restored relationship-setup story text (adult-version style)
 //  - Tighter layout (no scrolling on tablets/laptops)
@@ -1314,7 +1314,17 @@ function showEnd(){
   `);
   // Play end narration alongside the video
   say('end_video');
-  try{ window.parent.postMessage({type:'GAME_COMPLETE'}, '*'); }catch(e){}
+  // Notify the CHS tab (the window that opened us) that the game is done,
+  // and pull focus back so the parent sees the next CHS screen.
+  try{
+    const target = (window.opener && window.opener !== window) ? window.opener
+                 : (window.parent && window.parent !== window) ? window.parent
+                 : null;
+    if(target) target.postMessage({type:'GAME_COMPLETE'}, '*');
+    if(window.opener && typeof window.opener.focus === 'function'){
+      window.opener.focus();
+    }
+  }catch(e){ console.warn('GAME_COMPLETE postMessage failed:', e); }
 }
 
 // ═══════════════════════════════════════════════════════════
