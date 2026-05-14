@@ -258,7 +258,7 @@
 <div id="gc"></div>
 <script>
 // ═══════════════════════════════════════════════════════════
-//  TWIZZLE TOWN — Child Study Game v11.1
+//  TWIZZLE TOWN — Child Study Game v11.2
 //  ashleyjthomas/RELKIND
 //  - Restored relationship-setup story text (adult-version style)
 //  - Tighter layout (no scrolling on tablets/laptops)
@@ -732,15 +732,10 @@ function showWelcome(){
 function showSetup(){
   if(_aud){ _aud.pause(); }
   G.selAge = null;
-  const fromCHS = !!_URL_PID;
   render(`
     <h2>Before we start...</h2>
-    ${fromCHS ? `
-      <p class="txt">Welcome! Press an age below to begin.</p>
-    ` : `
-      <p class="txt">What's your <strong>first name</strong>?</p>
-      <input class="tinput" id="pidIn" type="text" placeholder="Type your name!" autocomplete="off"/>
-    `}
+    <p class="txt">What's your <strong>first name</strong>?</p>
+    <input class="tinput" id="pidIn" type="text" placeholder="Type your name!" autocomplete="off"/>
     <p class="txt" style="margin-top:4px;">How old are you?</p>
     <div class="age-row">
       ${[4,5,6,7,8].map(a=>
@@ -750,11 +745,8 @@ function showSetup(){
     <button class="btn g" id="goBtn" style="opacity:.5" disabled
       onclick="launchGame()">Start</button>
   `);
-  const pidIn = document.getElementById('pidIn');
-  if(pidIn) pidIn.addEventListener('input', checkReady);
-  // In CHS mode the name field is hidden, so a "name OK" check is automatic
-  if(fromCHS) checkReady();
-  say(fromCHS ? 'setup_age' : 'setup');
+  document.getElementById('pidIn').addEventListener('input', checkReady);
+  say('setup');
 }
 function pickAge(a){
   G.selAge = a;
@@ -765,18 +757,17 @@ function pickAge(a){
   checkReady();
 }
 function checkReady(){
-  const go    = document.getElementById('goBtn');
-  if(!go) return;
-  const pid   = document.getElementById('pidIn');
-  const nameOk = _URL_PID ? true : (pid && pid.value.trim().length > 0);
-  const ok = nameOk && G.selAge !== null;
+  const pid = document.getElementById('pidIn');
+  const go  = document.getElementById('goBtn');
+  if(!pid || !go) return;
+  const ok = pid.value.trim().length > 0 && G.selAge !== null;
   go.disabled = !ok;
   go.style.opacity = ok ? '1' : '.5';
 }
 function launchGame(){
   const pidIn = document.getElementById('pidIn');
-  if(!_URL_PID && (!pidIn || !pidIn.value.trim())) return;
-  G.firstName = pidIn ? pidIn.value.trim() : '';
+  if(!pidIn || !pidIn.value.trim()) return;
+  G.firstName = pidIn.value.trim();
   // Participant identifier in data:
   //   1. URL ?pid=  (CHS assigned condition) — preferred
   //   2. typed first name (standalone testing)
