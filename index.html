@@ -258,7 +258,7 @@
 <div id="gc"></div>
 <script>
 // ═══════════════════════════════════════════════════════════
-//  TWIZZLE TOWN — Child Study Game v11
+//  TWIZZLE TOWN — Child Study Game v11.1
 //  ashleyjthomas/RELKIND
 //  - Restored relationship-setup story text (adult-version style)
 //  - Tighter layout (no scrolling on tablets/laptops)
@@ -270,28 +270,30 @@ const VILLAGE   = "Twizzle Town";
 const CLOSE_DEF = "That means that they love each other more, tell each other more secrets, and give each other hugs.";
 const BOSS_DEF  = "That means they are in charge — they tell [Name] what to do, and [Name] listens.";
 
-// ── CHS ID auto-capture ───────────────────────────────────────
-// Pulls the participant identifier from common URL params used by
-// CHS (Children Helping Science) and similar platforms. If nothing
-// is found, we fall back to the child's first name as the ID.
-function _getChsId(){
+// ── CHS URL-param capture ─────────────────────────────────────
+// CHS opens the game with two params:
+//   ?pid=TT042_1747234567890   (the assigned participant condition)
+//   ?chsid=<response_uuid>     (the CHS response UUID)
+// We capture both separately and also accept some common aliases
+// in case CHS or a similar platform changes the names later.
+function _firstUrlParam(names){
   try{
     const p = new URLSearchParams(window.location.search);
-    const KEYS = [
-      'child_hashed_id','child_id','childId','childID',
-      'chs_child_id','chsId','chs_id',
-      'participantId','participant_id','pid',
-      'sessionId','session_id','response_id',
-      'subject_id','subjectId'
-    ];
-    for(const k of KEYS){
+    for(const k of names){
       const v = p.get(k);
       if(v && v.trim()) return v.trim();
     }
   }catch(e){}
   return '';
 }
-const _CHS_ID = _getChsId();
+const _URL_PID = _firstUrlParam([
+  'pid','participantId','participant_id',
+  'child_hashed_id','child_id','childId','childID','subject_id','subjectId'
+]);
+const _URL_CHS_ID = _firstUrlParam([
+  'chsid','chsId','chs_id','chs_child_id',
+  'response_uuid','responseUuid','response_id','session_id','sessionId'
+]);
 
 // ── Google Sheets webhook ─────────────────────────────────────
 // Paste the Web App URL from your Apps Script deployment here.
@@ -674,7 +676,7 @@ function effRoles(){
 //  GAME STATE
 // ═══════════════════════════════════════════════════════════
 const G = {
-  pid:'', firstName:'', chsId:_CHS_ID,
+  pid:'', firstName:'', chsId:_URL_CHS_ID,
   age:null, t0:null,
   bossB:null, closeB:null,
   order:[], versionMap:{},
@@ -730,10 +732,15 @@ function showWelcome(){
 function showSetup(){
   if(_aud){ _aud.pause(); }
   G.selAge = null;
+  const fromCHS = !!_URL_PID;
   render(`
     <h2>Before we start...</h2>
-    <p class="txt">What's your <strong>first name</strong>?</p>
-    <input class="tinput" id="pidIn" type="text" placeholder="Type your name!" autocomplete="off"/>
+    ${fromCHS ? `
+      <p class="txt">Welcome! Press an age below to begin.</p>
+    ` : `
+      <p class="txt">What's your <strong>first name</strong>?</p>
+      <input class="tinput" id="pidIn" type="text" placeholder="Type your name!" autocomplete="off"/>
+    `}
     <p class="txt" style="margin-top:4px;">How old are you?</p>
     <div class="age-row">
       ${[4,5,6,7,8].map(a=>
@@ -743,8 +750,11 @@ function showSetup(){
     <button class="btn g" id="goBtn" style="opacity:.5" disabled
       onclick="launchGame()">Start</button>
   `);
-  document.getElementById('pidIn').addEventListener('input', checkReady);
-  say('setup');
+  const pidIn = document.getElementById('pidIn');
+  if(pidIn) pidIn.addEventListener('input', checkReady);
+  // In CHS mode the name field is hidden, so a "name OK" check is automatic
+  if(fromCHS) checkReady();
+  say(fromCHS ? 'setup_age' : 'setup');
 }
 function pickAge(a){
   G.selAge = a;
@@ -755,19 +765,23 @@ function pickAge(a){
   checkReady();
 }
 function checkReady(){
-  const pid = document.getElementById('pidIn');
-  const go  = document.getElementById('goBtn');
-  if(!pid||!go) return;
-  const ok = pid.value.trim().length > 0 && G.selAge !== null;
+  const go    = document.getElementById('goBtn');
+  if(!go) return;
+  const pid   = document.getElementById('pidIn');
+  const nameOk = _URL_PID ? true : (pid && pid.value.trim().length > 0);
+  const ok = nameOk && G.selAge !== null;
   go.disabled = !ok;
   go.style.opacity = ok ? '1' : '.5';
 }
 function launchGame(){
-  const pid = document.getElementById('pidIn');
-  if(!pid || !pid.value.trim()) return;
-  G.firstName = pid.value.trim();
-  // Participant identifier in data: CHS ID if present in URL, else first name
-  G.pid       = G.chsId || G.firstName;
+  const pidIn = document.getElementById('pidIn');
+  if(!_URL_PID && (!pidIn || !pidIn.value.trim())) return;
+  G.firstName = pidIn ? pidIn.value.trim() : '';
+  // Participant identifier in data:
+  //   1. URL ?pid=  (CHS assigned condition) — preferred
+  //   2. typed first name (standalone testing)
+  G.pid       = _URL_PID || G.firstName;
+  G.chsId     = _URL_CHS_ID;
   G.age       = G.selAge;
   G.t0        = new Date().toISOString();
   G.bossB  = pick(['hmm1_boss','hmm2_boss','yes1_boss','yes2_boss']);
@@ -778,8 +792,9 @@ function launchGame(){
   G.versionMap[G.order[0]] = firstVer;
   G.versionMap[G.order[1]] = secondVer;
   document.getElementById('rinfo').innerHTML =
-    `Name: ${G.firstName} | Age: ${G.age}<br>`+
+    `PID: ${G.pid || '(none)'}<br>`+
     `CHS: ${G.chsId || '(none)'}<br>`+
+    `Name: ${G.firstName || '(skipped)'} | Age: ${G.age}<br>`+
     `Order: ${G.order.join(' &rarr; ')}<br>`+
     `${G.order[0]}: ${G.order[0]==='boss'?G.bossB:G.closeB} (Ver ${firstVer})<br>`+
     `${G.order[1]}: ${G.order[1]==='boss'?G.bossB:G.closeB} (Ver ${secondVer})`;
