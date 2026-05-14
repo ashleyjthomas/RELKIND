@@ -14,7 +14,7 @@ USAGE:
   2.  cd into this folder:
           cd "/Users/ashleythomas/Dropbox (Personal)/Mac (2)/Desktop/RELKIND"
   3.  Run:
-          python3 generate_v10_audio.py
+          python3 scripts/generate_v10_audio.py
 
   No `pip install` needed — uses the `requests` module that ships with Mac Python.
 """
@@ -91,8 +91,10 @@ HEADERS = {
     "content-type": "application/json",
 }
 
+# Write outputs into the repo root (parent of scripts/)
 here = os.path.dirname(os.path.abspath(__file__))
-os.chdir(here)
+out_dir = os.path.dirname(here)
+os.chdir(out_dir)
 
 ok = 0
 fail = 0

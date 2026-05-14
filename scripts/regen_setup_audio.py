@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """
-Generate setup_age.mp3 — the CHS-mode setup audio (no name prompt).
+Regenerate setup.mp3 with the new first-name prompt.
 
 USAGE:
   cd "/Users/ashleythomas/Dropbox (Personal)/Mac (2)/Desktop/RELKIND"
-  ELEVENLABS_API_KEY="sk_..." python3 regen_setup_age_audio.py
+  ELEVENLABS_API_KEY="sk_..." python3 scripts/regen_setup_audio.py
 """
 import os, sys, requests
 
@@ -21,7 +21,7 @@ if API_KEY == "PASTE_KEY_HERE":
     sys.exit(1)
 
 JOBS = [
-    ("setup_age.mp3", "Welcome! Press an age below to begin. How old are you?"),
+    ("setup.mp3", "What's your first name? How old are you?"),
 ]
 
 URL = f"https://api.elevenlabs.io/v1/text-to-speech/{VOICE_ID}"
@@ -31,8 +31,10 @@ HEADERS = {
     "content-type": "application/json",
 }
 
+# Write outputs into the repo root (parent of scripts/)
 here = os.path.dirname(os.path.abspath(__file__))
-os.chdir(here)
+out_dir = os.path.dirname(here)
+os.chdir(out_dir)
 
 for filename, text in JOBS:
     print(f"  {filename:<18}  ", end="", flush=True)
