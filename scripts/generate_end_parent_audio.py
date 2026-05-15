@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """
-Generate end_exit.mp3 — the parent-instructions narration that plays
-on the end screen after audio_end_parent.mp3 and end_video.mp3.
+Generate the two end-screen narrations:
 
-(audio_end_parent.mp3 is Ashley's own custom recording, converted from
-.m4a — this script does NOT regenerate it.)
+  audio_end_parent.mp3 — kid alert: "If your parent isn't with you, go get them now."
+  end_exit.mp3         — parent instructions: how to leave and return to CHS.
+
+Both play in the end-screen audio chain (with end_video.mp3 in the middle).
 
 USAGE:
   cd "/Users/ashleythomas/Dropbox (Personal)/Mac (2)/Documents/GitHub/RELKIND"
@@ -25,6 +26,8 @@ if API_KEY == "PASTE_KEY_HERE":
     sys.exit(1)
 
 JOBS = [
+    ("audio_end_parent.mp3",
+     "If your parent isn't with you, go get them now."),
     ("end_exit.mp3",
      "Parents, when you're ready, press the Escape key to leave fullscreen, "
      "and then click back into the C H S tab to continue."),
