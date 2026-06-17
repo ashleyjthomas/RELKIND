@@ -236,6 +236,18 @@
       .speech-row{gap:10px}
       .scene-img{max-width:300px}
     }
+    .next-arrow{
+      background:linear-gradient(145deg,#3498db,#2980b9);color:#fff;
+      border:none;width:64px;height:64px;border-radius:50%;
+      font-family:inherit;cursor:pointer;padding:0;
+      box-shadow:0 4px 14px rgba(52,152,219,.45);
+      display:inline-flex;align-items:center;justify-content:center;
+      transition:transform .1s, box-shadow .2s;
+      touch-action:manipulation;-webkit-tap-highlight-color:transparent;
+    }
+    .next-arrow:hover{box-shadow:0 6px 18px rgba(52,152,219,.55)}
+    .next-arrow:active{transform:scale(.94)}
+    .next-arrow svg{width:32px;height:32px;display:block}
   </style>
 </head>
 <body>
@@ -258,7 +270,7 @@
 <div id="gc"></div>
 <script>
 // ═══════════════════════════════════════════════════════════
-//  TWIZZLE TOWN — Child Study Game v11.5
+//  TWIZZLE TOWN — Child Study Game v11.6
 //  ashleyjthomas/RELKIND
 //  - Restored relationship-setup story text (adult-version style)
 //  - Tighter layout (no scrolling on tablets/laptops)
@@ -351,6 +363,12 @@ const STAR_SVG_OUTLINE =
   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true">' +
   '<path d="M12 2.6l2.95 5.98 6.6.96-4.78 4.66 1.13 6.58L12 17.68l-5.9 3.1 1.13-6.58L2.45 9.54l6.6-.96L12 2.6z"/>' +
   '</svg>';
+
+// Right-pointing arrow used for "next" navigation buttons
+const ARROW_NEXT_SVG =
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
+  'stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+  '<path d="M5 12h14M13 5l7 7-7 7"/></svg>';
 
 // ═══════════════════════════════════════════════════════════
 //  AUDIO ENGINE
@@ -948,8 +966,8 @@ function showTrialChars(){
       </div>
     </div>
     <div style="display:flex;gap:10px;align-items:center;margin-top:2px;">
-      <button class="btn" onclick="showTrialAction()">
-        What happened?
+      <button class="next-arrow" onclick="showTrialAction()" aria-label="Next" title="Next">
+        ${ARROW_NEXT_SVG}
       </button>
       <button class="rrb" onclick="reread()">Replay</button>
     </div>
@@ -978,8 +996,8 @@ function showTrialAction(){
       onerror="this.style.opacity=0.15">
     <p class="txt">${tr.story(tr.tgt)}</p>
     <div style="display:flex;gap:11px;align-items:center;">
-      <button class="btn" onclick="showTrialSpeech()">
-        Ask them
+      <button class="next-arrow" onclick="showTrialSpeech()" aria-label="Next" title="Next">
+        ${ARROW_NEXT_SVG}
       </button>
       <button class="rrb" onclick="reread()">Replay</button>
     </div>
