@@ -97,6 +97,16 @@ dat <- raw |>
 cat("After cleaning:", nrow(dat), "trials,",
     n_distinct(dat$participantId), "participants\n")
 
+# ---- Age-based exclusion -------------------------------------
+# Exclude 4-year-olds (Set MIN_AGE to whatever lower bound you want;
+# raise/lower it later without touching anything else.)
+MIN_AGE <- 5
+n_before <- n_distinct(dat$participantId)
+dat <- dat |> filter(age >= MIN_AGE)
+n_after  <- n_distinct(dat$participantId)
+cat("\nExcluded", n_before - n_after, "participants younger than", MIN_AGE,
+    "(now", n_after, "participants,", nrow(dat), "trials)\n")
+
 # Trials per participant (diagnostic — we keep everyone regardless)
 trial_counts <- dat |>
   count(participantId, name = "n_trials") |>
