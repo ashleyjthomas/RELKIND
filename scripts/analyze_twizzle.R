@@ -97,19 +97,22 @@ dat <- raw |>
 cat("After cleaning:", nrow(dat), "trials,",
     n_distinct(dat$participantId), "participants\n")
 
-# Trials per participant — flag incomplete sessions
+# Trials per participant (diagnostic — we keep everyone regardless)
 trial_counts <- dat |>
   count(participantId, name = "n_trials") |>
   arrange(n_trials)
-cat("\nTrial counts:\n"); print(table(trial_counts$n_trials))
+cat("\nTrial-count distribution (all participants kept):\n")
+print(table(trial_counts$n_trials))
+cat("Participants who didn't complete all 12 trials:",
+    sum(trial_counts$n_trials < 12), "\n")
+write_csv(trial_counts, "tables/trial_counts_per_participant.csv")
 
-# Keep only participants with the full 12 trials for the main analysis
-complete_ids <- trial_counts$participantId[trial_counts$n_trials == 12]
-dat_full <- dat |> filter(participantId %in% complete_ids)
-cat("\nParticipants with all 12 trials:", length(complete_ids), "\n")
+# Use every valid participant — partial sessions contribute the trials they did finish.
+dat_full <- dat
+cat("\nParticipants in analysis:", n_distinct(dat_full$participantId), "\n")
 
 # Age distribution
-cat("\nAge distribution (complete cases):\n")
+cat("\nAge distribution:\n")
 print(table(dat_full |> distinct(participantId, age) |> pull(age)))
 
 # ---- 2. Per-participant means --------------------------------
