@@ -270,7 +270,7 @@
 <div id="gc"></div>
 <script>
 // ═══════════════════════════════════════════════════════════
-//  TWIZZLE TOWN — Child Study Game v11.6
+//  TWIZZLE TOWN — Child Study Game v11.7
 //  ashleyjthomas/RELKIND
 //  - Restored relationship-setup story text (adult-version style)
 //  - Tighter layout (no scrolling on tablets/laptops)
@@ -279,7 +279,7 @@
 //  - Mid-game video + end-screen video
 // ═══════════════════════════════════════════════════════════
 const VILLAGE   = "Twizzle Town";
-const CLOSE_DEF = "That means that they love each other more, tell each other more secrets, and give each other hugs.";
+const CLOSE_DEF = "That means they love each other more, tell each other more secrets, and give each other more hugs.";
 const BOSS_DEF  = "That means they are in charge — they tell [Name] what to do, and [Name] listens.";
 
 // ── CHS URL-param capture ─────────────────────────────────────
@@ -902,11 +902,11 @@ function showBkIntro(){
   const cfg = curCfg();
   const isC = cfg.qType === 'close';
   render(`
-    <h2>${isC ? 'A question about being close!' : 'A question about the boss!'}</h2>
+    <h2>${isC ? 'A question about best friends!' : 'A question about the boss!'}</h2>
     ${isC ? `
       <p class="txt">After each story I will ask:<br>
-        <strong>"Who is [Name] closer to?"</strong></p>
-      <img src="CShugging.png" class="def-img" alt="Two friends hugging"
+        <strong>"Who is [Name]'s best friend?"</strong></p>
+      <img src="CShugging.png" class="def-img" alt="Two best friends hugging"
         onerror="this.style.display='none'">
     ` : `
       <p class="txt">After each story I will ask:<br>
@@ -1017,7 +1017,7 @@ function showTrialSpeech(){
   const spA = mkSpeech(cfg.ep, er.rA, tr.tgt, tr.act);
   const spB = mkSpeech(cfg.ep, er.rB, tr.tgt, tr.act);
   const qTxt   = isC
-    ? `Who is <strong>${tr.tgt}</strong> closer to?`
+    ? `Who is <strong>${tr.tgt}</strong>'s best friend?`
     : `Who do you think is <strong>${tr.tgt}'s boss</strong>?`;
   const defImg = isC
     ? `<img src="CShugging.png" class="def-img sm" alt="Two friends hugging" onerror="this.style.display='none'">`
