@@ -270,7 +270,7 @@
 <div id="gc"></div>
 <script>
 // ═══════════════════════════════════════════════════════════
-//  TWIZZLE TOWN — Child Study Game v11.7
+//  TWIZZLE TOWN — Child Study Game v11.8
 //  ashleyjthomas/RELKIND
 //  - Restored relationship-setup story text (adult-version style)
 //  - Tighter layout (no scrolling on tablets/laptops)
@@ -1137,6 +1137,9 @@ function recordResp(choice, el){
   const chosenGroup = choice === 0 ? tr.gA  : tr.gB;
   const chosenRole  = choice === 0 ? er.rA  : er.rB;
   const responseRecode = chosenRole === 'group' ? 1 : 2;
+  // Hypothesis-consistent direction (per pre-reg):
+  //   Close (best-friend): predicted to pick the individual-speaker
+  //   Boss: predicted to pick the group-speaker (less likely to pick individual)
   const hypothesisConsistent =
     (cfg.qType==='close' && chosenRole==='individual') ||
     (cfg.qType==='boss'  && chosenRole==='group') ? 1 : 0;
