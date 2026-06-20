@@ -256,7 +256,7 @@ p_cells <- ggplot(cell_summary,
     fill     = "Question"
   )
 ggsave("figures/01_cell_means.png", p_cells, width = 7, height = 4.5, dpi = 200)
-
+p_cells
 # 6b. Per-participant dots overlaid on cell means
 p_dots <- ggplot(pp,
                  aes(x = interaction(questionType, epistemic, sep = " · "),
@@ -273,7 +273,7 @@ p_dots <- ggplot(pp,
     x        = NULL, y = "Hypothesis-consistent (%)"
   )
 ggsave("figures/02_participant_dots.png", p_dots, width = 8, height = 4.5, dpi = 200)
-
+p_dots
 # 6c. Effect of age
 age_summary <- pp |>
   group_by(age, questionType) |>
