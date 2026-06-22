@@ -145,7 +145,8 @@ pp <- dat_full |>
     .groups       = "drop"
   )
 
-write_csv(pp, "tables/per_participant_cell_means.csv")
+cat("\nPer-participant cell means (proportion choosing individual-speaker):\n")
+print(pp, n = Inf)
 
 # ---- 3. Cell-level descriptives ------------------------------
 # Cell summary uses proportion choosing the individual-speaker.
