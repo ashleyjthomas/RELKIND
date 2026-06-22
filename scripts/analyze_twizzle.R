@@ -167,6 +167,25 @@ cat("\nCell means (proportion choosing individual-speaker, per participant):\n")
 print(cell_summary)
 write_csv(cell_summary, "tables/cell_means.csv")
 
+# ---- 3b. Age × condition table (per-participant proportions) ----------
+# Rows = year of age, columns = the 4 conditions (questionType × epistemic).
+# Cell value = mean % of trials on which kids chose the individual-speaker,
+# with the n of kids contributing to that cell shown in parentheses.
+age_cell_tbl <- pp |>
+  group_by(age, questionType, epistemic) |>
+  summarise(mean_p = mean(p_chose_indiv),
+            n_kids = n(),
+            .groups = "drop") |>
+  mutate(condition = paste(questionType, epistemic, sep = "_"),
+         cell     = sprintf("%.0f%% (n=%d)", 100 * mean_p, n_kids)) |>
+  select(age, condition, cell) |>
+  pivot_wider(names_from = condition, values_from = cell) |>
+  # Order columns: close_hmm, close_yes, boss_hmm, boss_yes
+  select(age, any_of(c("close_hmm", "close_yes", "boss_hmm", "boss_yes")))
+
+cat("\n% chose individual-speaker, per year of age × condition:\n")
+print(age_cell_tbl, n = Inf)
+
 # ---- 4. One-sample tests vs chance (50%) ---------------------
 # Per cell: one-sided tests in the direction predicted by the pre-reg.
 #   Best-friend (close): predict > .5 (choose individual)
