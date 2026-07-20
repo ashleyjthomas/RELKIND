@@ -1,0 +1,13 @@
+questionType,population,age_group,epistemic,n,k_ind,pct_ind,BF10,BF01,direction
+close,child,Younger (5-6),yes,150,102,68,5417.02,0,individual
+close,child,Younger (5-6),hmm,112,62,55,0.73,1.37,individual
+close,child,Older (7-8),yes,180,130,72,18807749.4,0,individual
+close,child,Older (7-8),hmm,192,134,70,1090638.72,0,individual
+boss (direction = group),child,Younger (5-6),yes,114,78,68,0.04,25,group
+boss (direction = group),child,Younger (5-6),hmm,143,90,63,0.05,20,group
+boss (direction = group),child,Older (7-8),yes,194,129,66,0.03,33.33,group
+boss (direction = group),child,Older (7-8),hmm,174,117,67,0.03,33.33,group
+boss (direction = individual),child,Younger (5-6),yes,114,78,68,808.17,0,individual
+boss (direction = individual),child,Younger (5-6),hmm,143,90,63,41.54,0.02,individual
+boss (direction = individual),child,Older (7-8),yes,194,129,66,11541.75,0,individual
+boss (direction = individual),child,Older (7-8),hmm,174,117,67,9676.34,0,individual

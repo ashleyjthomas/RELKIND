@@ -1,0 +1,9 @@
+Parameter,log_BF,Effects,Component
+b_Intercept,-2.889158713143634,fixed,conditional
+b_questionTypeboss_vs_close,8.173898446488558,fixed,conditional
+b_epistemicyes_vs_hmm,-1.4900962384886967,fixed,conditional
+b_ageGroupolder_vs_younger,-0.5582310617208872,fixed,conditional
+b_questionTypeboss_vs_close:epistemicyes_vs_hmm,-1.5368883807862375,fixed,conditional
+b_questionTypeboss_vs_close:ageGroupolder_vs_younger,-0.2076674296860785,fixed,conditional
+b_epistemicyes_vs_hmm:ageGroupolder_vs_younger,-2.3081352779661306,fixed,conditional
+b_questionTypeboss_vs_close:epistemicyes_vs_hmm:ageGroupolder_vs_younger,-2.3394698438030526,fixed,conditional
