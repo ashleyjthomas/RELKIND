@@ -286,6 +286,16 @@
     .opt-slot{
       display:flex;flex-direction:column;align-items:center;
       min-width:110px;gap:6px;
+      border-radius:12px;padding:4px 6px;
+      transition:background-color .25s ease, transform .25s ease,
+                 box-shadow .25s ease;
+    }
+    /* Applied to the slot whose character is currently being named
+       in the option read-aloud audio.  Glows warm yellow + subtle scale. */
+    .opt-slot.reading{
+      background:#fff8d1;
+      box-shadow:0 0 0 3px #f4c542, 0 6px 18px rgba(244,197,66,.35);
+      transform:scale(1.06);
     }
     .opt-role{
       display:flex;flex-direction:column;align-items:center;gap:2px;
@@ -555,14 +565,15 @@ function frameKey(trKey) {
   // 12 new files: <target>_frame.mp3
   return trKey + '_frame';
 }
-function optKey(trKey, indPos) {
-  // Per-trial option-card read-aloud.  Two files per target:
-  //   <target>_opt_A.mp3 : "[personA] is [target]'s best friend and [personB] is [target]'s boss"
-  //   <target>_opt_B.mp3 : "[personB] is [target]'s best friend and [personA] is [target]'s boss"
-  // We name the file by which visual card is being described (A / B), not
-  // by role — the description is generated at audio-gen time by consulting
-  // the same personA / personB in TRIALS.
-  return trKey + '_opt_' + indPos;   // 'A' or 'B'
+function optKey(trKey, card, half) {
+  // Per-trial option-card read-aloud, split so we can highlight the
+  // character portrait being spoken about:
+  //   <target>_opt_A_1.mp3 : "In this one, [pA] is [target]'s best friend,"
+  //   <target>_opt_A_2.mp3 : "and [pB] is [target]'s boss."
+  //   <target>_opt_B_1.mp3 : "In this one, [pB] is [target]'s best friend,"
+  //   <target>_opt_B_2.mp3 : "and [pA] is [target]'s boss."
+  // `card` is 'A' or 'B' ; `half` is 1 (best-friend half) or 2 (boss half).
+  return trKey + '_opt_' + card + '_' + half;
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -666,7 +677,8 @@ const TRIALS = {
       tgt:'Alex', tg:'wug', pA:'Quinn', gA:'flurp', pB:'Drew', gB:'zazzo',
       story: t=>`One day you see ${t} bouncing a ball on their head over and over again.`,
       portraitImg:'alex.png', actionImg:'alex_ball.png',
-      act:{g:'bounce balls on their heads', i:'bounce balls on their heads'},
+      // individual (Alex) has one head; group (Wugs) collectively have heads
+      act:{g:'bounce balls on their heads', i:'bounce balls on their head'},
       ids:{hmm1c:'Balls_Hmm_1',   hmm2c:'Balls_Hmm_2',
            yes1c:'Balls_Yes_1',   yes2c:'Ball_Yes_2',
            hmm1b:'Balls_Hmm_1_b', hmm2b:'Balls_Hmm_2_b',
@@ -1147,12 +1159,15 @@ function showTrialSpeech(){
 
   const optLeftIsA = !G.curOptSwap;
 
-  // Build one option card: shows BOTH characters, roles labelled underneath
-  function optCardHTML(bfName, bfImg, bfGroup, bsName, bsImg, bsGroup, optKeyId){
+  // Build one option card: shows BOTH characters, roles labelled underneath.
+  // Each slot gets an id so we can highlight it while its half of the audio
+  // plays (e.g., opt-A-bf = the best-friend slot on option-card A).
+  function optCardHTML(cardId, bfName, bfImg, bfGroup, bsName, bsImg, bsGroup){
     return `
-      <button class="opt-card" onclick="recordResp('${optKeyId}', this)">
+      <button class="opt-card" id="opt-card-${cardId}"
+              onclick="recordResp('${cardId}', this)">
         <div class="opt-row">
-          <div class="opt-slot">
+          <div class="opt-slot" id="opt-${cardId}-bf">
             ${cimg(bfImg, 'sm')}
             <div class="cname">${bfName}</div>${badge(bfGroup)}
             <div class="opt-role opt-bf">
@@ -1161,7 +1176,7 @@ function showTrialSpeech(){
               <span>${tr.tgt}'s<br><strong>best friend</strong></span>
             </div>
           </div>
-          <div class="opt-slot">
+          <div class="opt-slot" id="opt-${cardId}-bs">
             ${cimg(bsImg, 'sm')}
             <div class="cname">${bsName}</div>${badge(bsGroup)}
             <div class="opt-role opt-bs">
@@ -1174,10 +1189,10 @@ function showTrialSpeech(){
       </button>`;
   }
 
-  const cardA = optCardHTML(tr.pA, G.curPAImg, tr.gA,
-                            tr.pB, G.curPBImg, tr.gB, 'A');
-  const cardB = optCardHTML(tr.pB, G.curPBImg, tr.gB,
-                            tr.pA, G.curPAImg, tr.gA, 'B');
+  const cardA = optCardHTML('A', tr.pA, G.curPAImg, tr.gA,
+                                 tr.pB, G.curPBImg, tr.gB);
+  const cardB = optCardHTML('B', tr.pB, G.curPBImg, tr.gB,
+                                 tr.pA, G.curPAImg, tr.gA);
   const qTxt  = `Who is <strong>${tr.tgt}'s ${ASK_LABEL[cfg.ask]}</strong>?`;
 
   G.tStart = Date.now();
@@ -1271,41 +1286,90 @@ function triggerSpeech(){
   });
 }
 
-// Reveal the choice zone and play frame -> question -> per-option read-aloud.
+// ─── Slot highlighting helpers ─────────────────────────────────
+// Add a "reading" class to a specific slot for the duration of the
+// audio clip that names its character.  Both slots are guaranteed to
+// clear when the current audio chain is cancelled.
+function _highlightSlot(id){
+  document.querySelectorAll('.opt-slot.reading').forEach(function(el){
+    el.classList.remove('reading');
+  });
+  const el = document.getElementById(id);
+  if(el) el.classList.add('reading');
+}
+function _clearHighlights(){
+  document.querySelectorAll('.opt-slot.reading').forEach(function(el){
+    el.classList.remove('reading');
+  });
+}
+
+// Reveal the choice zone and chain: question -> for each card, [best-friend
+// half + bf-slot highlight] then [boss half + bs-slot highlight].
 function _revealChoice(){
   const cz = document.getElementById('choiceZone');
   if(cz) cz.classList.add('show');
-  // Scroll into view so the child sees the option cards
   setTimeout(function(){
     const opts = document.getElementById('opts');
     if(opts && typeof opts.scrollIntoView === 'function'){
       try{ opts.scrollIntoView({behavior:'smooth', block:'center'}); }catch(e){}
     }
   }, 300);
-  const tr  = G.blockChars[G.bIdx][G.tIdx];
-  const cfg = curCfg();
-  const optLeftIsA = !G.curOptSwap;
-  _chainTimeout(function(){
-    speakChain([
-      { key: askKey(cfg.ask, tr.key),                delay: 0   },
-      { key: optKey(tr.key, optLeftIsA ? 'A' : 'B'), delay: 700 },
-      { key: optKey(tr.key, optLeftIsA ? 'B' : 'A'), delay: 500 }
-    ]);
-  }, 500);
+  _chainTimeout(function(){ _playChoiceAudio(); }, 500);
 }
 
-// Replay just the question + option audio (frame was said at character intro)
+// Replay the question + per-card audio (with slot highlighting).
 function _replayChoice(){
   _cancelChain();
   if(_aud){ _aud.pause(); }
+  _clearHighlights();
+  _playChoiceAudio();
+}
+
+// Build the audio + highlight sequence for the current trial's choice screen.
+function _playChoiceAudio(){
   const tr  = G.blockChars[G.bIdx][G.tIdx];
   const cfg = curCfg();
   const optLeftIsA = !G.curOptSwap;
-  speakChain([
-    { key: askKey(cfg.ask, tr.key),                delay: 0   },
-    { key: optKey(tr.key, optLeftIsA ? 'A' : 'B'), delay: 700 },
-    { key: optKey(tr.key, optLeftIsA ? 'B' : 'A'), delay: 500 }
-  ]);
+  const cards = optLeftIsA ? ['A','B'] : ['B','A'];
+
+  const steps = [
+    { key: askKey(cfg.ask, tr.key), onStart: _clearHighlights, delay: 0 }
+  ];
+  cards.forEach(function(c, i){
+    // best-friend half of this card
+    steps.push({
+      key:     optKey(tr.key, c, 1),
+      onStart: function(){ _highlightSlot('opt-' + c + '-bf'); },
+      delay:   i === 0 ? 700 : 500
+    });
+    // boss half of this card
+    steps.push({
+      key:     optKey(tr.key, c, 2),
+      onStart: function(){ _highlightSlot('opt-' + c + '-bs'); },
+      delay:   150
+    });
+  });
+  // Clear highlight after the last clip finishes
+  steps.push({ key: null, onStart: _clearHighlights, delay: 300 });
+
+  _playSteps(steps);
+}
+
+// Small variant of speakChain that fires an onStart callback right before
+// each audio clip begins.  Skips null-key steps (used purely to run the
+// callback after a delay).
+function _playSteps(steps){
+  let i = 0;
+  function next(){
+    if(i >= steps.length) return;
+    const s = steps[i++];
+    _chainTimeout(function(){
+      if(typeof s.onStart === 'function') s.onStart();
+      if(s.key == null){ next(); return; }
+      _play(s.key, next);
+    }, s.delay || 0);
+  }
+  next();
 }
 // ═══════════════════════════════════════════════════════════
 //  RESPONSE RECORDING (STUDY 2)
@@ -1385,6 +1449,9 @@ function recordResp(choice, el){
   };
   G.resp.push(rowData);
   _postToSheets(rowData);
+  _cancelChain();
+  if(_aud){ _aud.pause(); }
+  _clearHighlights();
   el.classList.add('chosen');
   document.querySelectorAll('.opt-card').forEach(c=>c.classList.add('lock'));
   try{ localStorage.setItem('twizzle_s2_'+G.pid, JSON.stringify(G)); }catch(e){}

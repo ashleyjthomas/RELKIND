@@ -6,3 +6,7 @@ index_test.html
 
 # macOS
 .DS_Store
+
+# Backups from normalize_study2_audio.sh — 17 MB of pre-normalize originals
+# (regenerable from ElevenLabs; no need to commit)
+study2/tmp/

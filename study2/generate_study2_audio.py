@@ -2,10 +2,13 @@
 """
 Generate STUDY 2 audio for Twizzle Town.
 
-New files (36 total):
+New files (60 total):
   12 <target>_frame.mp3                                 (per-target joint frame,
                                                          spoken at character intro)
-  24 <target>_opt_A.mp3, <target>_opt_B.mp3            (per-target option read-aloud)
+  48 <target>_opt_{A,B}_{1,2}.mp3                       (per-target option read-aloud
+                                                         split into best-friend + boss
+                                                         halves so the UI can highlight
+                                                         the character being named)
 
 Reused from Study 1 (no regeneration needed):
   - <target>_q_close.mp3   ("Who is [target]'s best friend?")
@@ -61,17 +64,24 @@ for key, tgt, pA, pB in TARGETS:
         f"one is {tgt}'s boss. You'll have to figure out which is which!"
     ))
 
-# ── (2) Per-target option read-aloud (24 files) ────────────────
-# Option A: pA in best-friend slot; option B: pB in best-friend slot.
+# ── (2) Per-target option read-aloud, SPLIT into 2 clips per option ─
+# Splitting the sentence lets the UI highlight the character portrait
+# being named as each clip plays.
+#   Option A: pA in best-friend slot, pB in boss slot
+#     opt_A_1.mp3  ->  "In this one, {pA} is {tgt}'s best friend,"
+#     opt_A_2.mp3  ->  "and {pB} is {tgt}'s boss."
+#   Option B: roles flipped
+#     opt_B_1.mp3  ->  "In this one, {pB} is {tgt}'s best friend,"
+#     opt_B_2.mp3  ->  "and {pA} is {tgt}'s boss."
 for key, tgt, pA, pB in TARGETS:
-    JOBS.append((
-        f"{key}_opt_A.mp3",
-        f"In this one, {pA} is {tgt}'s best friend and {pB} is {tgt}'s boss."
-    ))
-    JOBS.append((
-        f"{key}_opt_B.mp3",
-        f"In this one, {pB} is {tgt}'s best friend and {pA} is {tgt}'s boss."
-    ))
+    JOBS.append((f"{key}_opt_A_1.mp3",
+                 f"In this one, {pA} is {tgt}'s best friend,"))
+    JOBS.append((f"{key}_opt_A_2.mp3",
+                 f"and {pB} is {tgt}'s boss."))
+    JOBS.append((f"{key}_opt_B_1.mp3",
+                 f"In this one, {pB} is {tgt}'s best friend,"))
+    JOBS.append((f"{key}_opt_B_2.mp3",
+                 f"and {pA} is {tgt}'s boss."))
 
 # ── Run ─────────────────────────────────────────────────────────
 URL = f"https://api.elevenlabs.io/v1/text-to-speech/{VOICE_ID}"
