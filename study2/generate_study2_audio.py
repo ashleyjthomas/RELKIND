@@ -2,13 +2,31 @@
 """
 Generate STUDY 2 audio for Twizzle Town.
 
-New files (60 total):
-  12 <target>_frame.mp3                                 (per-target joint frame,
-                                                         spoken at character intro)
-  48 <target>_opt_{A,B}_{1,2}.mp3                       (per-target option read-aloud
-                                                         split into best-friend + boss
-                                                         halves so the UI can highlight
-                                                         the character being named)
+Files generated (61 total):
+  12 <target>_frame.mp3                                 (character intro: "One of the
+                                                         people that X knows is X's
+                                                         best friend and one is X's
+                                                         boss.  You'll have to figure
+                                                         out which is which!")
+  12 <target>_prefix.mp3                                (choice-screen prefix:
+                                                         "Remember, one is X's best
+                                                         friend and one is X's boss.
+                                                         Do you think it's like this?")
+   1 or_like_this.mp3                                   (generic connector)
+  48 <target>_opt_{A,B}_{1,2}.mp3                       (option halves, no "In this
+                                                         one," prefix — the frame is
+                                                         provided by prefix.mp3):
+                                                           _A_1 = "[pA] is X's best friend,"
+                                                           _A_2 = "and [pB] is X's boss."
+                                                           _B_1 = "[pB] is X's best friend,"
+                                                           _B_2 = "and [pA] is X's boss."
+
+Reused from Study 1 (no regeneration needed):
+  - <target>_intro / _likeA / _likeB / _action / _ask / _reread
+  - <target>_{ep}_{ind|group}.mp3 speech clips
+  - star_*, mid_video, welcome, setup, etc.
+NOT used in Study 2 anymore (safe to leave; no harm):
+  - <target>_q_close.mp3, <target>_q_boss.mp3   (asked-role questions)
 
 Reused from Study 1 (no regeneration needed):
   - <target>_q_close.mp3   ("Who is [target]'s best friend?")
@@ -64,24 +82,41 @@ for key, tgt, pA, pB in TARGETS:
         f"one is {tgt}'s boss. You'll have to figure out which is which!"
     ))
 
-# ── (2) Per-target option read-aloud, SPLIT into 2 clips per option ─
+# ── (2) Per-target choice-screen prefix (12 files) ─────────────
+# Played at the top of the option-card screen, before the two option
+# descriptions. Symmetric — never mentions a specific asked role.
+for key, tgt, pA, pB in TARGETS:
+    JOBS.append((
+        f"{key}_prefix.mp3",
+        f"Remember, one is {tgt}'s best friend and one is {tgt}'s boss. "
+        f"Do you think it's like this?"
+    ))
+
+# ── (3) Generic connector (1 file) ─────────────────────────────
+JOBS.append(("or_like_this.mp3", "Or like this?"))
+JOBS.append(("do_you_think.mp3", "Do you think it's like this?"))
+
+# ── (4) Per-target option read-aloud, split into 2 clips per option ─
 # Splitting the sentence lets the UI highlight the character portrait
-# being named as each clip plays.
+# being named as each clip plays.  No "In this one," prefix — the
+# per-target `_prefix.mp3` above and the generic `or_like_this.mp3`
+# provide the "in this one / or like this" framing.
 #   Option A: pA in best-friend slot, pB in boss slot
-#     opt_A_1.mp3  ->  "In this one, {pA} is {tgt}'s best friend,"
+#     opt_A_1.mp3  ->  "{pA} is {tgt}'s best friend,"
 #     opt_A_2.mp3  ->  "and {pB} is {tgt}'s boss."
-#   Option B: roles flipped
-#     opt_B_1.mp3  ->  "In this one, {pB} is {tgt}'s best friend,"
-#     opt_B_2.mp3  ->  "and {pA} is {tgt}'s boss."
+#   Option B: roles flipped, but characters SPOKEN in the same
+#   left-to-right order as displayed (pA first, then pB):
+#     opt_B_1.mp3  ->  "{pA} is {tgt}'s boss,"
+#     opt_B_2.mp3  ->  "and {pB} is {tgt}'s best friend."
 for key, tgt, pA, pB in TARGETS:
     JOBS.append((f"{key}_opt_A_1.mp3",
-                 f"In this one, {pA} is {tgt}'s best friend,"))
+                 f"{pA} is {tgt}'s best friend,"))
     JOBS.append((f"{key}_opt_A_2.mp3",
                  f"and {pB} is {tgt}'s boss."))
     JOBS.append((f"{key}_opt_B_1.mp3",
-                 f"In this one, {pB} is {tgt}'s best friend,"))
+                 f"{pA} is {tgt}'s boss,"))
     JOBS.append((f"{key}_opt_B_2.mp3",
-                 f"and {pA} is {tgt}'s boss."))
+                 f"and {pB} is {tgt}'s best friend."))
 
 # ── Run ─────────────────────────────────────────────────────────
 URL = f"https://api.elevenlabs.io/v1/text-to-speech/{VOICE_ID}"

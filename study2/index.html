@@ -392,27 +392,25 @@ const _URL_CHS_ID = _firstUrlParam([
 // Deployed via /RELKIND/study2/apps_script_study2.gs (see instructions there).
 const SHEETS_WEBHOOK = 'https://script.google.com/macros/s/AKfycbwinMk7GQObeqC6bFMqrYjA8rbJUuv-toUhDkoLYFRhSIO2GWR2ummLOMjF0Pb60lgXjQ/exec';
 
-// Column order shared by the CSV export and the Google Sheet
-// STUDY 2 schema: adds askedRole + optionSwapped +
-// individualRoleAssigned (which role the individual-speaker got);
-// keeps chosenRole for backward compatibility (= role assigned to
-// the individual-referring speaker).
+// Column order shared by the CSV export and the Google Sheet.
+// STUDY 2 schema (2 blocks x 6 trials; forced ipsative choice with
+// no per-trial asked-role — the wording is fully symmetric).
 const CSV_COLS = [
   'study',                                              // "study2"
   'participantId','chsId','firstName','age',
-  'blockOrder','blockCurrent','blockIndex','trialInBlock',
-  'epistemic','askedRole',                              // askedRole: "best_friend" | "boss"
-  'blockRoleA','blockRoleB',                            // which of A/B is individual / group in this trial
+  'blockOrder','blockCurrent','blockIndex','trialInBlock',  // block: 0..1, trial: 0..5
+  'epistemic',                                          // 'yes' | 'hmm'
+  'blockRoleA','blockRoleB',                            // which of A/B is individual / group on this trial
   'rolesSwapped','effectiveRoleA','effectiveRoleB',
-  'optionOrder','optionChosenIndex',                    // 0 = left option, 1 = right option
-  'individualAssignedTo',                               // "best_friend" | "boss"  (what the kid gave the individual-speaker)
-  'hypothesisConsistent',                               // 1 if individual->best_friend (Study 2 H1); 0 otherwise
+  'optionOrder','optionChosenIndex',                    // 'A_left'/'B_left', 'A'/'B'
+  'individualAssignedTo',                               // "best_friend" | "boss"  (DV: role kid gave the individual-speaker)
+  'hypothesisConsistent',                               // 1 if individual -> best_friend (Study 2 H1)
   'dataExportTag','target','behavior',
   'personA','groupA','personB','groupB',
   'speechA','speechB',
   'portraitImgShown','actionImgShown',
   'orangeImgShown','greenImgShown',
-  'chosenName','chosenGroup','chosenRole',              // Study-1 compatibility: chosenRole = individualAssignedTo
+  'chosenName','chosenGroup','chosenRole',              // Study-1 compat: name/group/role of the speaker in best-friend slot
   'rt_ms','timestamp'
 ];
 
@@ -551,28 +549,34 @@ function speechKey(ep, role, trKey) {
   const r = (role === 'group') ? 'group' : 'ind';
   return trKey + '_' + ep + '_' + r;
 }
-// STUDY 2 helpers -----------------------------------------------------
-// Existing per-target speech (X_hmm_ind, X_yes_group, etc.) is reused
-// verbatim.  askKey / frameKey / optKey are new for Study 2.
-function askKey(ask, trKey) {
-  // "who is [target]'s best friend?" or "...boss?" (12 files, per target)
-  //   best_friend -> X_q_close.mp3  (rewording already done)
-  //   boss        -> X_q_boss.mp3
-  return trKey + '_q_' + (ask === 'best_friend' ? 'close' : 'boss');
-}
-function frameKey(trKey) {
-  // "One of these people is [target]'s best friend and one is [target]'s boss."
-  // 12 new files: <target>_frame.mp3
-  return trKey + '_frame';
-}
-function optKey(trKey, card, half) {
-  // Per-trial option-card read-aloud, split so we can highlight the
-  // character portrait being spoken about:
-  //   <target>_opt_A_1.mp3 : "In this one, [pA] is [target]'s best friend,"
-  //   <target>_opt_A_2.mp3 : "and [pB] is [target]'s boss."
-  //   <target>_opt_B_1.mp3 : "In this one, [pB] is [target]'s best friend,"
-  //   <target>_opt_B_2.mp3 : "and [pA] is [target]'s boss."
-  // `card` is 'A' or 'B' ; `half` is 1 (best-friend half) or 2 (boss half).
+// STUDY 2 audio helpers ----------------------------------------------
+// The per-target speech (X_hmm_ind, X_yes_group, etc.) is inherited
+// from Study 1 and reused verbatim.  Everything below is new for Study 2.
+//
+//   <target>_frame.mp3   character intro: "One of the people that
+//                        [tgt] knows is [tgt]'s best friend and one is
+//                        [tgt]'s boss. You'll have to figure out which
+//                        is which!"
+//   <target>_prefix.mp3  choice-screen prefix: "Remember, one is [tgt]'s
+//                        best friend and one is [tgt]'s boss. Do you
+//                        think it's like this?"
+//   or_like_this.mp3     generic connector: "Or like this?"
+//   do_you_think.mp3     generic question: "Do you think it's like this?"
+//                        (plays at the top of the choice screen; the
+//                         "Remember..." reminder moved to the speech screen)
+//   <target>_opt_A_1.mp3 "[pA] is [tgt]'s best friend,"     (highlight A left slot)
+//   <target>_opt_A_2.mp3 "and [pB] is [tgt]'s boss."        (highlight A right slot)
+//   <target>_opt_B_1.mp3 "[pA] is [tgt]'s boss,"            (highlight B left slot)
+//   <target>_opt_B_2.mp3 "and [pB] is [tgt]'s best friend." (highlight B right slot)
+//   NOTE: opt_B_* were re-worded so characters are spoken in the same
+//   left-to-right order as displayed — regenerate them with
+//   generate_study2_audio.py (22 files) before running kids.
+
+function frameKey (trKey)          { return trKey + '_frame';  }
+function prefixKey(trKey)          { return trKey + '_prefix'; }
+function orLikeThisKey()           { return 'or_like_this';    }
+function optKey   (trKey, card, half) {
+  // card: 'A' | 'B'  ; half: 1 (best-friend) | 2 (boss)
   return trKey + '_opt_' + card + '_' + half;
 }
 
@@ -615,24 +619,24 @@ function cimg(src, cls, id){
 // ═══════════════════════════════════════════════════════════
 //  BLOCK CONFIGS
 // ═══════════════════════════════════════════════════════════
-// STUDY 2 blocks: 4 blocks = 2 (epistemic) x 2 (asked role).
-// Per-trial aRole/bRole (who is individual vs group) is decided
-// per-trial via a random swap, not per-block, so both left/right
-// positions get balanced within each mini-block.
+// STUDY 2 blocks: 2 blocks = epistemic (yes / hmm) ONLY.
+//
+// The forced-choice audio at the choice screen is fully symmetric
+// ("Do you think it's like this? X is BF and Y is boss.  Or like
+//  this? Y is BF and X is boss.") — so there's no per-trial "asked
+// role" manipulation.  Kids just pick between two full assignments.
+//
+// Per-trial aRole/bRole (which speaker is individual vs group) is
+// decided per-trial via a random swap so both left/right positions
+// are balanced within each 6-trial block.
 const BCFG = {
-  yes_bf: {ep:'yes', ask:'best_friend'},
-  hmm_bf: {ep:'hmm', ask:'best_friend'},
-  yes_bs: {ep:'yes', ask:'boss'},
-  hmm_bs: {ep:'hmm', ask:'boss'},
+  yes: { ep: 'yes' },
+  hmm: { ep: 'hmm' },
 };
-const BLOCK_KEYS = ['yes_bf','hmm_bf','yes_bs','hmm_bs'];
-const NPER_BLOCK  = 3;   // trials per mini-block
-const NBLOCKS     = 4;
-const NTRIALS_TOT = NPER_BLOCK * NBLOCKS;   // 12
-
-// Pretty labels for display + audio filenames
-const ASK_LABEL   = { best_friend: "best friend", boss: "boss" };
-const ASK_KEY_SUF = { best_friend: 'bf',          boss: 'bs'   };
+const BLOCK_KEYS  = ['yes','hmm'];
+const NPER_BLOCK  = 2;     // trials per block
+const NBLOCKS     = 2;
+const NTRIALS_TOT = NPER_BLOCK * NBLOCKS;   // 4
 
 // ═══════════════════════════════════════════════════════════
 //  TRIAL DATA
@@ -671,18 +675,6 @@ const TRIALS = {
            yes1c:'Climb_Yes_1',   yes2c:'Climb_Yes_2',
            hmm1b:'Walls_Hmm_1_b', hmm2b:'Walls_Hmm_2_b',
            yes1b:'Walls_Yes_1_b', yes2b:'Walls_Yes_2_b'}
-    },
-    {
-      beh:'balls', key:'alex',
-      tgt:'Alex', tg:'wug', pA:'Quinn', gA:'flurp', pB:'Drew', gB:'zazzo',
-      story: t=>`One day you see ${t} bouncing a ball on their head over and over again.`,
-      portraitImg:'alex.png', actionImg:'alex_ball.png',
-      // individual (Alex) has one head; group (Wugs) collectively have heads
-      act:{g:'bounce balls on their heads', i:'bounce balls on their head'},
-      ids:{hmm1c:'Balls_Hmm_1',   hmm2c:'Balls_Hmm_2',
-           yes1c:'Balls_Yes_1',   yes2c:'Ball_Yes_2',
-           hmm1b:'Balls_Hmm_1_b', hmm2b:'Balls_Hmm_2_b',
-           yes1b:'Balls_Yes_1_b', yes2b:'Balls_Yes_2_b'}
     },
     {
       beh:'whisper', key:'jordan',
@@ -804,7 +796,8 @@ function effRoles(){
 // Which visual card ('A' or 'B') carries the individual-speaker on this trial?
 function indCard(){ return G.curSwap ? 'B' : 'A'; }
 
-// Flat pool of all 12 characters (Study 2 uses all 12, 3 per block, no repeats)
+// Flat pool of 11 characters (Alex removed — typo in stimulus).
+// Each child sees 6 of them (3 per block), no repeats.
 const ALL_TRIALS = TRIALS.A.concat(TRIALS.B);
 
 // ═══════════════════════════════════════════════════════════
@@ -813,9 +806,9 @@ const ALL_TRIALS = TRIALS.A.concat(TRIALS.B);
 const G = {
   pid:'', firstName:'', chsId:_URL_CHS_ID,
   age:null, t0:null,
-  // STUDY 2: 4 mini-blocks x 3 trials
-  blockOrder:[],       // array of 4 block keys in run order, e.g. ['yes_bf','hmm_bs','yes_bs','hmm_bf']
-  blockChars:[],       // 4 arrays of 3 trial-configs (references into ALL_TRIALS)
+  // STUDY 2: 2 blocks x 3 trials
+  blockOrder:[],       // array of 2 block keys in run order, e.g. ['yes','hmm']
+  blockChars:[],       // 2 arrays of 3 trial-configs (references into ALL_TRIALS)
   bIdx:0, tIdx:0,      // current block / trial-in-block
   curT:null,           // current trial config
   curPortraitImg:null, curActionImg:null,
@@ -838,7 +831,7 @@ function curBlockKey(){ return G.blockOrder[G.bIdx]; }
 function curCfg()     { return BCFG[curBlockKey()]; }
 function starMeterHTML(){
   let h = '<div class="star-meter">';
-  for(let i=0;i<6;i++){
+  for(let i=0;i<NTRIALS_TOT;i++){
     const earned = i < G.stars;
     h += `<span class="star-slot ${earned?'earned':'empty'}">${earned?STAR_SVG:STAR_SVG_OUTLINE}</span>`;
   }
@@ -913,9 +906,9 @@ function launchGame(){
   G.t0        = new Date().toISOString();
 
   // STUDY 2 assignment ------------------------------------------------
-  // 1. Shuffle the 4 mini-block keys.
+  // 1. Shuffle the 2 block keys (yes / hmm).
   G.blockOrder = shuffle(BLOCK_KEYS.slice());
-  // 2. Shuffle all 12 characters and split into 4 groups of 3.
+  // 2. Shuffle the character pool and deal 3 to each block (6 of 11 used).
   const chars = shuffle(ALL_TRIALS.slice());
   G.blockChars = [];
   for(let b=0; b<NBLOCKS; b++){
@@ -1048,7 +1041,10 @@ function nextTrial(){
   G.curPAImg       = pick(ORANGE_IMGS);
   G.curPBImg       = pick(GREEN_IMGS);
   G.curSwap        = Math.random() < 0.5;   // A/B are individual/group swapped?
-  G.curOptSwap     = Math.random() < 0.5;   // which option card renders on the LEFT?
+  // Option cards are NOT swapped: the left card always leads with pA (the
+  // speaker shown on top), the right card with pB. Counterbalancing of
+  // which speaker individuates vs generalizes is carried by curSwap.
+  G.curOptSwap     = false;
   showTrialChars();
 }
 
@@ -1113,7 +1109,7 @@ function showTrialAction(){
   const tn = G.bIdx * NPER_BLOCK + G.tIdx + 1;
   render(`
     ${starMeterHTML()}
-    <p class="prog">Story ${tn} of 12</p>
+    <p class="prog">Story ${tn} of ${NTRIALS_TOT}</p>
     <div class="dirs">
       Look what <strong>${tr.tgt}</strong> is doing!
     </div>
@@ -1152,48 +1148,55 @@ function showTrialSpeech(){
   const tr  = G.blockChars[G.bIdx][G.tIdx];
   const cfg = curCfg();
   const tn  = G.bIdx * NPER_BLOCK + G.tIdx + 1;
-  const isBF = cfg.ask === 'best_friend';
   const er  = effRoles();
   const spA = mkSpeech(cfg.ep, er.rA, tr.tgt, tr.act);
   const spB = mkSpeech(cfg.ep, er.rB, tr.tgt, tr.act);
 
   const optLeftIsA = !G.curOptSwap;
 
-  // Build one option card: shows BOTH characters, roles labelled underneath.
-  // Each slot gets an id so we can highlight it while its half of the audio
-  // plays (e.g., opt-A-bf = the best-friend slot on option-card A).
-  function optCardHTML(cardId, bfName, bfImg, bfGroup, bsName, bsImg, bsGroup){
+  // Build one option card: BOTH characters stay in FIXED positions
+  // (pA always in the left slot, pB always in the right slot) and only
+  // the best-friend / boss role labels swap between the two cards.
+  // Slot ids stay semantic (opt-<card>-bf / opt-<card>-bs) so the audio
+  // highlighting follows whichever slot holds that role on that card.
+  function roleHTML(role){
+    return role === 'bf'
+      ? `<div class="opt-role opt-bf">
+           <img src="CShugging.png" class="opt-role-icon" alt="best friend"
+             onerror="this.style.display='none'">
+           <span>${tr.tgt}'s<br><strong>best friend</strong></span>
+         </div>`
+      : `<div class="opt-role opt-bs">
+           <img src="ARchair.png" class="opt-role-icon" alt="boss"
+             onerror="this.style.display='none'">
+           <span>${tr.tgt}'s<br><strong>boss</strong></span>
+         </div>`;
+  }
+  // aRole/bRole = role of pA (left slot) / pB (right slot): 'bf' | 'bs'
+  function optCardHTML(cardId, aRole, bRole){
     return `
       <button class="opt-card" id="opt-card-${cardId}"
               onclick="recordResp('${cardId}', this)">
         <div class="opt-row">
-          <div class="opt-slot" id="opt-${cardId}-bf">
-            ${cimg(bfImg, 'sm')}
-            <div class="cname">${bfName}</div>${badge(bfGroup)}
-            <div class="opt-role opt-bf">
-              <img src="CShugging.png" class="opt-role-icon" alt="best friend"
-                onerror="this.style.display='none'">
-              <span>${tr.tgt}'s<br><strong>best friend</strong></span>
-            </div>
+          <div class="opt-slot" id="opt-${cardId}-${aRole}">
+            ${cimg(G.curPAImg, 'sm')}
+            <div class="cname">${tr.pA}</div>${badge(tr.gA)}
+            ${roleHTML(aRole)}
           </div>
-          <div class="opt-slot" id="opt-${cardId}-bs">
-            ${cimg(bsImg, 'sm')}
-            <div class="cname">${bsName}</div>${badge(bsGroup)}
-            <div class="opt-role opt-bs">
-              <img src="ARchair.png" class="opt-role-icon" alt="boss"
-                onerror="this.style.display='none'">
-              <span>${tr.tgt}'s<br><strong>boss</strong></span>
-            </div>
+          <div class="opt-slot" id="opt-${cardId}-${bRole}">
+            ${cimg(G.curPBImg, 'sm')}
+            <div class="cname">${tr.pB}</div>${badge(tr.gB)}
+            ${roleHTML(bRole)}
           </div>
         </div>
       </button>`;
   }
 
-  const cardA = optCardHTML('A', tr.pA, G.curPAImg, tr.gA,
-                                 tr.pB, G.curPBImg, tr.gB);
-  const cardB = optCardHTML('B', tr.pB, G.curPBImg, tr.gB,
-                                 tr.pA, G.curPAImg, tr.gA);
-  const qTxt  = `Who is <strong>${tr.tgt}'s ${ASK_LABEL[cfg.ask]}</strong>?`;
+  const cardA = optCardHTML('A', 'bf', 'bs');   // pA best friend, pB boss
+  const cardB = optCardHTML('B', 'bs', 'bf');   // pA boss, pB best friend
+  // No directional question — the child picks between two full role
+  // assignments.  The on-screen prompt just cues the choice.
+  const qTxt  = `Do you think it's <strong>like this?</strong> Or <strong>like that?</strong>`;
 
   G.tStart = Date.now();
   render(`
@@ -1204,6 +1207,11 @@ function showTrialSpeech(){
       and <strong>${tr.pB}</strong> about it.<br>
       Press the <strong style="color:#e67e22;">orange button</strong>
       to hear what they say!
+    </div>
+
+    <div class="frame-bar">
+      Remember — one of them is <strong>${tr.tgt}'s best friend</strong> and one is
+      <strong>${tr.tgt}'s boss</strong>. You'll have to figure out which is which!
     </div>
 
     <!-- Speech bubbles (stay visible for the whole trial) -->
@@ -1228,11 +1236,11 @@ function showTrialSpeech(){
       Hear what they say
     </button>
 
-    <!-- Choice zone: hidden until speeches complete.  Frame text is not
-         repeated here because it was already delivered on the character
-         intro screen — only the question + options need to appear. -->
+    <!-- Choice zone: hidden until speeches complete.  Frame was delivered
+         on the character intro screen; here the child sees the two option
+         cards and picks between them. -->
     <div id="choiceZone" class="choice-zone">
-      <div class="qbox show ${isBF ? '' : 'boss'}">
+      <div class="qbox show">
         <div class="qtxt">${qTxt}</div>
       </div>
       <div id="opts" class="opts-row">
@@ -1257,7 +1265,13 @@ function showTrialSpeech(){
       if(btn) btn.textContent = 'Hear again';
     }, 50);
   }
-  say(tr.key + '_ask');
+  // Reminder moved here (was on the choice screen): kids hear
+  // "...one is X's best friend and one is X's boss. You'll have to
+  // figure out which is which!" BEFORE the two speakers describe X.
+  speakChain([
+    { key: tr.key + '_ask',   delay: 0   },
+    { key: frameKey(tr.key),  delay: 400 },
+  ]);
 }
 
 function triggerSpeech(){
@@ -1326,27 +1340,42 @@ function _replayChoice(){
 }
 
 // Build the audio + highlight sequence for the current trial's choice screen.
+// (The "Remember..." reminder now plays BEFORE the speeches, on the speech
+// screen, so the choice screen opens with just the question.)
+//
+// Characters are named in LEFT-to-RIGHT visual order on both cards
+// (pA first, then pB), so the spoken order matches the presented order:
+//
+// Chain:
+//   1. question    "Do you think it's like this?"      (do_you_think.mp3)
+//   2. cardA half1 "[pA] is X's best friend,"          — highlight cardA LEFT slot
+//   3. cardA half2 "and [pB] is X's boss."             — highlight cardA RIGHT slot
+//   4. connector   "Or like this?"
+//   5. cardB half1 "[pA] is X's boss,"                 — highlight cardB LEFT slot
+//   6. cardB half2 "and [pB] is X's best friend."      — highlight cardB RIGHT slot
 function _playChoiceAudio(){
   const tr  = G.blockChars[G.bIdx][G.tIdx];
-  const cfg = curCfg();
-  const optLeftIsA = !G.curOptSwap;
-  const cards = optLeftIsA ? ['A','B'] : ['B','A'];
+  const cards = ['A','B'];
 
   const steps = [
-    { key: askKey(cfg.ask, tr.key), onStart: _clearHighlights, delay: 0 }
+    { key: 'do_you_think', onStart: _clearHighlights, delay: 0 }
   ];
   cards.forEach(function(c, i){
-    // best-friend half of this card
+    // Connector before the second card
+    if(i === 1){
+      steps.push({ key: orLikeThisKey(), onStart: _clearHighlights, delay: 500 });
+    }
+    // Left slot of this card: pA (best friend on card A, boss on card B)
     steps.push({
       key:     optKey(tr.key, c, 1),
-      onStart: function(){ _highlightSlot('opt-' + c + '-bf'); },
-      delay:   i === 0 ? 700 : 500
+      onStart: function(){ _highlightSlot('opt-' + c + (c === 'A' ? '-bf' : '-bs')); },
+      delay:   i === 0 ? 500 : 300
     });
-    // boss half of this card
+    // Right slot of this card: pB (boss on card A, best friend on card B)
     steps.push({
       key:     optKey(tr.key, c, 2),
-      onStart: function(){ _highlightSlot('opt-' + c + '-bs'); },
-      delay:   150
+      onStart: function(){ _highlightSlot('opt-' + c + (c === 'A' ? '-bs' : '-bf')); },
+      delay:   120
     });
   });
   // Clear highlight after the last clip finishes
@@ -1374,10 +1403,10 @@ function _playSteps(steps){
 // ═══════════════════════════════════════════════════════════
 //  RESPONSE RECORDING (STUDY 2)
 // ═══════════════════════════════════════════════════════════
-// choice is 'A' or 'B'.  Card 'A' places person A in the asked role;
-// card 'B' places person B in the asked role.  We store both the raw
-// pick and the derived assignment (was the individual-speaker put in
-// best_friend or in boss).
+// choice is 'A' or 'B'.  Card 'A' places person A in best-friend slot
+// (and B in boss); card 'B' is the mirror.  We store the raw pick + the
+// derived assignment: which role did the child give the INDIVIDUAL-referring
+// speaker?  That's the DV — individualAssignedTo ∈ {"best_friend","boss"}.
 function recordResp(choice, el){
   if(G.locked) return;
   G.locked = true;
@@ -1387,25 +1416,23 @@ function recordResp(choice, el){
   const bk   = curBlockKey();
   const rt   = Date.now() - (G.tStart || Date.now());
 
-  // The card the kid clicked
-  const askIsA = (choice === 'A');                            // did they place A in ask-role?
-  const otherRole = cfg.ask === 'best_friend' ? 'boss' : 'best_friend';
+  // Chosen card A -> pA in best-friend, pB in boss.  Card B -> flipped.
+  const clickA = (choice === 'A');
+  const bfPerson   = clickA ? tr.pA : tr.pB;
+  const bfGroup    = clickA ? tr.gA : tr.gB;
+  const bfSpkRole  = clickA ? er.rA : er.rB;                  // 'individual' | 'group'
+  const bsPerson   = clickA ? tr.pB : tr.pA;
+  const bsGroup    = clickA ? tr.gB : tr.gA;
+  const bsSpkRole  = clickA ? er.rB : er.rA;
 
-  const askedPerson = askIsA ? tr.pA  : tr.pB;
-  const askedGroup  = askIsA ? tr.gA  : tr.gB;
-  const askedSpkRole= askIsA ? er.rA  : er.rB;                // 'individual' or 'group'
-  const otherPerson = askIsA ? tr.pB  : tr.pA;
-  const otherGroup  = askIsA ? tr.gB  : tr.gA;
-  const otherSpkRole= askIsA ? er.rB  : er.rA;
+  // Where did the child put the individual-referring speaker?
+  const individualAssignedTo = (bfSpkRole === 'individual') ? 'best_friend' : 'boss';
 
-  // What did the kid say the INDIVIDUAL-referring speaker was?
-  const individualAssignedTo = (askedSpkRole === 'individual') ? cfg.ask : otherRole;
-
-  // Hypothesis-consistent (Study 2 H1): individual-speaker -> best_friend
+  // H1 (Study 2): individual-speaker -> best_friend
   const hypothesisConsistent = (individualAssignedTo === 'best_friend') ? 1 : 0;
 
   // Data export tag for this row
-  const tag = tr.key + '_' + cfg.ep + '_' + ASK_KEY_SUF[cfg.ask];
+  const tag = tr.key + '_' + cfg.ep;
 
   const rowData = {
     study:              'study2',
@@ -1415,10 +1442,9 @@ function recordResp(choice, el){
     age:                G.age,
     blockOrder:         G.blockOrder.join('_'),
     blockCurrent:       bk,
-    blockIndex:         G.bIdx,                               // 0..3
-    trialInBlock:       G.tIdx,                               // 0..2
+    blockIndex:         G.bIdx,                               // 0..1
+    trialInBlock:       G.tIdx,                               // 0..5
     epistemic:          cfg.ep,
-    askedRole:          cfg.ask,                              // 'best_friend' | 'boss'
     blockRoleA:         er.rA,
     blockRoleB:         er.rB,
     rolesSwapped:       G.curSwap,
@@ -1441,9 +1467,9 @@ function recordResp(choice, el){
     actionImgShown:     G.curActionImg,
     orangeImgShown:     G.curPAImg,
     greenImgShown:      G.curPBImg,
-    chosenName:         askedPerson,
-    chosenGroup:        askedGroup,
-    chosenRole:         askedSpkRole,                         // Study-1-compat: role of the speaker put in the asked slot
+    chosenName:         bfPerson,       // person the child put in best-friend slot
+    chosenGroup:        bfGroup,
+    chosenRole:         bfSpkRole,      // 'individual' | 'group' — role of person put in best-friend slot
     rt_ms:              rt,
     timestamp:          new Date().toISOString()
   };
@@ -1458,12 +1484,9 @@ function recordResp(choice, el){
   G.totalDone++;
   G.tIdx++;
   setTimeout(function(){
-    if(G.totalDone % 2 === 0){
-      G.stars = Math.min(6, G.totalDone / 2);
-      showStarEarned();
-    } else {
-      nextTrial();
-    }
+    // 6 trials total: one star per trial
+    G.stars = Math.min(NTRIALS_TOT, G.totalDone);
+    showStarEarned();
   }, 700);
 }
 
@@ -1471,8 +1494,8 @@ function recordResp(choice, el){
 //  STAR EARNED
 // ═══════════════════════════════════════════════════════════
 function showStarEarned(){
-  const isDone = G.totalDone === 12;
-  const isHalf = G.totalDone === 6;
+  const isDone = G.totalDone === NTRIALS_TOT;
+  const isHalf = G.totalDone === NTRIALS_TOT / 2;
   render(`
     <div class="star-pop big-celebrate" style="width:120px;height:120px;">${STAR_SVG}</div>
     <h2>You earned a star!</h2>
@@ -1703,10 +1726,8 @@ function researcherSkipTrial(){
   // Record an empty placeholder so the trial index advances cleanly
   G.tIdx++;
   G.totalDone++;
-  if(G.totalDone % 2 === 0){
-    G.stars = Math.min(6, G.totalDone / 2);
-  }
-  if(G.tIdx >= 6){
+  G.stars = Math.min(NTRIALS_TOT, G.totalDone);
+  if(G.tIdx >= NPER_BLOCK){
     advBlock();
   } else {
     nextTrial();
@@ -1718,26 +1739,26 @@ function researcherSkipBlock(){
   if(!G.t0){ alert('Start the game first.'); return; }
   // Jump out of the current block
   const before = G.bIdx;
-  G.tIdx = 6;
-  G.totalDone = Math.max(G.totalDone, (before + 1) * 6);
-  G.stars = Math.min(6, Math.floor(G.totalDone / 2));
+  G.tIdx = NPER_BLOCK;
+  G.totalDone = Math.max(G.totalDone, (before + 1) * NPER_BLOCK);
+  G.stars = Math.min(NTRIALS_TOT, G.totalDone);
   advBlock();
 }
 function researcherJumpToTrial(){
   if(!G.t0){ alert('Start the game first.'); return; }
-  const raw = prompt('Jump to story # (1–12):', '1');
+  const raw = prompt('Jump to story # (1–' + NTRIALS_TOT + '):', '1');
   if(raw === null) return;
   const n = parseInt(raw, 10);
   if(!(n >= 1 && n <= NTRIALS_TOT)){ alert('Enter a number 1–' + NTRIALS_TOT + '.'); return; }
   if(_aud){ _aud.pause(); }
   _cancelChain();
-  // STUDY 2: 4 blocks x NPER_BLOCK trials
+  // STUDY 2: NBLOCKS blocks x NPER_BLOCK trials
   const targetBlockIdx     = Math.floor((n - 1) / NPER_BLOCK);
   const targetTrialInBlock = (n - 1) % NPER_BLOCK;
   G.bIdx = targetBlockIdx;
   G.tIdx = targetTrialInBlock;
   G.totalDone = n - 1;
-  G.stars = Math.min(6, Math.floor(G.totalDone / 2));
+  G.stars = Math.min(NTRIALS_TOT, G.totalDone);
   if(targetTrialInBlock === 0){
     showBkIntro();
   } else {
