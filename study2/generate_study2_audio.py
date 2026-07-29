@@ -95,6 +95,7 @@ for key, tgt, pA, pB in TARGETS:
 # ── (3) Generic connector (1 file) ─────────────────────────────
 JOBS.append(("or_like_this.mp3", "Or like this?"))
 JOBS.append(("do_you_think.mp3", "Do you think it's like this?"))
+JOBS.append(("why_question.mp3", "Why do you think that?"))
 
 # ── (4) Per-target option read-aloud, split into 2 clips per option ─
 # Splitting the sentence lets the UI highlight the character portrait

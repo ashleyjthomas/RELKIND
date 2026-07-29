@@ -404,6 +404,7 @@ const CSV_COLS = [
   'rolesSwapped','effectiveRoleA','effectiveRoleB',
   'optionOrder','optionChosenIndex',                    // 'A_left'/'B_left', 'A'/'B'
   'individualAssignedTo',                               // "best_friend" | "boss"  (DV: role kid gave the individual-speaker)
+  'whyAnswer','why_rt_ms',                              // parent-typed "why?" (asked once per block, on its last trial)
   'hypothesisConsistent',                               // 1 if individual -> best_friend (Study 2 H1)
   'dataExportTag','target','behavior',
   'personA','groupA','personB','groupB',
@@ -1470,16 +1471,33 @@ function recordResp(choice, el){
     chosenName:         bfPerson,       // person the child put in best-friend slot
     chosenGroup:        bfGroup,
     chosenRole:         bfSpkRole,      // 'individual' | 'group' — role of person put in best-friend slot
+    whyAnswer:          '',
+    why_rt_ms:          '',
     rt_ms:              rt,
     timestamp:          new Date().toISOString()
   };
-  G.resp.push(rowData);
-  _postToSheets(rowData);
   _cancelChain();
   if(_aud){ _aud.pause(); }
   _clearHighlights();
   el.classList.add('chosen');
   document.querySelectorAll('.opt-card').forEach(c=>c.classList.add('lock'));
+  // Ask the open-ended "why?" once per block, after its LAST trial (so the
+  // prompt can't change behavior on the block's remaining trials). The row
+  // is pushed/posted after the why screen so it carries the typed answer.
+  const askWhy = (G.tIdx === NPER_BLOCK - 1);
+  if(askWhy){
+    G.pendingRow = rowData;
+    setTimeout(function(){ showWhyQuestion(rowData); }, 700);
+    return;
+  }
+  _finishTrial(rowData);
+}
+
+// Push + post the row, advance counters, and show the star screen.
+function _finishTrial(rowData){
+  G.pendingRow = null;
+  G.resp.push(rowData);
+  _postToSheets(rowData);
   try{ localStorage.setItem('twizzle_s2_'+G.pid, JSON.stringify(G)); }catch(e){}
   G.totalDone++;
   G.tIdx++;
@@ -1488,6 +1506,47 @@ function recordResp(choice, el){
     G.stars = Math.min(NTRIALS_TOT, G.totalDone);
     showStarEarned();
   }, 700);
+}
+
+// ═══════════════════════════════════════════════════════════
+//  WHY QUESTION (once per block, after its last trial)
+// ═══════════════════════════════════════════════════════════
+// The child is asked "Why do you think that?" (audio: why_question.mp3)
+// and the PARENT types the child's answer verbatim. Optional — Continue
+// works with an empty box. The answer is saved on the trial row that
+// was just completed (whyAnswer, why_rt_ms).
+function showWhyQuestion(rowData){
+  G.whyStart = Date.now();
+  render(`
+    ${starMeterHTML()}
+    <h2>Why do you think that?</h2>
+    <p class="txt">
+      Ask your child: <strong>"Why do you think ${rowData.chosenName} is
+      ${rowData.target}'s best friend?"</strong>
+    </p>
+    <p class="txt" style="font-size:.9em;color:#888;">
+      Parents: please type your child's answer below, as close to their
+      own words as you can. If they don't have an answer, just press Continue.
+    </p>
+    <textarea class="tinput" id="whyIn" rows="3"
+      style="width:90%;max-width:520px;resize:vertical;"
+      placeholder="Type your child's answer here (optional)"></textarea>
+    <div style="display:flex;gap:11px;align-items:center;margin-top:8px;">
+      <button class="btn g" onclick="submitWhy()">Continue</button>
+      <button class="rrb" onclick="reread()">Replay</button>
+    </div>
+  `);
+  const ta = document.getElementById('whyIn');
+  if(ta) setTimeout(function(){ ta.focus(); }, 300);
+  say('why_question');
+}
+function submitWhy(){
+  const ta  = document.getElementById('whyIn');
+  const row = G.pendingRow;
+  if(!row){ nextTrial(); return; }
+  row.whyAnswer  = ta ? ta.value.trim() : '';
+  row.why_rt_ms  = Date.now() - (G.whyStart || Date.now());
+  _finishTrial(row);
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -1712,6 +1771,9 @@ function toggleResearcher(){
 }
 // Keyboard backup: Shift + R toggles the researcher panel
 document.addEventListener('keydown', function(e){
+  // Ignore while typing in any input/textarea (e.g., the why-question box)
+  const tag = (e.target && e.target.tagName || '').toLowerCase();
+  if(tag === 'input' || tag === 'textarea') return;
   if(e.shiftKey && (e.key === 'R' || e.key === 'r')){
     e.preventDefault();
     toggleResearcher();
