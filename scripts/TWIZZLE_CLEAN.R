@@ -661,7 +661,7 @@ main_all <- cowplot::plot_grid(main_ab, leg_age, ncol = 1,
                                rel_heights = c(1, 0.10))
 ggsave(.figP("combined_main.png"), main_all,
        width = 12, height = 5.6, dpi = 300, bg = "white")
-
+main_all
 
 message("TWIZZLE_CLEAN.R complete -- models in ", models_dir,
         " ; summary tables in ", results_dir,

@@ -16,7 +16,9 @@ output:
 Study 2 game at `study2/`; the Study 1 game is archived at
 `study1.html`) **IRB:** Harvard University Area IRB (approved)
 
-**Date of pre-registration:** [DATE]
+**Date of pre-registration:** 07/31/2026, 11:02 AM (OSF Preregistration,
+pending approval)
+**Registration:** <https://osf.io/9ztu7> **OSF project:** <https://osf.io/8dm9w>
 
 ------------------------------------------------------------------------
 
@@ -43,7 +45,9 @@ older children showed relative differentiation between the two
 questions. Study 1 therefore cannot distinguish (a) a mapping from
 individuation to *closeness specifically* from (b) a general preference
 for, or attention-based inference about, the individuating speaker that
-attaches to *any* salient relationship.
+attaches to *any* salient relationship. (This also differed from
+adults, who were split about whether they used this information to
+infer who would be a person's boss.)
 
 **Study 2** removes this ambiguity by forcing a trade-off. On every
 trial, children meet a target and two speakers (one explains the
@@ -59,8 +63,15 @@ epistemic state ("Hmm...must" vs. "Yes...").
 
 ### Pilot data
 
-Data collected with the Study 2 game before [DATE/TIME ET] are treated
-as **pilot data** and excluded from confirmatory analyses. Piloting was
+**Pilot data** are defined by observation, not collection date: sessions
+that the authors had *observed* before registration (07/31/2026,
+11:02 AM) are pilot and excluded from confirmatory analyses. This
+comprises the authors' own internal test sessions (participant IDs
+containing "TEST"/"test") and one child session (TT009, flagged "PILOT"
+in the data sheet). Sessions collected before registration but **not
+observed** until after registration are included in the confirmatory
+sample, consistent with the registration's foreknowledge declaration
+("data exists but the authors have not observed it yet"). Piloting was
 used to shorten the session (4 test trials), remove one item with a
 stimulus error (the "Alex" item), fix the option-display so the two
 speakers appear (and are read aloud) in the same left-right positions
@@ -72,7 +83,7 @@ before children hear the speakers' explanations.
 **H1 --- Joint assignment (primary).** When assigning the two roles,
 children will assign the **individual-level explainer to the
 best-friend role** (and therefore the group-level explainer to the boss
-role) more often than chance (proportion \> .5, hypothesis-consistent).
+role) more often than chance (P(choseIndividualAsBF) \> .5).
 
 **H2 --- Age effect.** Hypothesis-consistent responding will be
 stronger in older children (7--8 years) than younger children (5--6
@@ -105,10 +116,10 @@ randomized per trial); (4) the child chooses between two option cards
 showing the two possible role assignments. The two speakers appear in
 fixed left-right positions on both option cards (only the role labels
 swap), and the option audio names the speakers in the same left-right
-order as displayed. Which complete assignment appears on the
-left/right card is fixed (left card = left speaker as best friend);
-the role-to-speaker mapping is carried entirely by the per-trial
-randomization of which speaker individuates.
+order as displayed. Which complete assignment appears on the left/right card
+is fixed (left card = left speaker as best friend); the role-to-speaker
+mapping (which speaker individuates) is randomized per trial and
+counterbalanced across children.
 
 Block order (Hmm-first vs. Yes-first) is randomized across
 participants. Four target characters per child are drawn without
@@ -123,7 +134,8 @@ counterbalancing implementation.
 **Ages 5 to 8 years**, recruited through Children Helping Science.
 
 **Target N: 100 children** (25 per year of age), with the goal of at
-least **80 retained after exclusions** (20 per age).
+least **80 retained after exclusions** (20 per age). This is based on
+our previous study, which was well-powered.
 
 **Stopping rule:** Recruit until at least 20 retained per year of age
 (5, 6, 7, 8 ≥ 20 each, after applying exclusion criteria below). If
@@ -161,10 +173,15 @@ We will report the number of participants lost at each exclusion step.
 ### Outcome
 
 `individualAssignedTo` ∈ {best_friend, boss}: which role the child
-gave the individual-level explainer. `hypothesisConsistent` = 1 when
-the individual-level explainer is assigned to the **best-friend** role
-(equivalently, the group-level explainer to the boss role), 0
-otherwise.
+gave the individual-level explainer. The primary DV is
+**`choseIndividualAsBF`** = 1 when the individual-level explainer is
+assigned to the **best-friend** role (equivalently, the group-level
+explainer to the boss role), 0 otherwise. We use this transparent
+directional coding rather than a "hypothesis-consistent" label: the DV
+names the behavior directly, and H1 is a directional prediction about
+it. (In Study 1 analyses we likewise reframe the outcome as *chose the
+individual-level explainer*, with question type as a predictor; this is
+an equivalent reparameterization of the registered Study 1 model.)
 
 ### Within-subject manipulation
 
@@ -187,13 +204,13 @@ comparisons. Code is committed to the project repository.
 ### 6.1 Primary confirmatory analysis
 
 We will fit a Bayesian hierarchical logistic regression predicting
-`hypothesisConsistent` from epistemic frame, age group, and their
+`choseIndividualAsBF` from epistemic frame, age group, and their
 interaction, with random intercepts by participant. (With 4 trials per
 child we pre-register random intercepts only; we will not fit random
 slopes.)
 
 ``` r
-brm(hypothesisConsistent ~ epistemic * ageGroup + (1 | participantId),
+brm(choseIndividualAsBF ~ epistemic * ageGroup + (1 | participantId),
     family = bernoulli(),
     prior  = c(prior(normal(0, 1.5), class = "Intercept"),
                prior(normal(0, 1),   class = "b"),
@@ -256,7 +273,7 @@ We will refit the §6.1 model separately within each age group,
 dropping the ageGroup term:
 
 ``` r
-brm(hypothesisConsistent ~ epistemic + (1 | participantId),
+brm(choseIndividualAsBF ~ epistemic + (1 | participantId),
     family = bernoulli(), ...,
     data = subset(dat, ageGroup == "Older"))
 ```
@@ -275,9 +292,15 @@ We will also report cell means and BFs (§6.3) stratified by age group.
 4.  **6-year-olds with the older group.** Refit §6.1 grouping
     6-year-olds with 7--8 instead of 5--6.
 
+### Missing data
+
+Missing data will be ignored (participants contribute the trials they
+completed; sessions with at least one experimental trial are included).
+
 ### 6.6 Exploratory analyses (not confirmatory)
 
--   Response-time analyses (log-RT as a continuous outcome).
+-   Response-time analyses (log-RT as a continuous outcome; RTs
+    below 500 ms or above 90 s excluded before transformation).
 -   Item-level random effects (random intercepts by target character).
 -   Effects of counterbalancing nuisance variables (`rolesSwapped`,
     block order) as fixed effects (not predicted to matter; reported
@@ -305,7 +328,23 @@ We will also report cell means and BFs (§6.3) stratified by age group.
 completion, with identifying fields (`firstName`, `chsId`, birthdates)
 stripped.
 
-## 8. References
+## 8. Notes on the registered text (added post-registration, for transparency)
+
+1.  **Variable naming.** The registered *Statistical models* field uses
+    the variable name `hypothesisConsistent` in the `brm()` code while
+    the registered *Indices* and *Transformations* fields define the
+    primary DV as `choseIndividualAsBF`. These are the **same variable**
+    (identical values; the data export contains both column names).
+    Analyses will be reported using `choseIndividualAsBF`.
+2.  **Age-grouping rationale.** The registered §6.2 rationale ("Study 1
+    6-year-olds patterned with 5-year-olds") reflects the Study 1
+    *pilot*; in the final Study 1 sample, 6-year-olds patterned more
+    closely with 7--8-year-olds. The registered grouping (5--6 vs 7--8)
+    is retained for comparability with Study 1, and the registered
+    sensitivity analyses (6-year-olds grouped with the older children;
+    continuous exact age) address this directly.
+
+## 9. References
 
 Bürkner, P.-C. (2017). brms: An R package for Bayesian multilevel
 models using Stan. *Journal of Statistical Software, 80*(1), 1--28.

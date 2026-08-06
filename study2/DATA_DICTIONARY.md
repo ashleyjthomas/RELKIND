@@ -10,7 +10,7 @@ Study 2 rows (listed at the bottom). Filter on `study == "study2"` and
 The child chooses between two complete role assignments. `chosenName` is
 the person the child made the **best friend**; the other speaker is the
 boss. `individualAssignedTo` tells you where the individual-level
-explainer ended up, and `hypothesisConsistent = 1` means the child gave
+explainer ended up, and `choseIndividualAsBF = 1` means the child gave
 the individual-explainer the best-friend role (the pre-registered H1
 response).
 
@@ -64,8 +64,9 @@ response).
 | `chosenName` | name | Speaker the child put in the **best-friend** slot. The other speaker is the boss. |
 | `chosenGroup` | `flurp` / `zazzo` | Group of that best-friend speaker. |
 | `chosenRole` | `individual` / `group` | Whether the best-friend speaker was the individual- or group-level explainer. |
-| `individualAssignedTo` | `best_friend` / `boss` | **DV.** Role the child gave the individual-level explainer. |
-| `hypothesisConsistent` | 1 / 0 | 1 = individual-explainer assigned to best friend (H1-consistent). Equals `chosenRole == "individual"`. |
+| `individualAssignedTo` | `best_friend` / `boss` | Role the child gave the individual-level explainer. |
+| `choseIndividualAsBF` | 1 / 0 | **Primary DV.** 1 = individual-level explainer assigned to the best-friend role. Equals `chosenRole == "individual"`. |
+| `hypothesisConsistent` | 1 / 0 | Legacy alias of `choseIndividualAsBF` (identical values; kept so early pilot rows align). Prefer `choseIndividualAsBF`. |
 | `rt_ms` | integer | Time from choice-screen onset to card click, in ms. |
 | `whyAnswer` | free text or blank | Caregiver-typed answer to "Why do you think that?". Asked once per block, on its **last** trial (`trialInBlock == 1`); blank on other trials or if skipped. |
 | `why_rt_ms` | integer or blank | Time the why screen was open before Continue, in ms. |
@@ -79,7 +80,7 @@ header; ignore them for Study 2.
 
 ## Quick sanity identities
 
-- `hypothesisConsistent == (chosenRole == "individual")`
-- `individualAssignedTo == "best_friend"` iff `hypothesisConsistent == 1`
-- If `rolesSwapped == FALSE`: choosing card `A` ⇒ `hypothesisConsistent = 1`; if TRUE: card `B` ⇒ 1.
+- `choseIndividualAsBF == (chosenRole == "individual")` (and `hypothesisConsistent` is identical)
+- `individualAssignedTo == "best_friend"` iff `choseIndividualAsBF == 1`
+- If `rolesSwapped == FALSE`: choosing card `A` ⇒ `choseIndividualAsBF = 1`; if TRUE: card `B` ⇒ 1.
 - Complete session = 4 rows, `blockIndex`/`trialInBlock` = (0,0), (0,1), (1,0), (1,1), with exactly two distinct `epistemic` values and 4 distinct `target`s.

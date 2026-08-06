@@ -404,6 +404,7 @@ const CSV_COLS = [
   'rolesSwapped','effectiveRoleA','effectiveRoleB',
   'optionOrder','optionChosenIndex',                    // 'A_left'/'B_left', 'A'/'B'
   'individualAssignedTo',                               // "best_friend" | "boss"  (DV: role kid gave the individual-speaker)
+  'choseIndividualAsBF',                                // 1 = individual-level explainer assigned to best-friend role (primary DV)
   'whyAnswer','why_rt_ms',                              // parent-typed "why?" (asked once per block, on its last trial)
   'hypothesisConsistent',                               // 1 if individual -> best_friend (Study 2 H1)
   'dataExportTag','target','behavior',
@@ -1454,7 +1455,8 @@ function recordResp(choice, el){
     optionOrder:        G.curOptSwap ? 'B_left' : 'A_left',
     optionChosenIndex:  choice,                               // 'A' or 'B'
     individualAssignedTo: individualAssignedTo,               // 'best_friend' | 'boss'
-    hypothesisConsistent: hypothesisConsistent,
+    choseIndividualAsBF:  hypothesisConsistent,               // primary DV (same value, transparent name)
+    hypothesisConsistent: hypothesisConsistent,               // legacy alias, kept for pilot-row continuity
     dataExportTag:      tag,
     target:             tr.tgt,
     behavior:           tr.beh,
