@@ -1,0 +1,14 @@
+model,max_Rhat,min_ESS,n_divergent
+s2_main,1.001,Inf,0
+s2_younger,1.003,Inf,0
+s2_older,1.002,Inf,0
+s2_age_continuous,1.001,Inf,0
+s2_age_continuous_4to8,1.001,Inf,0
+s2_priors_tight,1.001,Inf,0
+s2_priors_wide,1.002,Inf,0
+s2_complete_only,1.001,Inf,0
+s2_6_with_older,1.002,Inf,0
+s2_noage,1.001,Inf,0
+s2_rt,1.001,Inf,0
+s2_item,1.001,Inf,0
+s2_nuisance,1.001,Inf,0

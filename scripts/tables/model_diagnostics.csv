@@ -1,0 +1,6 @@
+model,n_param,max_Rhat,min_ESS,n_divergent,BayesR2,BayesR2_low,BayesR2_high
+twizzle_main,115,1.001,4138,0,0.179,0.142,0.214
+twizzle_age,115,1.002,3780,0,0.18,0.143,0.216
+twizzle_noage,111,1,4521,0,0.172,0.135,0.208
+twizzle_ageyr,123,1.002,3232,0,0.188,0.152,0.222
+twizzle_age_all,145,1.001,4488,0,0.153,0.122,0.184
