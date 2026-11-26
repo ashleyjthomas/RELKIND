@@ -61,6 +61,7 @@ JOBS = [
     ("loves_more.mp3", "Who loves them more?"),
     ("memcheck_intro.mp3", "Wait! Listen to this one more time."),
     ("memcheck_who.mp3",   "Who said that?"),
+    ("memcheck_correction.mp3", "Good try! It was actually this one who said that!"),
 ]
 for key, T, pA, pB in TARGETS:
     JOBS += [

@@ -410,7 +410,7 @@ const CSV_COLS = [
   'whyAnswer','why_rt_ms',                              // parent-typed "why?" (asked once per block, on its last trial)
   'lovesWhoAnswer','lovesWho_rt_ms',                    // end-of-game probe: boss / best_friend / both (one row per child, dataExportTag LOVES_PROBE)
   'lovesMoreAnswer','lovesMore_rt_ms',                  // follow-up, only asked after "both": boss / best_friend
-  'memCheckProbe','memCheckAnswer','memCheckCorrect','memCheck_rt_ms',  // per-trial "who said this?" attention check
+  'memCheckProbe','memCheckAnswer','memCheckCorrect','memCheckCorrect2','memCheck_rt_ms',  // per-trial "who said that?" check; Correct2 = post-replay answer (blank if first answer was right)
   'hypothesisConsistent',                               // 1 if individual -> best_friend (Study 2 H1)
   'dataExportTag','target','behavior',
   'personA','groupA','personB','groupB',
@@ -1538,6 +1538,7 @@ function _revealMemCheck(){
   const mz = document.getElementById('memZone');
   if(mz) mz.classList.add('show');
   G._memStart = Date.now();
+  G._memAttempt = null;   // fresh trial: next answer is the recorded one
   setTimeout(function(){
     const el = document.getElementById('mem-a');
     if(el && typeof el.scrollIntoView === 'function'){
@@ -1563,13 +1564,44 @@ function recordMemCheck(which){
   const probe = _memProbeType();
   const saidByA = (er.rA === probe);
   const correct = (which === 'A') === saidByA ? 1 : 0;
-  G.memPending = {
-    memCheckProbe:   probe,
-    memCheckAnswer:  which === 'A' ? tr.pA : tr.pB,
-    memCheckCorrect: correct,
-    memCheck_rt_ms:  Date.now() - (G._memStart || Date.now())
-  };
   _cancelChain(); if(_aud){ _aud.pause(); }
+
+  if(G._memAttempt !== 2){
+    // FIRST answer: this is what gets recorded as the attention check.
+    G.memPending = {
+      memCheckProbe:   probe,
+      memCheckAnswer:  which === 'A' ? tr.pA : tr.pB,
+      memCheckCorrect: correct,
+      memCheckCorrect2: '',            // filled only if a replay happened
+      memCheck_rt_ms:  Date.now() - (G._memStart || Date.now())
+    };
+    if(correct){ _dismissMemCheck(); return; }
+    // Wrong -> replay the probed speech ONCE and ask again.
+    G._memAttempt = 2;
+    _playMemCheckAudio();
+    return;
+  }
+
+  // SECOND answer (after the single replay).
+  G._memAttempt = null;
+  G.memPending.memCheckCorrect2 = correct;
+  if(correct){ _dismissMemCheck(); return; }
+  // Wrong again -> show them the right answer: freeze the buttons,
+  // highlight the speaker who actually said it while the correction
+  // clip plays, then move on to the choice.
+  const correctId = saidByA ? 'mem-a' : 'mem-b';
+  ['mem-a','mem-b'].forEach(function(id){
+    const b = document.getElementById(id);
+    if(b){ b.disabled = true; b.style.pointerEvents = 'none';
+           b.style.opacity = (id === correctId) ? '1' : '.35'; }
+  });
+  const cb = document.getElementById(correctId);
+  if(cb){ cb.style.outline = '4px solid #e67e22'; cb.style.borderRadius = '14px'; }
+  speakThen('memcheck_correction', function(){
+    _chainTimeout(_dismissMemCheck, 600);
+  });
+}
+function _dismissMemCheck(){
   const mz = document.getElementById('memZone');
   if(mz) mz.classList.remove('show');
   // Now reveal the relational choice and its audio chain.

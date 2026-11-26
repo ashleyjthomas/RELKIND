@@ -5,9 +5,13 @@ with the ROLES swapped: children assign which speaker LOVES the target and
 which LIKES the target. Rows carry `study = "study4"`.
 Primary DV: `choseIndividualAsLoves` (1 = individual-level explainer assigned
 to the loves role); `individualAssignedTo` is "loves" | "likes".
-Per-trial attention check after each choice ("Who said that?" replaying one
-speech): `memCheckProbe` (individual|group), `memCheckAnswer` (speaker name),
-`memCheckCorrect` (0/1), `memCheck_rt_ms`.
+Per-trial attention check BEFORE each choice ("Who said that?" replaying one
+speech): `memCheckProbe` (individual|group), `memCheckAnswer` (speaker name,
+first answer), `memCheckCorrect` (0/1, FIRST answer — this is the recorded
+check), `memCheckCorrect2` (0/1 second answer after the single replay; blank
+when the first answer was right), `memCheck_rt_ms`. A wrong first answer gets
+one replay + re-ask; a wrong second answer gets the correct speaker
+highlighted with a correction clip (memcheck_correction.mp3).
 One extra row per child with `dataExportTag = LOVES_PROBE` records the
 end-of-game folk-theory probe: "Who loves someone: their boss, their best
 friend, or both of them?" (`lovesWhoAnswer` = boss | best_friend | both,
