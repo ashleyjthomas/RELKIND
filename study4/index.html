@@ -1394,18 +1394,17 @@ function _playChoiceAudio(){
     if(i === 1){
       steps.push({ key: orLikeThisKey(), onStart: _clearHighlights, delay: 500 });
     }
-    // STUDY 4: clip 1 always names the LOVES person ("{X} loves {T},") —
-    // that's pA on card A but pB on card B — so the highlight follows the
-    // ROLE slot (-bf = loves), not a fixed left/right position.
+    // STUDY 4: BOTH cards read LEFT-to-RIGHT — clip 1 names pA (left slot),
+    // clip 2 names pB (right slot). pA's slot is '-bf' (loves) on card A and
+    // '-bs' (likes) on card B; pB's slot is the other one.
     steps.push({
       key:     optKey(tr.key, c, 1),
-      onStart: function(){ _highlightSlot('opt-' + c + '-bf'); },
+      onStart: function(){ _highlightSlot('opt-' + c + (c === 'A' ? '-bf' : '-bs')); },
       delay:   i === 0 ? 500 : 300
     });
-    // Clip 2 always names the LIKES person ("and {Y} likes {T}.").
     steps.push({
       key:     optKey(tr.key, c, 2),
-      onStart: function(){ _highlightSlot('opt-' + c + '-bs'); },
+      onStart: function(){ _highlightSlot('opt-' + c + (c === 'A' ? '-bs' : '-bf')); },
       delay:   120
     });
   });

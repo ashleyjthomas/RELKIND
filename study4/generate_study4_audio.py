@@ -14,7 +14,8 @@ in this folder:
                            likes {T}. Do you think it's like this?"
   44 x <key>_opt_{A,B}_{1,2}.mp3
                           _A_1 "{pA} loves {T},"   _A_2 "and {pB} likes {T}."
-                          _B_1 "{pB} loves {T},"   _B_2 "and {pA} likes {T}."
+                          _B_1 "{pA} likes {T},"   _B_2 "and {pB} loves {T}."
+                          (both cards read LEFT-to-RIGHT: pA first, then pB)
    1 x loves_probe.mp3    "One last question! Who loves someone: their boss,
                            their best friend, or both of them?"
    1 x loves_more.mp3     "Who loves them more?" (asked only after "both")
