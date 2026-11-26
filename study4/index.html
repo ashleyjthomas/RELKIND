@@ -335,7 +335,7 @@
 <div id="gc"></div>
 <script>
 // ═══════════════════════════════════════════════════════════
-//  TWIZZLE TOWN — Child Study Game v22.0 (STUDY 4: loves vs. just-met)
+//  TWIZZLE TOWN — Child Study Game v22.1 (STUDY 4: loves vs. likes)
 //  Identical to Study 2 except the group-level speech says
 //  "People (must) like to X" instead of "Wugs (must) like to X".
 //  ashleyjthomas/RELKIND
@@ -405,10 +405,11 @@ const CSV_COLS = [
   'blockRoleA','blockRoleB',                            // which of A/B is individual / group on this trial
   'rolesSwapped','effectiveRoleA','effectiveRoleB',
   'optionOrder','optionChosenIndex',                    // 'A_left'/'B_left', 'A'/'B'
-  'individualAssignedTo',                               // "loves" | "just_met"  (DV: role kid gave the individual-speaker)
+  'individualAssignedTo',                               // "loves" | "likes"  (DV: role kid gave the individual-speaker)
   'choseIndividualAsLoves',                             // 1 = individual-level explainer assigned to the LOVES role (primary DV)
   'whyAnswer','why_rt_ms',                              // parent-typed "why?" (asked once per block, on its last trial)
   'bossKnowsAnswer','bossProbe_rt_ms',                  // end-of-game probe (one row per child, dataExportTag BOSS_PROBE)
+  'memCheckProbe','memCheckAnswer','memCheckCorrect','memCheck_rt_ms',  // per-trial "who said this?" attention check
   'hypothesisConsistent',                               // 1 if individual -> best_friend (Study 2 H1)
   'dataExportTag','target','behavior',
   'personA','groupA','personB','groupB',
@@ -1088,8 +1089,8 @@ function showTrialChars(){
       </div>
     </div>
     <div class="frame-bar">
-      One of the people that ${tr.tgt} knows <strong>loves ${tr.tgt}</strong>
-      and one of them <strong>just met ${tr.tgt}</strong>. You'll have to figure out which is which!
+      One of them <strong>loves ${tr.tgt}</strong> and one of them
+      <strong>likes ${tr.tgt}</strong>. You'll have to figure out which is which!
     </div>
     <div style="display:flex;gap:10px;align-items:center;margin-top:2px;">
       <button class="next-arrow" onclick="showTrialAction()" aria-label="Next" title="Next">
@@ -1099,10 +1100,8 @@ function showTrialChars(){
     </div>
   `);
   speakChain([
-    { key: tr.key + '_intro',  delay: 0   },
-    { key: tr.key + '_likeA',  imgId: 'side-a', delay: 250 },
-    { key: tr.key + '_likeB',  imgId: 'side-b', delay: 300 },
-    { key: frameKey(tr.key),                    delay: 500 },
+    { key: tr.key + '_intro',  delay: 0   },   // "Now you'll meet X. These two are A and B."
+    { key: frameKey(tr.key),   delay: 500 },   // "One of them loves X, and one just met X..."
   ]);
 }
 
@@ -1171,8 +1170,8 @@ function showTrialSpeech(){
            <span><strong>loves</strong><br>${tr.tgt}</span>
          </div>`
       : `<div class="opt-role opt-bs">
-           <span class="opt-role-icon" style="font-size:1.6em">\uD83D\uDC4B</span>
-           <span><strong>just met</strong><br>${tr.tgt}</span>
+           <span class="opt-role-icon" style="font-size:1.6em">\uD83D\uDC4D</span>
+           <span><strong>likes</strong><br>${tr.tgt}</span>
          </div>`;
   }
   // aRole/bRole = role of pA (left slot) / pB (right slot): 'bf' | 'bs'
@@ -1214,7 +1213,7 @@ function showTrialSpeech(){
 
     <div class="frame-bar">
       Remember — one of them <strong>loves ${tr.tgt}</strong> and one of them
-      <strong>just met ${tr.tgt}</strong>. You'll have to figure out which is which!
+      <strong>likes ${tr.tgt}</strong>. You'll have to figure out which is which!
     </div>
 
     <!-- Speech bubbles (stay visible for the whole trial) -->
@@ -1429,7 +1428,7 @@ function recordResp(choice, el){
   const bsSpkRole  = clickA ? er.rB : er.rA;
 
   // Where did the child put the individual-referring speaker?
-  const individualAssignedTo = (bfSpkRole === 'individual') ? 'loves' : 'just_met';
+  const individualAssignedTo = (bfSpkRole === 'individual') ? 'loves' : 'likes';
 
   // H1 (Study 4): individual-speaker -> loves
   const hypothesisConsistent = (individualAssignedTo === 'loves') ? 1 : 0;
@@ -1484,13 +1483,56 @@ function recordResp(choice, el){
   _clearHighlights();
   el.classList.add('chosen');
   document.querySelectorAll('.opt-card').forEach(c=>c.classList.add('lock'));
-  // Ask the open-ended "why?" once per block, after its LAST trial (so the
-  // prompt can't change behavior on the block's remaining trials). The row
-  // is pushed/posted after the why screen so it carries the typed answer.
+  // Every trial: brief "who said this?" attention check after the choice.
+  G.pendingRow = rowData;
+  setTimeout(function(){ showMemCheck(rowData); }, 700);
+}
+
+// ── STUDY 4 per-trial attention check ─────────────────────────
+// Replays ONE of the two speeches (individual- or people-level, random) and
+// asks "Who said that?" with both speaker portraits as buttons. Runs AFTER
+// the relational choice so it cannot cue the decision. Fields added to the
+// trial row: memCheckProbe ('individual'|'group'), memCheckAnswer (speaker
+// name), memCheckCorrect (0/1), memCheck_rt_ms.
+function showMemCheck(rowData){
+  const tr = G.blockChars[G.bIdx][G.tIdx];
+  const er = effRoles();
+  const probe = Math.random() < 0.5 ? 'individual' : 'group';
+  // which speaker (A/B) gave the probed statement?
+  const saidByA = (er.rA === probe);
+  const correctName = saidByA ? tr.pA : tr.pB;
+  const speechKey = tr.key + '_' + curBlockKey() + '_' + (probe === 'individual' ? 'ind' : 'group');
+  G._memStart = Date.now();
+  render(`
+    ${starMeterHTML()}
+    <h2 style="margin-bottom:6px">Wait — one quick question!</h2>
+    <p class="txt" style="font-size:1.1em">Listen one more time&hellip; <strong>Who said that?</strong></p>
+    <div class="char-row" style="margin-top:14px">
+      <div class="cw"><button class="opt-card" style="padding:10px"
+            onclick="recordMemCheck('${tr.pA}','${correctName}','${probe}')">
+            ${cimg(G.curPAImg,'lg')}<div class="clbl">${tr.pA}</div></button></div>
+      <div class="cw"><button class="opt-card" style="padding:10px"
+            onclick="recordMemCheck('${tr.pB}','${correctName}','${probe}')">
+            ${cimg(G.curPBImg,'lg')}<div class="clbl">${tr.pB}</div></button></div>
+    </div>
+    <button class="rrb" onclick="reread()" style="margin-top:10px">Replay</button>
+  `);
+  speakChain([
+    { key: 'memcheck_intro', delay: 0 },     // "Wait — listen to this one more time!"
+    { key: speechKey,        delay: 350 },   // the probed speech (existing clip)
+    { key: 'memcheck_who',   delay: 350 },   // "Who said that?"
+  ]);
+}
+function recordMemCheck(answerName, correctName, probe){
+  const rowData = G.pendingRow;
+  rowData.memCheckProbe   = probe;
+  rowData.memCheckAnswer  = answerName;
+  rowData.memCheckCorrect = (answerName === correctName) ? 1 : 0;
+  rowData.memCheck_rt_ms  = Date.now() - (G._memStart || Date.now());
+  // Then the open-ended "why?" once per block (on its last trial), else finish.
   const askWhy = (G.tIdx === NPER_BLOCK - 1);
   if(askWhy){
-    G.pendingRow = rowData;
-    setTimeout(function(){ showWhyQuestion(rowData); }, 700);
+    setTimeout(function(){ showWhyQuestion(rowData); }, 400);
     return;
   }
   _finishTrial(rowData);

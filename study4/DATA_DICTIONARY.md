@@ -1,14 +1,19 @@
-# STUDY 4 NOTE (loves vs. just-met)
-Copy of Study 3 (People-generic speeches unchanged) with the ROLES swapped:
-children assign which speaker LOVES the target and which JUST MET the target.
-Data rows carry `study = "study4"`. Primary DV: `choseIndividualAsLoves`
-(1 = individual-level explainer assigned to the loves role);
-`individualAssignedTo` is "loves" | "just_met". One extra row per child with
-`dataExportTag = BOSS_PROBE` records the end-of-game folk-theory probe
-(`bossKnowsAnswer` = boss | best_friend, `bossProbe_rt_ms`).
+# STUDY 4 NOTE (loves vs. likes)
+Copy of Study 3 (People-generic speeches and original character intros
+unchanged; the Study-1 "_likeA/_likeB" liking clips are no longer played)
+with the ROLES swapped: children assign which speaker LOVES the target and
+which LIKES the target. Rows carry `study = "study4"`.
+Primary DV: `choseIndividualAsLoves` (1 = individual-level explainer assigned
+to the loves role); `individualAssignedTo` is "loves" | "likes".
+Per-trial attention check after each choice ("Who said that?" replaying one
+speech): `memCheckProbe` (individual|group), `memCheckAnswer` (speaker name),
+`memCheckCorrect` (0/1), `memCheck_rt_ms`.
+One extra row per child with `dataExportTag = BOSS_PROBE` records the
+end-of-game folk-theory probe (`bossKnowsAnswer` = boss | best_friend,
+`bossProbe_rt_ms`).
 Before running children: regenerate role audio with `generate_study4_audio.py`
-(67 clips - frames, prefixes, options, probe; they still say best friend/boss
-until you do!) then run `equalize_volume.py`.
+(68 clips - frames, prefixes, options, probe, memcheck; current files on disk
+still say "just met" until you do!) then run `equalize_volume.py`.
 
 # STUDY 3 NOTE ("People" generic)
 This folder is a copy of Study 2 with ONE manipulation change: the group-level

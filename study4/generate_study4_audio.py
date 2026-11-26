@@ -1,27 +1,33 @@
 #!/usr/bin/env python3
 """
-Generate the STUDY 4 ("loves vs. just met") audio for Twizzle Town.
+Generate the STUDY 4 ("loves vs. likes") audio for Twizzle Town.
 
-Study 4 keeps Study 3's People-generic speeches (reused unchanged) but swaps
-the ROLE framing: instead of best friend / boss, one speaker LOVES the target
-and one JUST MET the target.  This script regenerates every clip whose text
-mentions the roles, OVERWRITING the copies in this folder:
+Study 4 keeps Study 3's People-generic speeches AND the original character
+intros (reused unchanged) but swaps the ROLE framing: one speaker LOVES the
+target and one LIKES the target. This script generates every clip whose text
+mentions the roles, plus the two attention-check clips, OVERWRITING copies
+in this folder:
 
-  11 x <key>_frame.mp3    "One of the people that {T} knows loves {T}, and one
-                           of them just met {T}. You'll have to figure out
-                           which is which!"
+  11 x <key>_frame.mp3    "One of them loves {T}, and one of them likes {T}.
+                           You'll have to figure out which is which!"
   11 x <key>_prefix.mp3   "Remember, one of them loves {T} and one of them
-                           just met {T}. Do you think it's like this?"
+                           likes {T}. Do you think it's like this?"
   44 x <key>_opt_{A,B}_{1,2}.mp3
-                          _A_1 "{pA} loves {T},"     _A_2 "and {pB} just met {T}."
-                          _B_1 "{pB} loves {T},"     _B_2 "and {pA} just met {T}."
-   1 x probe_question.mp3 "One last question! Who knows more about what someone
-                           likes to do: their boss, or their best friend?"
-Reused unchanged: all <key>_{hmm|yes}_{ind|group}.mp3 People speeches,
-do_you_think.mp3, or_like_this.mp3, why_question.mp3, intros, stars, etc.
+                          _A_1 "{pA} loves {T},"   _A_2 "and {pB} likes {T}."
+                          _B_1 "{pB} loves {T},"   _B_2 "and {pA} likes {T}."
+   1 x probe_question.mp3 (end-of-game boss-knowledge probe)
+   1 x memcheck_intro.mp3 "Wait! Listen to this one more time."
+   1 x memcheck_who.mp3   "Who said that?"
+
+Reused unchanged: <key>_intro (original years/equal-time version),
+all <key>_{hmm|yes}_{ind|group}.mp3 People speeches, do_you_think.mp3,
+or_like_this.mp3, why_question.mp3, stars, etc.  (_likeA/_likeB are no
+longer played.)
 
 USAGE (from this folder):
   ELEVENLABS_API_KEY="sk_..." python3 generate_study4_audio.py
+Optionally pass filename substrings to regenerate only matches, e.g.:
+  python3 generate_study4_audio.py _frame _prefix
 Then:  python3 equalize_volume.py
 """
 import os, sys, time, requests
@@ -46,21 +52,25 @@ TARGETS = [
     ("arlo",   "Arlo",   "Cora",   "Beau"),
 ]
 
-JOBS = [("probe_question.mp3",
-         "One last question! Who knows more about what someone likes to do: "
-         "their boss, or their best friend?")]
+JOBS = [
+    ("probe_question.mp3",
+     "One last question! Who knows more about what someone likes to do: "
+     "their boss, or their best friend?"),
+    ("memcheck_intro.mp3", "Wait! Listen to this one more time."),
+    ("memcheck_who.mp3",   "Who said that?"),
+]
 for key, T, pA, pB in TARGETS:
     JOBS += [
       (f"{key}_frame.mp3",
-       f"One of the people that {T} knows loves {T}, and one of them just met "
-       f"{T}. You'll have to figure out which is which!"),
+       f"One of them loves {T}, and one of them likes {T}. "
+       f"You'll have to figure out which is which!"),
       (f"{key}_prefix.mp3",
-       f"Remember, one of them loves {T} and one of them just met {T}. "
+       f"Remember, one of them loves {T} and one of them likes {T}. "
        f"Do you think it's like this?"),
       (f"{key}_opt_A_1.mp3", f"{pA} loves {T},"),
-      (f"{key}_opt_A_2.mp3", f"and {pB} just met {T}."),
+      (f"{key}_opt_A_2.mp3", f"and {pB} likes {T}."),
       (f"{key}_opt_B_1.mp3", f"{pB} loves {T},"),
-      (f"{key}_opt_B_2.mp3", f"and {pA} just met {T}."),
+      (f"{key}_opt_B_2.mp3", f"and {pA} likes {T}."),
     ]
 
 API_KEY = os.environ.get("ELEVENLABS_API_KEY")
@@ -68,6 +78,11 @@ if not API_KEY:
     sys.exit('Set ELEVENLABS_API_KEY, e.g.\n  ELEVENLABS_API_KEY="sk_..." python3 generate_study4_audio.py')
 URL = f"https://api.elevenlabs.io/v1/text-to-speech/{VOICE_ID}"
 HEADERS = {"xi-api-key": API_KEY, "Content-Type": "application/json"}
+# Optional filter: pass substrings to only generate matching files, e.g.
+#   python3 generate_study4_audio.py _intro _frame
+pats = [p for p in sys.argv[1:] if not p.startswith("-")]
+if pats:
+    JOBS = [(f, t) for f, t in JOBS if any(p in f for p in pats)]
 print(f"Generating {len(JOBS)} clips with voice {VOICE_ID} ({MODEL})...\n")
 done = fail = 0
 for fname, text in JOBS:
