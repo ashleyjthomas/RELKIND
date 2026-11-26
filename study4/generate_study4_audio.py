@@ -15,7 +15,9 @@ in this folder:
   44 x <key>_opt_{A,B}_{1,2}.mp3
                           _A_1 "{pA} loves {T},"   _A_2 "and {pB} likes {T}."
                           _B_1 "{pB} loves {T},"   _B_2 "and {pA} likes {T}."
-   1 x probe_question.mp3 (end-of-game boss-knowledge probe)
+   1 x loves_probe.mp3    "One last question! Who loves someone: their boss,
+                           their best friend, or both of them?"
+   1 x loves_more.mp3     "Who loves them more?" (asked only after "both")
    1 x memcheck_intro.mp3 "Wait! Listen to this one more time."
    1 x memcheck_who.mp3   "Who said that?"
 
@@ -53,9 +55,10 @@ TARGETS = [
 ]
 
 JOBS = [
-    ("probe_question.mp3",
-     "One last question! Who knows more about what someone likes to do: "
-     "their boss, or their best friend?"),
+    ("loves_probe.mp3",
+     "One last question! Who loves someone: their boss, "
+     "their best friend, or both of them?"),
+    ("loves_more.mp3", "Who loves them more?"),
     ("memcheck_intro.mp3", "Wait! Listen to this one more time."),
     ("memcheck_who.mp3",   "Who said that?"),
 ]

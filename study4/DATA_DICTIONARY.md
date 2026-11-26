@@ -8,9 +8,12 @@ to the loves role); `individualAssignedTo` is "loves" | "likes".
 Per-trial attention check after each choice ("Who said that?" replaying one
 speech): `memCheckProbe` (individual|group), `memCheckAnswer` (speaker name),
 `memCheckCorrect` (0/1), `memCheck_rt_ms`.
-One extra row per child with `dataExportTag = BOSS_PROBE` records the
-end-of-game folk-theory probe (`bossKnowsAnswer` = boss | best_friend,
-`bossProbe_rt_ms`).
+One extra row per child with `dataExportTag = LOVES_PROBE` records the
+end-of-game folk-theory probe: "Who loves someone: their boss, their best
+friend, or both of them?" (`lovesWhoAnswer` = boss | best_friend | both,
+`lovesWho_rt_ms`). Children who answer "both" get a follow-up, "Who loves
+them more?" (`lovesMoreAnswer` = boss | best_friend, `lovesMore_rt_ms`;
+blank otherwise).
 Before running children: regenerate role audio with `generate_study4_audio.py`
 (68 clips - frames, prefixes, options, probe, memcheck; current files on disk
 still say "just met" until you do!) then run `equalize_volume.py`.

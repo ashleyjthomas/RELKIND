@@ -408,7 +408,8 @@ const CSV_COLS = [
   'individualAssignedTo',                               // "loves" | "likes"  (DV: role kid gave the individual-speaker)
   'choseIndividualAsLoves',                             // 1 = individual-level explainer assigned to the LOVES role (primary DV)
   'whyAnswer','why_rt_ms',                              // parent-typed "why?" (asked once per block, on its last trial)
-  'bossKnowsAnswer','bossProbe_rt_ms',                  // end-of-game probe (one row per child, dataExportTag BOSS_PROBE)
+  'lovesWhoAnswer','lovesWho_rt_ms',                    // end-of-game probe: boss / best_friend / both (one row per child, dataExportTag LOVES_PROBE)
+  'lovesMoreAnswer','lovesMore_rt_ms',                  // follow-up, only asked after "both": boss / best_friend
   'memCheckProbe','memCheckAnswer','memCheckCorrect','memCheck_rt_ms',  // per-trial "who said this?" attention check
   'hypothesisConsistent',                               // 1 if individual -> best_friend (Study 2 H1)
   'dataExportTag','target','behavior',
@@ -1393,16 +1394,18 @@ function _playChoiceAudio(){
     if(i === 1){
       steps.push({ key: orLikeThisKey(), onStart: _clearHighlights, delay: 500 });
     }
-    // Left slot of this card: pA (best friend on card A, boss on card B)
+    // STUDY 4: clip 1 always names the LOVES person ("{X} loves {T},") —
+    // that's pA on card A but pB on card B — so the highlight follows the
+    // ROLE slot (-bf = loves), not a fixed left/right position.
     steps.push({
       key:     optKey(tr.key, c, 1),
-      onStart: function(){ _highlightSlot('opt-' + c + (c === 'A' ? '-bf' : '-bs')); },
+      onStart: function(){ _highlightSlot('opt-' + c + '-bf'); },
       delay:   i === 0 ? 500 : 300
     });
-    // Right slot of this card: pB (boss on card A, best friend on card B)
+    // Clip 2 always names the LIKES person ("and {Y} likes {T}.").
     steps.push({
       key:     optKey(tr.key, c, 2),
-      onStart: function(){ _highlightSlot('opt-' + c + (c === 'A' ? '-bs' : '-bf')); },
+      onStart: function(){ _highlightSlot('opt-' + c + '-bs'); },
       delay:   120
     });
   });
@@ -1737,32 +1740,69 @@ function advBlock(){
 // One question after the last story, testing each child's folk theory of
 // bosses (knowledge-routing moderator): "Who knows more about what someone
 // likes to do: their boss, or their best friend?"  Button order randomized.
+// End-of-game probe, two stages:
+//   1. "Who loves someone: their boss, their best friend, or both?"
+//      (boss / best-friend order randomized; "both of them" always last)
+//   2. only if they answer "both": "Who loves them more?" (order randomized)
+// One row is posted after the whole flow (lovesMoreAnswer blank unless asked).
 function showBossProbe(){
+  const t0 = Date.now();
+  const pair = Math.random() < 0.5
+    ? [['boss','their boss'], ['best_friend','their best friend']]
+    : [['best_friend','their best friend'], ['boss','their boss']];
+  const opts = pair.concat([['both','both of them']]);
+  document.getElementById('gc').innerHTML = `
+    <div class="card">
+      <h2 style="margin-bottom:10px">One last question!</h2>
+      <p class="txt" style="font-size:1.15em">Who <strong>loves</strong> someone:
+         <strong>their boss</strong>, <strong>their best friend</strong>, or
+         <strong>both of them</strong>?</p>
+      <div style="display:flex;gap:18px;justify-content:center;margin-top:22px;flex-wrap:wrap">
+        ${opts.map(o => `
+          <button class="btn g" style="min-width:170px;font-size:1.05em"
+                  onclick="recordLovesWho('${o[0]}', ${t0})">${o[1]}</button>`).join('')}
+      </div>
+    </div>`;
+  say('loves_probe');
+}
+function recordLovesWho(ans, t0){
+  G.lovesProbe = {
+    lovesWhoAnswer: ans,
+    lovesWho_rt_ms: Date.now() - t0,
+    lovesMoreAnswer: '',
+    lovesMore_rt_ms: ''
+  };
+  if(ans === 'both'){ showLovesMore(); } else { _postLovesProbe(); }
+}
+function showLovesMore(){
   const t0 = Date.now();
   const opts = Math.random() < 0.5
     ? [['boss','their boss'], ['best_friend','their best friend']]
     : [['best_friend','their best friend'], ['boss','their boss']];
   document.getElementById('gc').innerHTML = `
     <div class="card">
-      <h2 style="margin-bottom:10px">One last question!</h2>
-      <p class="txt" style="font-size:1.15em">Who knows more about what someone
-         likes to do: <strong>their boss</strong>, or <strong>their best friend</strong>?</p>
+      <h2 style="margin-bottom:10px">One more!</h2>
+      <p class="txt" style="font-size:1.15em">Who loves them <strong>more</strong>?</p>
       <div style="display:flex;gap:18px;justify-content:center;margin-top:22px;flex-wrap:wrap">
         ${opts.map(o => `
           <button class="btn g" style="min-width:170px;font-size:1.05em"
-                  onclick="recordBossProbe('${o[0]}', ${t0})">${o[1]}</button>`).join('')}
+                  onclick="recordLovesMore('${o[0]}', ${t0})">${o[1]}</button>`).join('')}
       </div>
     </div>`;
-  say('probe_question');
+  say('loves_more');
 }
-function recordBossProbe(ans, t0){
-  const row = {
+function recordLovesMore(ans, t0){
+  G.lovesProbe.lovesMoreAnswer = ans;
+  G.lovesProbe.lovesMore_rt_ms = Date.now() - t0;
+  _postLovesProbe();
+}
+function _postLovesProbe(){
+  const row = Object.assign({
     study: 'study4', participantId: G.pid, chsId: G.chsId,
     firstName: G.firstName, age: G.age,
-    dataExportTag: 'BOSS_PROBE',
-    bossKnowsAnswer: ans, bossProbe_rt_ms: Date.now() - t0,
+    dataExportTag: 'LOVES_PROBE',
     timestamp: new Date().toISOString()
-  };
+  }, G.lovesProbe);
   _postToSheets(row);
   showEnd();
 }
