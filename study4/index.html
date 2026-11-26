@@ -1620,9 +1620,11 @@ function _finishTrial(rowData){
   G.totalDone++;
   G.tIdx++;
   setTimeout(function(){
-    // 6 trials total: one star per trial
     G.stars = Math.min(NTRIALS_TOT, G.totalDone);
-    showStarEarned();
+    // STUDY 4: the end-of-game loves probe comes BEFORE the final star,
+    // so the "You earned a star!" audio isn't cut off by the probe.
+    if(G.totalDone === NTRIALS_TOT){ showBossProbe(); }
+    else { showStarEarned(); }
   }, 700);
 }
 
@@ -1687,7 +1689,9 @@ function showStarEarned(){
       : ''}
   `);
   say(isDone ? 'star_done' : isHalf ? 'star_halfway' : 'star_generic');
-  if(isDone) setTimeout(function(){ showBossProbe(); }, 2800);
+  // Probe already happened (before this final star); go to the thank-you
+  // screen once the star audio has had time to play out.
+  if(isDone) setTimeout(function(){ showEnd(); }, 3500);
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -1819,12 +1823,21 @@ function showLovesMore(){
       <h2 style="margin-bottom:10px">One more!</h2>
       <p class="txt" style="font-size:1.15em">Who loves them <strong>more</strong>?</p>
       <div style="display:flex;gap:18px;justify-content:center;margin-top:22px;flex-wrap:wrap">
-        ${opts.map(o => `
-          <button class="btn g" style="min-width:170px;font-size:1.05em"
+        ${opts.map((o,i) => `
+          <button class="btn g" id="lm-${i}" style="min-width:170px;font-size:1.05em"
                   onclick="recordLovesMore('${o[0]}', ${t0})">${o[1]}</button>`).join('')}
       </div>
     </div>`;
-  say('loves_more');
+  // Audio names the options in on-screen order; each button bounces
+  // while it is being named.
+  const clip = function(ans, withOr){
+    return (withOr ? 'probeopt_or_' : 'probeopt_') + (ans === 'boss' ? 'boss' : 'bf');
+  };
+  speakChain([
+    { key: 'loves_more',            delay: 0   },
+    { key: clip(opts[0][0], false), delay: 350, imgId: 'lm-0' },
+    { key: clip(opts[1][0], true),  delay: 250, imgId: 'lm-1' },
+  ]);
 }
 function recordLovesMore(ans, t0){
   G.lovesProbe.lovesMoreAnswer = ans;
@@ -1839,7 +1852,9 @@ function _postLovesProbe(){
     timestamp: new Date().toISOString()
   }, G.lovesProbe);
   _postToSheets(row);
-  showEnd();
+  // Final star screen comes AFTER the probe; it then advances to the
+  // thank-you screen on its own.
+  showStarEarned();
 }
 
 function showEnd(){
