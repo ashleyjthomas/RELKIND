@@ -65,6 +65,13 @@ JOBS = [
     ("memcheck_correction.mp3", "Good try! It was actually this one who said that!"),
     ("memcheck_tryagain.mp3", "Not quite! Let's try again."),
     ("memcheck_right.mp3",    "That's right!"),
+    # "Who loves them more?" follow-up: options named in on-screen order,
+    # each button bounces while it is named (order randomized, so both
+    # plain and "or" variants exist for each option).
+    ("probeopt_boss.mp3",    "Their boss?"),
+    ("probeopt_or_boss.mp3", "Or their boss?"),
+    ("probeopt_bf.mp3",      "Their best friend?"),
+    ("probeopt_or_bf.mp3",   "Or their best friend?"),
 ]
 for key, T, pA, pB in TARGETS:
     JOBS += [
