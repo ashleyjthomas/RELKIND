@@ -920,6 +920,12 @@ function launchGame(){
   for(let b=0; b<NBLOCKS; b++){
     G.blockChars.push(chars.slice(b*NPER_BLOCK, (b+1)*NPER_BLOCK));
   }
+  // STUDY 4: counterbalanced attention-check plan — within each block, one
+  // trial probes the INDIVIDUAL-level statement and one the PEOPLE-level
+  // statement (order randomized), so every child gets 2 of each overall.
+  G.memProbePlan = G.blockChars.map(function(){
+    return Math.random() < 0.5 ? ['individual','group'] : ['group','individual'];
+  });
 
   // Debug panel (visible only via localStorage flag)
   const chNames = G.blockChars.map(g => g.map(c=>c.tgt).join(','));
@@ -1238,6 +1244,25 @@ function showTrialSpeech(){
       Hear what they say
     </button>
 
+    <!-- Attention check: hidden until speeches complete; must be answered
+         BEFORE the option cards appear (same page). -->
+    <div id="memZone" class="choice-zone">
+      <div class="qbox show">
+        <div class="qtxt">Wait &mdash; who said that? Listen one more time!</div>
+      </div>
+      <div class="char-row" style="margin-top:8px">
+        <div class="cw"><button class="opt-card" id="mem-a" style="padding:10px"
+              onclick="recordMemCheck('A')">
+              ${cimg(G.curPAImg,'lg')}<div class="clbl">${tr.pA}</div></button></div>
+        <div class="cw"><button class="opt-card" id="mem-b" style="padding:10px"
+              onclick="recordMemCheck('B')">
+              ${cimg(G.curPBImg,'lg')}<div class="clbl">${tr.pB}</div></button></div>
+      </div>
+      <div style="margin-top:6px;display:flex;justify-content:center;">
+        <button class="rrb" onclick="_replayMemCheck()">Replay</button>
+      </div>
+    </div>
+
     <!-- Choice zone: hidden until speeches complete.  Frame was delivered
          on the character intro screen; here the child sees the two option
          cards and picks between them. -->
@@ -1295,8 +1320,9 @@ function triggerSpeech(){
       speakWithAnim('spk-b', keyB, function() {
         G.speechDone = true;
         if(btn){ btn.textContent = 'Hear again'; btn.disabled = false; }
-        // Reveal the frame + question + option cards, then chain their audio
-        _revealChoice();
+        // Attention check first (same page); the option cards reveal after
+        // the child answers it.
+        _revealMemCheck();
       });
     }, 400);
   });
@@ -1483,59 +1509,68 @@ function recordResp(choice, el){
   _clearHighlights();
   el.classList.add('chosen');
   document.querySelectorAll('.opt-card').forEach(c=>c.classList.add('lock'));
-  // Every trial: brief "who said this?" attention check after the choice.
-  G.pendingRow = rowData;
-  setTimeout(function(){ showMemCheck(rowData); }, 700);
-}
-
-// ── STUDY 4 per-trial attention check ─────────────────────────
-// Replays ONE of the two speeches (individual- or people-level, random) and
-// asks "Who said that?" with both speaker portraits as buttons. Runs AFTER
-// the relational choice so it cannot cue the decision. Fields added to the
-// trial row: memCheckProbe ('individual'|'group'), memCheckAnswer (speaker
-// name), memCheckCorrect (0/1), memCheck_rt_ms.
-function showMemCheck(rowData){
-  const tr = G.blockChars[G.bIdx][G.tIdx];
-  const er = effRoles();
-  const probe = Math.random() < 0.5 ? 'individual' : 'group';
-  // which speaker (A/B) gave the probed statement?
-  const saidByA = (er.rA === probe);
-  const correctName = saidByA ? tr.pA : tr.pB;
-  const speechKey = tr.key + '_' + curBlockKey() + '_' + (probe === 'individual' ? 'ind' : 'group');
-  G._memStart = Date.now();
-  render(`
-    ${starMeterHTML()}
-    <h2 style="margin-bottom:6px">Wait — one quick question!</h2>
-    <p class="txt" style="font-size:1.1em">Listen one more time&hellip; <strong>Who said that?</strong></p>
-    <div class="char-row" style="margin-top:14px">
-      <div class="cw"><button class="opt-card" style="padding:10px"
-            onclick="recordMemCheck('${tr.pA}','${correctName}','${probe}')">
-            ${cimg(G.curPAImg,'lg')}<div class="clbl">${tr.pA}</div></button></div>
-      <div class="cw"><button class="opt-card" style="padding:10px"
-            onclick="recordMemCheck('${tr.pB}','${correctName}','${probe}')">
-            ${cimg(G.curPBImg,'lg')}<div class="clbl">${tr.pB}</div></button></div>
-    </div>
-    <button class="rrb" onclick="reread()" style="margin-top:10px">Replay</button>
-  `);
-  speakChain([
-    { key: 'memcheck_intro', delay: 0 },     // "Wait — listen to this one more time!"
-    { key: speechKey,        delay: 350 },   // the probed speech (existing clip)
-    { key: 'memcheck_who',   delay: 350 },   // "Who said that?"
-  ]);
-}
-function recordMemCheck(answerName, correctName, probe){
-  const rowData = G.pendingRow;
-  rowData.memCheckProbe   = probe;
-  rowData.memCheckAnswer  = answerName;
-  rowData.memCheckCorrect = (answerName === correctName) ? 1 : 0;
-  rowData.memCheck_rt_ms  = Date.now() - (G._memStart || Date.now());
-  // Then the open-ended "why?" once per block (on its last trial), else finish.
+  // Attach the attention-check fields recorded before the choice.
+  if(G.memPending){ Object.assign(rowData, G.memPending); G.memPending = null; }
+  // Ask the open-ended "why?" once per block, after its LAST trial.
   const askWhy = (G.tIdx === NPER_BLOCK - 1);
   if(askWhy){
-    setTimeout(function(){ showWhyQuestion(rowData); }, 400);
+    G.pendingRow = rowData;
+    setTimeout(function(){ showWhyQuestion(rowData); }, 700);
     return;
   }
   _finishTrial(rowData);
+}
+
+// ── STUDY 4 per-trial attention check (BEFORE the choice, same page) ──
+// Replays one of the two speeches — which one is counterbalanced within
+// child via G.memProbePlan (one individual-probe and one people-probe trial
+// per block, order randomized) — and asks "Who said that?" with both
+// portraits. The option cards reveal only after it is answered.
+function _memProbeType(){ return G.memProbePlan[G.bIdx][G.tIdx]; }
+function _memSpeechKey(){
+  const tr = G.blockChars[G.bIdx][G.tIdx];
+  return tr.key + '_' + curBlockKey() + '_' + (_memProbeType() === 'individual' ? 'ind' : 'group');
+}
+function _revealMemCheck(){
+  const mz = document.getElementById('memZone');
+  if(mz) mz.classList.add('show');
+  G._memStart = Date.now();
+  setTimeout(function(){
+    const el = document.getElementById('mem-a');
+    if(el && typeof el.scrollIntoView === 'function'){
+      try{ el.scrollIntoView({behavior:'smooth', block:'center'}); }catch(e){}
+    }
+  }, 300);
+  _chainTimeout(function(){ _playMemCheckAudio(); }, 400);
+}
+function _playMemCheckAudio(){
+  speakChain([
+    { key: 'memcheck_intro', delay: 0 },    // "Wait! Listen to this one more time."
+    { key: _memSpeechKey(),  delay: 350 },  // the probed speech (existing clip)
+    { key: 'memcheck_who',   delay: 350 },  // "Who said that?"
+  ]);
+}
+function _replayMemCheck(){
+  _cancelChain(); if(_aud){ _aud.pause(); }
+  _playMemCheckAudio();
+}
+function recordMemCheck(which){
+  const tr = G.blockChars[G.bIdx][G.tIdx];
+  const er = effRoles();
+  const probe = _memProbeType();
+  const saidByA = (er.rA === probe);
+  const correct = (which === 'A') === saidByA ? 1 : 0;
+  G.memPending = {
+    memCheckProbe:   probe,
+    memCheckAnswer:  which === 'A' ? tr.pA : tr.pB,
+    memCheckCorrect: correct,
+    memCheck_rt_ms:  Date.now() - (G._memStart || Date.now())
+  };
+  _cancelChain(); if(_aud){ _aud.pause(); }
+  const mz = document.getElementById('memZone');
+  if(mz) mz.classList.remove('show');
+  // Now reveal the relational choice and its audio chain.
+  _revealChoice();
 }
 
 // Push + post the row, advance counters, and show the star screen.
