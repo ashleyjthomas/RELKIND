@@ -1575,17 +1575,17 @@ function recordMemCheck(which){
       memCheckCorrect2: '',            // filled only if a replay happened
       memCheck_rt_ms:  Date.now() - (G._memStart || Date.now())
     };
-    if(correct){ _dismissMemCheck(); return; }
-    // Wrong -> replay the probed speech ONCE and ask again.
+    if(correct){ _memRight(); return; }
+    // Wrong -> "Not quite!", then replay the probed speech ONCE and ask again.
     G._memAttempt = 2;
-    _playMemCheckAudio();
+    speakThen('memcheck_tryagain', function(){ _chainTimeout(_playMemCheckAudio, 300); });
     return;
   }
 
   // SECOND answer (after the single replay).
   G._memAttempt = null;
   G.memPending.memCheckCorrect2 = correct;
-  if(correct){ _dismissMemCheck(); return; }
+  if(correct){ _memRight(); return; }
   // Wrong again -> show them the right answer: freeze the buttons,
   // highlight the speaker who actually said it while the correction
   // clip plays, then move on to the choice.
@@ -1600,6 +1600,10 @@ function recordMemCheck(which){
   speakThen('memcheck_correction', function(){
     _chainTimeout(_dismissMemCheck, 600);
   });
+}
+// Correct answer (either attempt): "That's right!" then on to the choice.
+function _memRight(){
+  speakThen('memcheck_right', function(){ _chainTimeout(_dismissMemCheck, 300); });
 }
 function _dismissMemCheck(){
   const mz = document.getElementById('memZone');

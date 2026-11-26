@@ -9,9 +9,10 @@ Per-trial attention check BEFORE each choice ("Who said that?" replaying one
 speech): `memCheckProbe` (individual|group), `memCheckAnswer` (speaker name,
 first answer), `memCheckCorrect` (0/1, FIRST answer — this is the recorded
 check), `memCheckCorrect2` (0/1 second answer after the single replay; blank
-when the first answer was right), `memCheck_rt_ms`. A wrong first answer gets
-one replay + re-ask; a wrong second answer gets the correct speaker
-highlighted with a correction clip (memcheck_correction.mp3).
+when the first answer was right), `memCheck_rt_ms`. Feedback: correct ->
+"That's right!" (memcheck_right.mp3); wrong first answer -> "Not quite!
+Let's try again." (memcheck_tryagain.mp3) + one replay + re-ask; wrong
+second answer -> correct speaker highlighted with memcheck_correction.mp3.
 One extra row per child with `dataExportTag = LOVES_PROBE` records the
 end-of-game folk-theory probe: "Who loves someone: their boss, their best
 friend, or both of them?" (`lovesWhoAnswer` = boss | best_friend | both,

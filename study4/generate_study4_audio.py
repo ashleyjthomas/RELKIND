@@ -62,6 +62,8 @@ JOBS = [
     ("memcheck_intro.mp3", "Wait! Listen to this one more time."),
     ("memcheck_who.mp3",   "Who said that?"),
     ("memcheck_correction.mp3", "Good try! It was actually this one who said that!"),
+    ("memcheck_tryagain.mp3", "Not quite! Let's try again."),
+    ("memcheck_right.mp3",    "That's right!"),
 ]
 for key, T, pA, pB in TARGETS:
     JOBS += [
@@ -73,8 +75,8 @@ for key, T, pA, pB in TARGETS:
        f"Do you think it's like this?"),
       (f"{key}_opt_A_1.mp3", f"{pA} loves {T},"),
       (f"{key}_opt_A_2.mp3", f"and {pB} likes {T}."),
-      (f"{key}_opt_B_1.mp3", f"{pB} loves {T},"),
-      (f"{key}_opt_B_2.mp3", f"and {pA} likes {T}."),
+      (f"{key}_opt_B_1.mp3", f"{pA} likes {T},"),
+      (f"{key}_opt_B_2.mp3", f"and {pB} loves {T}."),
     ]
 
 API_KEY = os.environ.get("ELEVENLABS_API_KEY")
