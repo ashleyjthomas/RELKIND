@@ -72,6 +72,10 @@ JOBS = [
     ("probeopt_or_boss.mp3", "Or their boss?"),
     ("probeopt_bf.mp3",      "Their best friend?"),
     ("probeopt_or_bf.mp3",   "Or their best friend?"),
+    # First probe ("Who loves someone?") also names each option with a
+    # bounce, reusing probeopt_boss / probeopt_bf plus these two:
+    ("lovesq_intro.mp3", "One last question! Who loves someone?"),
+    ("lovesq_both.mp3",  "Or both of them?"),
 ]
 for key, T, pA, pB in TARGETS:
     JOBS += [

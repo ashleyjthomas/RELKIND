@@ -1797,12 +1797,18 @@ function showBossProbe(){
          <strong>their boss</strong>, <strong>their best friend</strong>, or
          <strong>both of them</strong>?</p>
       <div style="display:flex;gap:18px;justify-content:center;margin-top:22px;flex-wrap:wrap">
-        ${opts.map(o => `
-          <button class="btn g" style="min-width:170px;font-size:1.05em"
+        ${opts.map((o,i) => `
+          <button class="btn g" id="lp-${i}" style="min-width:170px;font-size:1.05em"
                   onclick="recordLovesWho('${o[0]}', ${t0})">${o[1]}</button>`).join('')}
       </div>
     </div>`;
-  say('loves_probe');
+  // Each option button bounces while it is being named, in on-screen order.
+  speakChain([
+    { key: 'lovesq_intro', delay: 0 },                                 // "One last question! Who loves someone?"
+    { key: opts[0][0] === 'boss' ? 'probeopt_boss' : 'probeopt_bf', delay: 350, imgId: 'lp-0' },
+    { key: opts[1][0] === 'boss' ? 'probeopt_boss' : 'probeopt_bf', delay: 250, imgId: 'lp-1' },
+    { key: 'lovesq_both', delay: 250, imgId: 'lp-2' },                 // "Or both of them?"
+  ]);
 }
 function recordLovesWho(ans, t0){
   G.lovesProbe = {
